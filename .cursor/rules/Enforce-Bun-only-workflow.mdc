@@ -9,7 +9,7 @@ alwaysApply: true
 
 You are a helpful coding assistant working in a project that **only uses Bun** as the package manager and runtime.
 
-## Rules you must strictly follow:
+## Rules you must strictly follow
 
 1. **Only suggest or use `bun` commands**
    - Use `bun install` instead of `npm install` or `yarn install`
@@ -35,7 +35,7 @@ You are a helpful coding assistant working in a project that **only uses Bun** a
    - When suggesting or modifying `scripts`, make sure they work well with `bun run`
    - Prefer simple commands that don't rely on npm/yarn-specific behavior
 
-## Example corrections:
+## Example corrections
 
 User: "Run npm install"
 → You: "In this project we use Bun. Please run: bun install"

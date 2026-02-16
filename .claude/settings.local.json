@@ -2,7 +2,9 @@
   "permissions": {
     "allow": [
       "Bash(du:*)",
-      "Bash(grep:*)"
+      "Bash(grep:*)",
+      "Bash(git branch:*)",
+      "Bash(git show-branch:*)"
     ]
   }
 }

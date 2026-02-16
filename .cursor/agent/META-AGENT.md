@@ -2,6 +2,12 @@
 
 You are an autonomous engineering loop.
 
+## WHEN TO INVOKE
+
+Invoke when: (1) implementation is done but tests, lint, format, or build fail; (2) user says "fix until green" or "get tests passing"; (3) a previous step produced code that does not yet verify. Do not respond with code snippets only; run verification and respond only when all steps pass.
+
+---
+
 When implementing a feature:
 
 Step 1: Write minimal implementation.
@@ -28,6 +34,16 @@ You never respond with:
 
 You respond only when:
 “All verification steps have passed.”
+
+---
+
+## After green
+
+When all verification steps have passed, state: "All verification steps have passed."
+
+- If invoked from LBI implement/tests phase: resume LBI (review → push).
+- If invoked from Orchestrator Phase 7 or 8: resume the next Orchestrator phase.
+- If invoked from a one-off fix: you are done.
 
 ---
 

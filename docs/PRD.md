@@ -16,15 +16,15 @@ This document is the **single source of truth** for Collab-Board. All checklists
 
 ## 2. How to Use This PRD
 
-1. **Pick the next feature** whose "Feature Fx.y complete (merged to `dev`)" checkbox is unchecked. Use the Feature Map tables under each epic to find the branch name.
-2. **Create branch** `feature/<slug>` from `dev` (e.g. `feature/monorepo-workspace-setup`). The slug is in the feature table.
+1. **Pick the next feature** whose "Feature Fx.y complete (merged to `development`)" checkbox is unchecked. Use the Feature Map tables under each epic to find the branch name.
+2. **Create branch** `feature/<slug>` from `development` (e.g. `feature/monorepo-workspace-setup`). The slug is in the feature table.
 3. **Work through the Implementation Checklist** for that feature in order:
-   - Check "Branch created from `dev`" when done.
+   - Check "Branch created from `development`" when done.
    - For each **Commit** in order: do the work, then check the commit checkbox and every **Subtask** under it.
    - When all commits and subtasks are done, all #### Acceptance Criteria for that feature should be met.
 4. **Run** `bun run validate` (format, typecheck, lint, test). Fix any failures.
-5. **Merge** the feature branch into `dev`.
-6. **Check the box** "Feature Fx.y complete (merged to `dev`)". Move to the next feature.
+5. **Merge** the feature branch into `development`.
+6. **Check the box** "Feature Fx.y complete (merged to `development`)". Move to the next feature.
 7. **Do not check any box** until the work is done and merged. Checkboxes are for tracking completion only.
 
 ---
@@ -121,7 +121,7 @@ All of the following must be functional at the 24-hour mark:
 
 - **Commit granularity:** 3–8 commits per feature branch; each commit reviewable in isolation.
 - **Commit prefixes:** `feat:`, `fix:`, `chore:`, `test:`, `docs:`, `refactor:`, `perf:`
-- **PR expectation:** Each Feature in this PRD corresponds to one PR into `dev`.
+- **PR expectation:** Each Feature in this PRD corresponds to one PR into `development`.
 - **No Cursor co-authorship trailers** in git commits. Do not add, suggest, or keep any line such as `Co-authored-by: Cursor <...>` in commit messages.
 
 ---
@@ -131,24 +131,24 @@ All of the following must be functional at the 24-hour mark:
 ### Branch Model
 
 - **`main`** — protected, no direct pushes. Curated releases only.
-- **`dev`** — long-lived integration branch. All feature work merges here.
-- **`feature/<slug>`** — short-lived, branches from `dev`, merges back to `dev`.
+- **`development`** — long-lived integration branch. All feature work merges here.
+- **`feature/<slug>`** — short-lived, branches from `development`, merges back to `development`.
 
 ### Required Workflow (repeat per feature)
 
-1. **Branch:** Create `feature/<slug>` from `dev`
+1. **Branch:** Create `feature/<slug>` from `development`
 2. **Implement:** Build the feature over several small commits
 3. **Test:** Write tests for the feature
 4. **Run:** Execute tests (`bun run test:run`)
 5. **Fix:** If tests fail, fix and rerun until green
 6. **Verify:** Run `bun run validate` (format + typecheck + lint + test)
-7. **Merge:** Merge feature branch into `dev`
+7. **Merge:** Merge feature branch into `development`
 8. **Next:** Move to the next feature
 
 ```mermaid
 flowchart LR
   main["main (protected)"]
-  dev["dev (integration)"]
+  dev["development (integration)"]
 
   dev --> f1["feature/branch-1"]
   f1 -->|"tests green"| dev
@@ -178,7 +178,7 @@ flowchart TB
 
 ### Checkbox Convention
 
-- Do **not** check any box until implementation is complete, verified, and merged to `dev`. Checkboxes in this document track completion only.
+- Do **not** check any box until implementation is complete, verified, and merged to `development`. Checkboxes in this document track completion only.
 
 ---
 
@@ -293,7 +293,7 @@ flowchart LR
 
 ### Parallel Execution
 
-The following epics have no dependency on each other and can be implemented in parallel (on separate feature branches from `dev`). Merge order still matters: integrate dependencies before dependents.
+The following epics have no dependency on each other and can be implemented in parallel (on separate feature branches from `development`). Merge order still matters: integrate dependencies before dependents.
 
 - **E3 (Auth) and E4 (Canvas)** — After E2 is complete, these two can be worked in parallel. Two developers (or two agents) can each take one epic; both must be merged before E6 (which needs E3 and E5; E5 needs E4).
 - **E11 (AI Complex) and E12 (Advanced features)** — After E10 is complete, E11 and E12 are independent (E11 depends on E10, E12 on E5). Can be done in parallel; both must be merged before E13.
@@ -337,7 +337,7 @@ Everything below through Epic 8 must be functional at the 24-hour MVP gate.
 
 **User stories:** US-1.1 (Initialize monorepo), US-1.2 (Deploy skeleton to Render).
 
-- [ ] Epic 2 complete (all features below merged to `dev`)
+- [ ] Epic 2 complete (all features below merged to `development`)
 
 #### Feature Map
 
@@ -354,7 +354,7 @@ Everything below through Epic 8 must be functional at the 24-hour MVP gate.
 - **PR:** `Infra: Bun monorepo with client/server workspaces`
 - **Branch:** `feature/monorepo-workspace-setup`
 - **SOLID:** SRP — separate workspaces per concern; DIP — shared-types as abstraction boundary
-- [ ] Feature F2.1 complete (merged to `dev`)
+- [ ] Feature F2.1 complete (merged to `development`)
 
 #### Acceptance Criteria
 
@@ -367,7 +367,7 @@ Everything below through Epic 8 must be functional at the 24-hour MVP gate.
 
 #### Implementation Checklist
 
-- [ ] Branch created from `dev`
+- [ ] Branch created from `development`
 
 **Commit 1: Create workspace structure and root config**
 
@@ -403,7 +403,7 @@ Everything below through Epic 8 must be functional at the 24-hour MVP gate.
   - [ ] Run `bun install` at root (succeeds)
   - [ ] Run `bun run typecheck` across workspaces
   - [ ] Run `bun run test:run` in client workspace
-  - [ ] Merge feature branch into `dev`
+  - [ ] Merge feature branch into `development`
 
 ---
 
@@ -412,7 +412,7 @@ Everything below through Epic 8 must be functional at the 24-hour MVP gate.
 - **PR:** `Backend: Express server with health check and static serving`
 - **Branch:** `feature/express-server-skeleton`
 - **SOLID:** SRP — server entry separate from app config separate from route definitions
-- [ ] Feature F2.2 complete (merged to `dev`)
+- [ ] Feature F2.2 complete (merged to `development`)
 
 #### Acceptance Criteria
 
@@ -424,7 +424,7 @@ Everything below through Epic 8 must be functional at the 24-hour MVP gate.
 
 #### Implementation Checklist
 
-- [ ] Branch created from `dev`
+- [ ] Branch created from `development`
 
 **Commit 1: Express app and health endpoint**
 
@@ -458,7 +458,7 @@ Everything below through Epic 8 must be functional at the 24-hour MVP gate.
   - [ ] Verify health endpoint returns 200
   - [ ] Verify Socket.io accepts a test connection
   - [ ] Run `bun run typecheck` (green)
-  - [ ] Merge feature branch into `dev`
+  - [ ] Merge feature branch into `development`
 
 ---
 
@@ -467,7 +467,7 @@ Everything below through Epic 8 must be functional at the 24-hour MVP gate.
 - **PR:** `Data: MongoDB Atlas connection and Mongoose models`
 - **Branch:** `feature/mongodb-connection-and-models`
 - **SOLID:** DIP — StorageAdapter interface with MongoDB implementation; SRP — models separate from repository
-- [ ] Feature F2.3 complete (merged to `dev`)
+- [ ] Feature F2.3 complete (merged to `development`)
 
 #### Acceptance Criteria
 
@@ -479,7 +479,7 @@ Everything below through Epic 8 must be functional at the 24-hour MVP gate.
 
 #### Implementation Checklist
 
-- [ ] Branch created from `dev`
+- [ ] Branch created from `development`
 
 **Commit 1: StorageAdapter interface and MongoDB connection**
 
@@ -513,7 +513,7 @@ Everything below through Epic 8 must be functional at the 24-hour MVP gate.
 - [ ] Subtasks:
   - [ ] Add a startup log confirming MongoDB connection
   - [ ] Run `bun run typecheck` (green)
-  - [ ] Merge feature branch into `dev`
+  - [ ] Merge feature branch into `development`
 
 ---
 
@@ -522,7 +522,7 @@ Everything below through Epic 8 must be functional at the 24-hour MVP gate.
 - **PR:** `Types: shared-types package for client/server`
 - **Branch:** `feature/shared-types-package`
 - **SOLID:** ISP — separate type files per domain; LSP — BoardObject base with subtypes
-- [ ] Feature F2.4 complete (merged to `dev`)
+- [ ] Feature F2.4 complete (merged to `development`)
 
 #### Acceptance Criteria
 
@@ -534,7 +534,7 @@ Everything below through Epic 8 must be functional at the 24-hour MVP gate.
 
 #### Implementation Checklist
 
-- [ ] Branch created from `dev`
+- [ ] Branch created from `development`
 
 **Commit 1: BoardObject types and discriminated unions**
 
@@ -560,7 +560,7 @@ Everything below through Epic 8 must be functional at the 24-hour MVP gate.
   - [ ] Import shared types in a client file (verify builds)
   - [ ] Import shared types in a server file (verify builds)
   - [ ] Run `bun run typecheck` (green)
-  - [ ] Merge feature branch into `dev`
+  - [ ] Merge feature branch into `development`
 
 ---
 
@@ -568,7 +568,7 @@ Everything below through Epic 8 must be functional at the 24-hour MVP gate.
 
 - **PR:** `Deploy: Render deployment with build scripts`
 - **Branch:** `feature/render-deployment-pipeline`
-- [ ] Feature F2.5 complete (merged to `dev`)
+- [ ] Feature F2.5 complete (merged to `development`)
 
 #### Acceptance Criteria
 
@@ -580,7 +580,7 @@ Everything below through Epic 8 must be functional at the 24-hour MVP gate.
 
 #### Implementation Checklist
 
-- [ ] Branch created from `dev`
+- [ ] Branch created from `development`
 
 **Commit 1: Production build scripts**
 
@@ -606,7 +606,7 @@ Everything below through Epic 8 must be functional at the 24-hour MVP gate.
   - [ ] Run `bun run build` locally (succeeds)
   - [ ] Run `bun run start` locally (server starts, serves static files)
   - [ ] Verify `/api/health` returns 200
-  - [ ] Merge feature branch into `dev`
+  - [ ] Merge feature branch into `development`
 
 ---
 
@@ -618,7 +618,7 @@ Everything below through Epic 8 must be functional at the 24-hour MVP gate.
 
 **User stories:** US-1.3 (Sign in with Google OAuth or magic link), US-1.4 (Socket.io connections authenticated via Clerk JWT).
 
-- [ ] Epic 3 complete (all features below merged to `dev`)
+- [ ] Epic 3 complete (all features below merged to `development`)
 
 #### Feature Map (Epic 3)
 
@@ -633,7 +633,7 @@ Everything below through Epic 8 must be functional at the 24-hour MVP gate.
 
 - **PR:** `Auth: Clerk React SDK with SignIn and UserButton`
 - **Branch:** `feature/clerk-react-integration`
-- [ ] Feature F3.1 complete (merged to `dev`)
+- [ ] Feature F3.1 complete (merged to `development`)
 
 #### Acceptance Criteria
 
@@ -645,7 +645,7 @@ Everything below through Epic 8 must be functional at the 24-hour MVP gate.
 
 #### Implementation Checklist
 
-- [ ] Branch created from `dev`
+- [ ] Branch created from `development`
 
 **Commit 1:** `feat(auth): install clerk react sdk and add provider` — Subtasks: [ ] `bun add @clerk/clerk-react` in client; [ ] Add ClerkProvider in main.tsx; [ ] Add VITE_CLERK_PUBLISHABLE_KEY to .env.example
 
@@ -653,7 +653,7 @@ Everything below through Epic 8 must be functional at the 24-hour MVP gate.
 
 **Commit 3:** `feat(auth): add auth hooks and zustand auth store` — Subtasks: [ ] Create useAuth.ts, useClerkToken.ts; [ ] Create barrel export modules/auth/index.ts
 
-**Commit 4:** `test(auth): verify clerk auth flow and merge` — Subtasks: [ ] Verify sign-in and UserButton; [ ] Run typecheck; [ ] Merge to dev
+**Commit 4:** `test(auth): verify clerk auth flow and merge` — Subtasks: [ ] Verify sign-in and UserButton; [ ] Run typecheck; [ ] Merge to development
 
 ---
 
@@ -662,7 +662,7 @@ Everything below through Epic 8 must be functional at the 24-hour MVP gate.
 - **PR:** `Auth: Clerk Node SDK JWT verification middleware`
 - **Branch:** `feature/clerk-server-jwt-middleware`
 - **SOLID:** SRP — auth middleware separate from route logic
-- [ ] Feature F3.2 complete (merged to `dev`)
+- [ ] Feature F3.2 complete (merged to `development`)
 
 #### Acceptance Criteria
 
@@ -673,13 +673,13 @@ Everything below through Epic 8 must be functional at the 24-hour MVP gate.
 
 #### Implementation Checklist
 
-- [ ] Branch created from `dev`
+- [ ] Branch created from `development`
 
 **Commit 1:** `feat(auth): add clerk node sdk jwt verification` — Subtasks: [ ] bun add @clerk/clerk-sdk-node; [ ] Create clerk-verify.ts; [ ] Add CLERK_SECRET_KEY to .env.example
 
 **Commit 2:** `feat(auth): add express auth middleware` — Subtasks: [ ] Create auth.middleware.ts; [ ] Apply to /api/* except /api/health; [ ] Attach user to req.auth
 
-**Commit 3:** `test(auth): verify jwt middleware and merge` — Subtasks: [ ] Verify /api/health without auth, protected 401 without token; [ ] typecheck; [ ] Merge to dev
+**Commit 3:** `test(auth): verify jwt middleware and merge` — Subtasks: [ ] Verify /api/health without auth, protected 401 without token; [ ] typecheck; [ ] Merge to development
 
 ---
 
@@ -687,7 +687,7 @@ Everything below through Epic 8 must be functional at the 24-hour MVP gate.
 
 - **PR:** `Auth: Socket.io handshake JWT authentication`
 - **Branch:** `feature/socketio-jwt-handshake`
-- [ ] Feature F3.3 complete (merged to `dev`)
+- [ ] Feature F3.3 complete (merged to `development`)
 
 #### Acceptance Criteria
 
@@ -698,13 +698,13 @@ Everything below through Epic 8 must be functional at the 24-hour MVP gate.
 
 #### Implementation Checklist
 
-- [ ] Branch created from `dev`
+- [ ] Branch created from `development`
 
 **Commit 1:** `feat(auth): add clerk token to socket.io client auth` — Subtasks: [ ] Create useSocket.ts; [ ] Attach JWT to socket.auth.token; [ ] Handle auth errors and reconnection
 
 **Commit 2:** `feat(auth): add socket.io handshake jwt verification` — Subtasks: [ ] Create socket-auth.ts; [ ] Verify JWT in connection middleware; [ ] Reject unauthorized; [ ] Attach user to socket.data.user
 
-**Commit 3:** `test(auth): verify socket auth handshake and merge` — Subtasks: [ ] Verify authenticated connects, unauthenticated rejected; [ ] typecheck; [ ] Merge to dev
+**Commit 3:** `test(auth): verify socket auth handshake and merge` — Subtasks: [ ] Verify authenticated connects, unauthenticated rejected; [ ] typecheck; [ ] Merge to development
 
 ---
 
@@ -712,7 +712,7 @@ Everything below through Epic 8 must be functional at the 24-hour MVP gate.
 
 - **PR:** `Auth: route protection and AuthGuard component`
 - **Branch:** `feature/protected-routes-auth-guard`
-- [ ] Feature F3.4 complete (merged to `dev`)
+- [ ] Feature F3.4 complete (merged to `development`)
 
 #### Acceptance Criteria
 
@@ -723,13 +723,13 @@ Everything below through Epic 8 must be functional at the 24-hour MVP gate.
 
 #### Implementation Checklist
 
-- [ ] Branch created from `dev`
+- [ ] Branch created from `development`
 
 **Commit 1:** `feat(auth): add auth guard component` — Subtasks: [ ] Create AuthGuard.tsx; [ ] Redirect to sign-in if not authenticated; [ ] Show loading while auth initializing
 
 **Commit 2:** `feat(auth): add auth store and board-level access check` — Subtasks: [ ] Create authStore with user info and token; [ ] Board access utility; [ ] Wire AuthGuard into routing
 
-**Commit 3:** `test(auth): verify route protection and merge` — Subtasks: [ ] Verify unauthenticated redirects, authenticated proceeds; [ ] typecheck and test:run; [ ] Merge to dev
+**Commit 3:** `test(auth): verify route protection and merge` — Subtasks: [ ] Verify unauthenticated redirects, authenticated proceeds; [ ] typecheck and test:run; [ ] Merge to development
 
 ---
 
@@ -741,7 +741,7 @@ Everything below through Epic 8 must be functional at the 24-hour MVP gate.
 
 **User stories:** US-2.1 (Infinite canvas with pan), US-2.2 (Zoom scroll/pinch), US-2.3 (Grid/dot background).
 
-- [ ] Epic 4 complete (all features below merged to `dev`)
+- [ ] Epic 4 complete (all features below merged to `development`)
 
 #### Feature Map (Epic 4)
 
@@ -755,7 +755,7 @@ Everything below through Epic 8 must be functional at the 24-hour MVP gate.
 
 - **PR:** `Canvas: Konva Stage with fullscreen viewport`
 - **Branch:** `feature/konva-stage-viewport`
-- [ ] Feature F4.1 complete (merged to `dev`)
+- [ ] Feature F4.1 complete (merged to `development`)
 
 #### Acceptance Criteria
 
@@ -766,13 +766,13 @@ Everything below through Epic 8 must be functional at the 24-hour MVP gate.
 
 #### Implementation Checklist
 
-- [ ] Branch created from `dev`
+- [ ] Branch created from `development`
 
 **Commit 1:** `feat(canvas): install konva and create board component` — Subtasks: [ ] bun add konva react-konva; [ ] Create Board.tsx with Stage and Layer; [ ] Stage fills viewport; [ ] Window resize listener
 
 **Commit 2:** `feat(canvas): establish layer architecture` — Subtasks: [ ] Grid, objects, cursor, selection layers; [ ] useRef for layer refs; [ ] Create InfiniteCanvas.tsx wrapper
 
-**Commit 3:** `test(canvas): verify konva stage renders and merge` — Subtasks: [ ] Unit test Board; [ ] Verify viewport; [ ] typecheck and test:run; [ ] Merge to dev
+**Commit 3:** `test(canvas): verify konva stage renders and merge` — Subtasks: [ ] Unit test Board; [ ] Verify viewport; [ ] typecheck and test:run; [ ] Merge to development
 
 ---
 
@@ -780,7 +780,7 @@ Everything below through Epic 8 must be functional at the 24-hour MVP gate.
 
 - **PR:** `Canvas: pan and zoom controls`
 - **Branch:** `feature/canvas-pan-and-zoom`
-- [ ] Feature F4.2 complete (merged to `dev`)
+- [ ] Feature F4.2 complete (merged to `development`)
 
 #### Acceptance Criteria
 
@@ -793,13 +793,13 @@ Everything below through Epic 8 must be functional at the 24-hour MVP gate.
 
 #### Implementation Checklist
 
-- [ ] Branch created from `dev`
+- [ ] Branch created from `development`
 
 **Commit 1:** `feat(canvas): add click-drag pan` — Subtasks: [ ] Create usePanZoom.ts; [ ] Stage draggable for pan; [ ] Pan only on empty canvas; [ ] 60fps position updates
 
 **Commit 2:** `feat(canvas): add scroll-wheel and pinch zoom` — Subtasks: [ ] wheel handler zoom toward cursor; [ ] Bounded scale 0.1–5.0; [ ] Adjust stage position for zoom; [ ] Pinch for touch
 
-**Commit 3:** `test(canvas): verify pan and zoom behavior and merge` — Subtasks: [ ] Unit test zoom math; [ ] Manual verify smooth; [ ] typecheck and test:run; [ ] Merge to dev
+**Commit 3:** `test(canvas): verify pan and zoom behavior and merge` — Subtasks: [ ] Unit test zoom math; [ ] Manual verify smooth; [ ] typecheck and test:run; [ ] Merge to development
 
 ---
 
@@ -807,7 +807,7 @@ Everything below through Epic 8 must be functional at the 24-hour MVP gate.
 
 - **PR:** `Canvas: grid/dot background pattern`
 - **Branch:** `feature/canvas-grid-background`
-- [ ] Feature F4.3 complete (merged to `dev`)
+- [ ] Feature F4.3 complete (merged to `development`)
 
 #### Acceptance Criteria
 
@@ -818,11 +818,11 @@ Everything below through Epic 8 must be functional at the 24-hour MVP gate.
 
 #### Implementation Checklist
 
-- [ ] Branch created from `dev`
+- [ ] Branch created from `development`
 
 **Commit 1:** `feat(canvas): add grid background pattern` — Subtasks: [ ] Create GridBackground.tsx; [ ] Dots or lines on grid layer; [ ] Scale pattern with zoom; [ ] listening=false on grid layer
 
-**Commit 2:** `test(canvas): verify grid background and merge` — Subtasks: [ ] Verify grid renders and scales; [ ] Verify no interference with pan/zoom/clicks; [ ] typecheck; [ ] Merge to dev
+**Commit 2:** `test(canvas): verify grid background and merge` — Subtasks: [ ] Verify grid renders and scales; [ ] Verify no interference with pan/zoom/clicks; [ ] typecheck; [ ] Merge to development
 
 ---
 
@@ -832,7 +832,7 @@ Everything below through Epic 8 must be functional at the 24-hour MVP gate.
 
 **User stories:** US-3.1–US-3.8 (create sticky, edit text, color, shapes, move, resize, delete, multi-select).
 
-- [ ] Epic 5 complete (all features below merged to `dev`)
+- [ ] Epic 5 complete (all features below merged to `development`)
 
 #### Feature Map (Epic 5)
 
@@ -850,7 +850,7 @@ Everything below through Epic 8 must be functional at the 24-hour MVP gate.
 - **PR:** `State: Zustand boardStore for object management`
 - **Branch:** `feature/zustand-board-store`
 - **SOLID:** SRP — store manages object state only; ISP — granular selectors
-- [ ] Feature F5.1 complete (merged to `dev`)
+- [ ] Feature F5.1 complete (merged to `development`)
 
 #### Acceptance Criteria
 
@@ -861,13 +861,13 @@ Everything below through Epic 8 must be functional at the 24-hour MVP gate.
 
 #### Implementation Checklist
 
-- [ ] Branch created from `dev`
+- [ ] Branch created from `development`
 
 **Commit 1:** `feat(state): add zustand board store with object actions` — Subtasks: [ ] bun add zustand; [ ] Create boardStore.ts with addObject, updateObject, removeObject, setObjects, clearBoard; [ ] Selectors useObject(id), useObjectsByType(type), useAllObjects()
 
 **Commit 2:** `feat(state): add board metadata and active tool to store` — Subtasks: [ ] Add boardId, title, activeToolType; [ ] Add selectedObjectIds, setActiveTool, selectObject, deselectAll, toggleSelection
 
-**Commit 3:** `test(state): add board store unit tests and merge` — Subtasks: [ ] Vitest tests for store actions; [ ] test:run green; [ ] Merge to dev
+**Commit 3:** `test(state): add board store unit tests and merge` — Subtasks: [ ] Vitest tests for store actions; [ ] test:run green; [ ] Merge to development
 
 ---
 
@@ -875,7 +875,7 @@ Everything below through Epic 8 must be functional at the 24-hour MVP gate.
 
 - **PR:** `UI: Toolbar with tool selection`
 - **Branch:** `feature/toolbar-component`
-- [ ] Feature F5.2 complete (merged to `dev`)
+- [ ] Feature F5.2 complete (merged to `development`)
 
 #### Acceptance Criteria
 
@@ -886,13 +886,13 @@ Everything below through Epic 8 must be functional at the 24-hour MVP gate.
 
 #### Implementation Checklist
 
-- [ ] Branch created from `dev`
+- [ ] Branch created from `development`
 
 **Commit 1:** `feat(toolbar): add toolbar component with tool buttons` — Subtasks: [ ] Create Toolbar.tsx; [ ] Lucide icons (MousePointer, StickyNote, Square, Circle, Minus); [ ] Tailwind + shadcn; [ ] Wire to boardStore setActiveTool
 
 **Commit 2:** `feat(toolbar): add active tool indicator` — Subtasks: [ ] Highlight active button; [ ] Cursor style by tool; [ ] Barrel export toolbar/index.ts
 
-**Commit 3:** `test(toolbar): verify toolbar renders and merge` — Subtasks: [ ] Unit test Toolbar; [ ] test:run green; [ ] Merge to dev
+**Commit 3:** `test(toolbar): verify toolbar renders and merge` — Subtasks: [ ] Unit test Toolbar; [ ] test:run green; [ ] Merge to development
 
 ---
 
@@ -901,7 +901,7 @@ Everything below through Epic 8 must be functional at the 24-hour MVP gate.
 - **PR:** `Objects: sticky note creation, text editing, and color`
 - **Branch:** `feature/sticky-note-crud`
 - **SOLID:** OCP — sticky note implements BoardObject; SRP — rendering separate from editing
-- [ ] Feature F5.3 complete (merged to `dev`)
+- [ ] Feature F5.3 complete (merged to `development`)
 
 #### Acceptance Criteria
 
@@ -913,7 +913,7 @@ Everything below through Epic 8 must be functional at the 24-hour MVP gate.
 
 #### Implementation Checklist
 
-- [ ] Branch created from `dev`
+- [ ] Branch created from `development`
 
 **Commit 1:** `feat(objects): add sticky note konva component` — Subtasks: [ ] Create StickyNote.tsx (Rect + Text); [ ] Click for selection; [ ] Basic drag (refined in F5.5)
 
@@ -923,7 +923,7 @@ Everything below through Epic 8 must be functional at the 24-hour MVP gate.
 
 **Commit 4:** `feat(objects): add color picker for sticky notes` — Subtasks: [ ] Create ColorPicker.tsx; [ ] 6+ colors when sticky selected; [ ] Update boardStore object color
 
-**Commit 5:** `test(objects): verify sticky note crud and merge` — Subtasks: [ ] Unit tests creation and color; [ ] typecheck and test:run; [ ] Merge to dev
+**Commit 5:** `test(objects): verify sticky note crud and merge` — Subtasks: [ ] Unit tests creation and color; [ ] typecheck and test:run; [ ] Merge to development
 
 ---
 
@@ -932,7 +932,7 @@ Everything below through Epic 8 must be functional at the 24-hour MVP gate.
 - **PR:** `Objects: rectangle, circle, and line shapes`
 - **Branch:** `feature/shape-creation`
 - **SOLID:** LSP — all shapes implement BoardObject
-- [ ] Feature F5.4 complete (merged to `dev`)
+- [ ] Feature F5.4 complete (merged to `development`)
 
 #### Acceptance Criteria
 
@@ -943,7 +943,7 @@ Everything below through Epic 8 must be functional at the 24-hour MVP gate.
 
 #### Implementation Checklist
 
-- [ ] Branch created from `dev`
+- [ ] Branch created from `development`
 
 **Commit 1:** `feat(objects): add rectangle and circle shape components` — Subtasks: [ ] RectangleShape.tsx, CircleShape.tsx; [ ] Konva Rect and Circle; [ ] Register in object factory by type
 
@@ -951,7 +951,7 @@ Everything below through Epic 8 must be functional at the 24-hour MVP gate.
 
 **Commit 3:** `feat(objects): wire shape creation to toolbar actions` — Subtasks: [ ] Canvas click for rectangle, circle, line tools; [ ] Create BoardObject with type and defaults; [ ] Add to boardStore
 
-**Commit 4:** `test(objects): verify shape creation and merge` — Subtasks: [ ] Unit tests shape rendering; [ ] typecheck and test:run; [ ] Merge to dev
+**Commit 4:** `test(objects): verify shape creation and merge` — Subtasks: [ ] Unit tests shape rendering; [ ] typecheck and test:run; [ ] Merge to development
 
 ---
 
@@ -959,7 +959,7 @@ Everything below through Epic 8 must be functional at the 24-hour MVP gate.
 
 - **PR:** `Objects: selection, drag-move, and resize handles`
 - **Branch:** `feature/object-select-move-resize`
-- [ ] Feature F5.5 complete (merged to `dev`)
+- [ ] Feature F5.5 complete (merged to `development`)
 
 #### Acceptance Criteria
 
@@ -970,7 +970,7 @@ Everything below through Epic 8 must be functional at the 24-hour MVP gate.
 
 #### Implementation Checklist
 
-- [ ] Branch created from `dev`
+- [ ] Branch created from `development`
 
 **Commit 1:** `feat(objects): add object selection with visual indicator` — Subtasks: [ ] useSelection.ts; [ ] Click object → selectObject(id); empty → deselectAll(); [ ] Selection outline on selected
 
@@ -978,7 +978,7 @@ Everything below through Epic 8 must be functional at the 24-hour MVP gate.
 
 **Commit 3:** `feat(objects): add resize handles on selection` — Subtasks: [ ] SelectionTransformer.tsx with Konva Transformer; [ ] Update width/height on transform end; [ ] Min size e.g. 20x20
 
-**Commit 4:** `test(objects): verify selection, move, resize and merge` — Subtasks: [ ] Unit tests selection state; [ ] typecheck and test:run; [ ] Merge to dev
+**Commit 4:** `test(objects): verify selection, move, resize and merge` — Subtasks: [ ] Unit tests selection state; [ ] typecheck and test:run; [ ] Merge to development
 
 ---
 
@@ -986,7 +986,7 @@ Everything below through Epic 8 must be functional at the 24-hour MVP gate.
 
 - **PR:** `Objects: delete key and multi-select`
 - **Branch:** `feature/object-delete-and-multiselect`
-- [ ] Feature F5.6 complete (merged to `dev`)
+- [ ] Feature F5.6 complete (merged to `development`)
 
 #### Acceptance Criteria
 
@@ -997,13 +997,13 @@ Everything below through Epic 8 must be functional at the 24-hour MVP gate.
 
 #### Implementation Checklist
 
-- [ ] Branch created from `dev`
+- [ ] Branch created from `development`
 
 **Commit 1:** `feat(objects): add delete key handler` — Subtasks: [ ] Listen Delete/Backspace; [ ] removeObject for each selected; [ ] Clear selection after delete
 
 **Commit 2:** `feat(objects): add shift-click and selection rectangle` — Subtasks: [ ] Shift+click toggles selectedObjectIds; [ ] Drag on empty canvas draws selection rect; [ ] On release select intersecting; [ ] Render selection rect overlay
 
-**Commit 3:** `test(objects): verify delete and multi-select and merge` — Subtasks: [ ] Unit tests delete and multi-select; [ ] typecheck and test:run; [ ] Merge to dev
+**Commit 3:** `test(objects): verify delete and multi-select and merge` — Subtasks: [ ] Unit tests delete and multi-select; [ ] typecheck and test:run; [ ] Merge to development
 
 ---
 
@@ -1013,7 +1013,7 @@ Everything below through Epic 8 must be functional at the 24-hour MVP gate.
 
 **User stories:** US-4.1 (See other users' cursors <50ms), US-4.2 (Cursor labels, color), US-4.3 (Cursors disappear on disconnect).
 
-- [ ] Epic 6 complete (all features below merged to `dev`)
+- [ ] Epic 6 complete (all features below merged to `development`)
 
 #### Feature Map (Epic 6)
 
@@ -1027,7 +1027,7 @@ Everything below through Epic 8 must be functional at the 24-hour MVP gate.
 
 - **PR:** `Sync: Socket.io client connection and room join`
 - **Branch:** `feature/socketio-room-join`
-- [ ] Feature F6.1 complete (merged to `dev`)
+- [ ] Feature F6.1 complete (merged to `development`)
 
 #### Acceptance Criteria
 
@@ -1038,13 +1038,13 @@ Everything below through Epic 8 must be functional at the 24-hour MVP gate.
 
 #### Implementation Checklist
 
-- [ ] Branch created from `dev`
+- [ ] Branch created from `development`
 
 **Commit 1:** `feat(sync): add socket.io client connection and room join` — Subtasks: [ ] useSocket.ts; [ ] Connect after Clerk auth, JWT in socket.auth.token; [ ] Emit board:join { boardId }; [ ] Handle disconnect/reconnect
 
 **Commit 2:** `feat(sync): add server room management` — Subtasks: [ ] socket-manager.ts; [ ] board:join → join socket to board:${boardId}; [ ] disconnect → clean up; [ ] TransportAdapter implementation
 
-**Commit 3:** `test(sync): verify room join and merge` — Subtasks: [ ] Verify client connects and joins room; [ ] typecheck; [ ] Merge to dev
+**Commit 3:** `test(sync): verify room join and merge` — Subtasks: [ ] Verify client connects and joins room; [ ] typecheck; [ ] Merge to development
 
 ---
 
@@ -1053,7 +1053,7 @@ Everything below through Epic 8 must be functional at the 24-hour MVP gate.
 - **PR:** `Sync: cursor position emit and remote cursor rendering`
 - **Branch:** `feature/cursor-emit-and-render`
 - **SOLID:** SRP — CursorHandler cursor events only; DIP — cursor via Konva refs
-- [ ] Feature F6.2 complete (merged to `dev`)
+- [ ] Feature F6.2 complete (merged to `development`)
 
 #### Acceptance Criteria
 
@@ -1063,7 +1063,7 @@ Everything below through Epic 8 must be functional at the 24-hour MVP gate.
 
 #### Implementation Checklist
 
-- [ ] Branch created from `dev`
+- [ ] Branch created from `development`
 
 **Commit 1:** `feat(sync): emit cursor position at 30fps` — Subtasks: [ ] useCursors.ts; [ ] Track mouse on Stage; [ ] Throttle cursor:move 30fps; [ ] Payload userId, name, x, y, color
 
@@ -1071,7 +1071,7 @@ Everything below through Epic 8 must be functional at the 24-hour MVP gate.
 
 **Commit 3:** `feat(sync): render remote cursors on konva layer` — Subtasks: [ ] CursorOverlay.tsx; [ ] Dedicated layer; [ ] Direct node ref updates (not setState); [ ] Arrow + name label
 
-**Commit 4:** `test(sync): verify cursor sync latency and merge` — Subtasks: [ ] Two tabs verify cursors; [ ] Smooth movement; [ ] typecheck; [ ] Merge to dev
+**Commit 4:** `test(sync): verify cursor sync latency and merge` — Subtasks: [ ] Two tabs verify cursors; [ ] Smooth movement; [ ] typecheck; [ ] Merge to development
 
 ---
 
@@ -1079,7 +1079,7 @@ Everything below through Epic 8 must be functional at the 24-hour MVP gate.
 
 - **PR:** `Sync: cursor labels, colors, and disconnect cleanup`
 - **Branch:** `feature/cursor-labels-and-cleanup`
-- [ ] Feature F6.3 complete (merged to `dev`)
+- [ ] Feature F6.3 complete (merged to `development`)
 
 #### Acceptance Criteria
 
@@ -1089,13 +1089,13 @@ Everything below through Epic 8 must be functional at the 24-hour MVP gate.
 
 #### Implementation Checklist
 
-- [ ] Branch created from `dev`
+- [ ] Branch created from `development`
 
 **Commit 1:** `feat(sync): add cursor name labels and unique colors` — Subtasks: [ ] Unique color per user (palette or hash); [ ] Konva Text label beside cursor; [ ] Label scales with zoom
 
 **Commit 2:** `feat(sync): remove cursors on user disconnect` — Subtasks: [ ] Listen presence:leave; [ ] Remove Konva cursor node within 2s; [ ] Clean up local map
 
-**Commit 3:** `test(sync): verify cursor labels and cleanup and merge` — Subtasks: [ ] Verify labels; [ ] Verify cursor gone when tab closed; [ ] typecheck; [ ] Merge to dev
+**Commit 3:** `test(sync): verify cursor labels and cleanup and merge` — Subtasks: [ ] Verify labels; [ ] Verify cursor gone when tab closed; [ ] typecheck; [ ] Merge to development
 
 ---
 
@@ -1105,7 +1105,7 @@ Everything below through Epic 8 must be functional at the 24-hour MVP gate.
 
 **User stories:** US-5.1–US-5.4 (objects on all clients, move/update/delete sync).
 
-- [ ] Epic 7 complete (all features below merged to `dev`)
+- [ ] Epic 7 complete (all features below merged to `development`)
 
 #### Feature Map (Epic 7)
 
@@ -1121,7 +1121,7 @@ Everything below through Epic 8 must be functional at the 24-hour MVP gate.
 
 - **PR:** `Sync: object:create broadcast and handling`
 - **Branch:** `feature/object-create-sync`
-- [ ] Feature F7.1 complete (merged to `dev`)
+- [ ] Feature F7.1 complete (merged to `development`)
 
 #### Acceptance Criteria
 
@@ -1130,7 +1130,7 @@ Everything below through Epic 8 must be functional at the 24-hour MVP gate.
 
 #### Implementation Checklist
 
-- [ ] Branch created from `dev`
+- [ ] Branch created from `development`
 
 **Commit 1:** `feat(sync): emit object:create on object creation` — Subtasks: [ ] Hook boardStore addObject to emit object:create; [ ] Full BoardObject in payload
 
@@ -1138,7 +1138,7 @@ Everything below through Epic 8 must be functional at the 24-hour MVP gate.
 
 **Commit 3:** `feat(sync): handle incoming object:create on client` — Subtasks: [ ] Listen object:create; [ ] Add to boardStore; [ ] Render
 
-**Commit 4:** `test(sync): verify object create sync and merge` — Subtasks: [ ] Two tabs create in one see in other; [ ] typecheck; [ ] Merge to dev
+**Commit 4:** `test(sync): verify object create sync and merge` — Subtasks: [ ] Two tabs create in one see in other; [ ] typecheck; [ ] Merge to development
 
 ---
 
@@ -1146,7 +1146,7 @@ Everything below through Epic 8 must be functional at the 24-hour MVP gate.
 
 - **PR:** `Sync: object:move with optimistic UI`
 - **Branch:** `feature/object-move-sync`
-- [ ] Feature F7.2 complete (merged to `dev`)
+- [ ] Feature F7.2 complete (merged to `development`)
 
 #### Acceptance Criteria
 
@@ -1154,13 +1154,13 @@ Everything below through Epic 8 must be functional at the 24-hour MVP gate.
 
 #### Implementation Checklist
 
-- [ ] Branch created from `dev`
+- [ ] Branch created from `development`
 
 **Commit 1:** `feat(sync): emit object:move on drag` — Subtasks: [ ] Emit object:move { objectId, x, y } on drag end or throttled; [ ] Optimistic local via Konva drag
 
 **Commit 2:** `feat(sync): handle object:move on server and client` — Subtasks: [ ] Server: validate, update MongoDB position (100ms batch), broadcast; [ ] Client: listen object:move, update boardStore; [ ] Ignore own events
 
-**Commit 3:** `test(sync): verify object move sync and merge` — Subtasks: [ ] Two tabs drag in one updates other; [ ] typecheck; [ ] Merge to dev
+**Commit 3:** `test(sync): verify object move sync and merge` — Subtasks: [ ] Two tabs drag in one updates other; [ ] typecheck; [ ] Merge to development
 
 ---
 
@@ -1168,7 +1168,7 @@ Everything below through Epic 8 must be functional at the 24-hour MVP gate.
 
 - **PR:** `Sync: object:update broadcast (text, color, resize)`
 - **Branch:** `feature/object-update-sync`
-- [ ] Feature F7.3 complete (merged to `dev`)
+- [ ] Feature F7.3 complete (merged to `development`)
 
 #### Acceptance Criteria
 
@@ -1176,13 +1176,13 @@ Everything below through Epic 8 must be functional at the 24-hour MVP gate.
 
 #### Implementation Checklist
 
-- [ ] Branch created from `dev`
+- [ ] Branch created from `development`
 
 **Commit 1:** `feat(sync): emit object:update for text, color, resize` — Subtasks: [ ] Emit object:update { objectId, delta } on text edit, color, resize; [ ] Delta only changed props
 
 **Commit 2:** `feat(sync): handle object:update on server and client` — Subtasks: [ ] Server: validate, merge delta in MongoDB, broadcast; [ ] Client: listen, merge delta in boardStore; [ ] Last-write-wins
 
-**Commit 3:** `test(sync): verify object update sync and merge` — Subtasks: [ ] Two tabs edit text/color; [ ] typecheck; [ ] Merge to dev
+**Commit 3:** `test(sync): verify object update sync and merge` — Subtasks: [ ] Two tabs edit text/color; [ ] typecheck; [ ] Merge to development
 
 ---
 
@@ -1190,7 +1190,7 @@ Everything below through Epic 8 must be functional at the 24-hour MVP gate.
 
 - **PR:** `Sync: object:delete broadcast`
 - **Branch:** `feature/object-delete-sync`
-- [ ] Feature F7.4 complete (merged to `dev`)
+- [ ] Feature F7.4 complete (merged to `development`)
 
 #### Acceptance Criteria
 
@@ -1198,11 +1198,11 @@ Everything below through Epic 8 must be functional at the 24-hour MVP gate.
 
 #### Implementation Checklist
 
-- [ ] Branch created from `dev`
+- [ ] Branch created from `development`
 
 **Commit 1:** `feat(sync): emit and handle object:delete` — Subtasks: [ ] Emit object:delete { objectId } on delete; [ ] Server: remove from MongoDB, broadcast; [ ] Client: listen, remove from boardStore
 
-**Commit 2:** `test(sync): verify object delete sync and merge` — Subtasks: [ ] Two tabs delete in one disappears in other; [ ] typecheck; [ ] Merge to dev
+**Commit 2:** `test(sync): verify object delete sync and merge` — Subtasks: [ ] Two tabs delete in one disappears in other; [ ] typecheck; [ ] Merge to development
 
 ---
 
@@ -1210,7 +1210,7 @@ Everything below through Epic 8 must be functional at the 24-hour MVP gate.
 
 - **PR:** `Sync: board state load on connection`
 - **Branch:** `feature/board-state-load`
-- [ ] Feature F7.5 complete (merged to `dev`)
+- [ ] Feature F7.5 complete (merged to `development`)
 
 #### Acceptance Criteria
 
@@ -1218,13 +1218,13 @@ Everything below through Epic 8 must be functional at the 24-hour MVP gate.
 
 #### Implementation Checklist
 
-- [ ] Branch created from `dev`
+- [ ] Branch created from `development`
 
 **Commit 1:** `feat(sync): add board:load server handler` — Subtasks: [ ] On room join query MongoDB by boardId; [ ] Emit board:load { objects, board }; [ ] Include board metadata
 
 **Commit 2:** `feat(sync): handle board:load on client` — Subtasks: [ ] Listen board:load; [ ] boardStore.setObjects(objects); [ ] Loading indicator while waiting
 
-**Commit 3:** `test(sync): verify board load on connection and merge` — Subtasks: [ ] Create objects, refresh, verify reload; [ ] typecheck; [ ] Merge to dev
+**Commit 3:** `test(sync): verify board load on connection and merge` — Subtasks: [ ] Create objects, refresh, verify reload; [ ] typecheck; [ ] Merge to development
 
 ---
 
@@ -1234,7 +1234,7 @@ Everything below through Epic 8 must be functional at the 24-hour MVP gate.
 
 **User stories:** US-6.1–US-6.4 (presence list, board load on join, survive refresh, auto-reconnect).
 
-- [ ] Epic 8 complete (all features below merged to `dev`)
+- [ ] Epic 8 complete (all features below merged to `development`)
 
 #### Feature Map (Epic 8)
 
@@ -1250,7 +1250,7 @@ Everything below through Epic 8 must be functional at the 24-hour MVP gate.
 
 - **PR:** `Presence: online users list panel`
 - **Branch:** `feature/presence-panel`
-- [ ] Feature F8.1 complete (merged to `dev`)
+- [ ] Feature F8.1 complete (merged to `development`)
 
 #### Acceptance Criteria
 
@@ -1258,11 +1258,11 @@ Everything below through Epic 8 must be functional at the 24-hour MVP gate.
 
 #### Implementation Checklist
 
-- [ ] Branch created from `dev`
+- [ ] Branch created from `development`
 
 **Commit 1:** `feat(presence): add presence store and panel component` — Subtasks: [ ] collaborationStore.ts with onlineUsers Map; [ ] PresencePanel.tsx with avatars and names
 
-**Commit 2:** `test(presence): verify presence panel and merge` — Subtasks: [ ] Verify with mock data; [ ] typecheck and test:run; [ ] Merge to dev
+**Commit 2:** `test(presence): verify presence panel and merge` — Subtasks: [ ] Verify with mock data; [ ] typecheck and test:run; [ ] Merge to development
 
 ---
 
@@ -1270,7 +1270,7 @@ Everything below through Epic 8 must be functional at the 24-hour MVP gate.
 
 - **PR:** `Presence: join/leave event handling`
 - **Branch:** `feature/presence-join-leave`
-- [ ] Feature F8.2 complete (merged to `dev`)
+- [ ] Feature F8.2 complete (merged to `development`)
 
 #### Acceptance Criteria
 
@@ -1278,13 +1278,13 @@ Everything below through Epic 8 must be functional at the 24-hour MVP gate.
 
 #### Implementation Checklist
 
-- [ ] Branch created from `dev`
+- [ ] Branch created from `development`
 
 **Commit 1:** `feat(presence): add server presence handler` — Subtasks: [ ] presence.handler.ts; [ ] On connection: broadcast presence:join, send presence:list to new client; [ ] On disconnect: broadcast presence:leave; [ ] Track users per room in-memory
 
 **Commit 2:** `feat(presence): handle presence events on client` — Subtasks: [ ] Listen presence:join, presence:leave, presence:list; [ ] Update collaborationStore onlineUsers; [ ] Cursor cleanup on presence:leave
 
-**Commit 3:** `test(presence): verify join/leave events and merge` — Subtasks: [ ] Two tabs user in panel when second opens, gone when closed; [ ] typecheck; [ ] Merge to dev
+**Commit 3:** `test(presence): verify join/leave events and merge` — Subtasks: [ ] Two tabs user in panel when second opens, gone when closed; [ ] typecheck; [ ] Merge to development
 
 ---
 
@@ -1292,7 +1292,7 @@ Everything below through Epic 8 must be functional at the 24-hour MVP gate.
 
 - **PR:** `Persistence: board state survives page refresh`
 - **Branch:** `feature/board-persistence`
-- [ ] Feature F8.3 complete (merged to `dev`)
+- [ ] Feature F8.3 complete (merged to `development`)
 
 #### Acceptance Criteria
 
@@ -1300,11 +1300,11 @@ Everything below through Epic 8 must be functional at the 24-hour MVP gate.
 
 #### Implementation Checklist
 
-- [ ] Branch created from `dev`
+- [ ] Branch created from `development`
 
 **Commit 1:** `feat(persistence): verify all object mutations persist to mongodb` — Subtasks: [ ] Audit create/update/move/delete handlers write to MongoDB; [ ] Error handling failed writes; [ ] Throttled writes capture final state
 
-**Commit 2:** `test(persistence): verify board survives refresh and merge` — Subtasks: [ ] Create objects refresh verify reload; [ ] Modify refresh verify persisted; [ ] typecheck; [ ] Merge to dev
+**Commit 2:** `test(persistence): verify board survives refresh and merge` — Subtasks: [ ] Create objects refresh verify reload; [ ] Modify refresh verify persisted; [ ] typecheck; [ ] Merge to development
 
 ---
 
@@ -1312,7 +1312,7 @@ Everything below through Epic 8 must be functional at the 24-hour MVP gate.
 
 - **PR:** `Resilience: auto-reconnect with exponential backoff`
 - **Branch:** `feature/auto-reconnect`
-- [ ] Feature F8.4 complete (merged to `dev`)
+- [ ] Feature F8.4 complete (merged to `development`)
 
 #### Acceptance Criteria
 
@@ -1320,11 +1320,11 @@ Everything below through Epic 8 must be functional at the 24-hour MVP gate.
 
 #### Implementation Checklist
 
-- [ ] Branch created from `dev`
+- [ ] Branch created from `development`
 
 **Commit 1:** `feat(resilience): configure auto-reconnect and state re-sync` — Subtasks: [ ] Client reconnection: true, exponential backoff; [ ] On reconnect re-emit board:join, wait board:load; [ ] Replace local state with server state
 
-**Commit 2:** `test(resilience): verify auto-reconnect and merge` — Subtasks: [ ] Simulate disconnect verify reconnect; [ ] Board state correct after reconnect; [ ] typecheck; [ ] Merge to dev
+**Commit 2:** `test(resilience): verify auto-reconnect and merge` — Subtasks: [ ] Simulate disconnect verify reconnect; [ ] Board state correct after reconnect; [ ] typecheck; [ ] Merge to development
 
 ---
 
@@ -1332,7 +1332,7 @@ Everything below through Epic 8 must be functional at the 24-hour MVP gate.
 
 - **PR:** `UI: connection status indicator`
 - **Branch:** `feature/connection-status-indicator`
-- [ ] Feature F8.5 complete (merged to `dev`)
+- [ ] Feature F8.5 complete (merged to `development`)
 
 #### Acceptance Criteria
 
@@ -1340,11 +1340,11 @@ Everything below through Epic 8 must be functional at the 24-hour MVP gate.
 
 #### Implementation Checklist
 
-- [ ] Branch created from `dev`
+- [ ] Branch created from `development`
 
 **Commit 1:** `feat(ui): add connection status indicator` — Subtasks: [ ] ConnectionStatus.tsx; [ ] Track socket state; [ ] Green/yellow/red dot or toast; [ ] Header/toolbar
 
-**Commit 2:** `test(ui): verify connection status indicator and merge` — Subtasks: [ ] Verify correct state; [ ] typecheck; [ ] Merge to dev
+**Commit 2:** `test(ui): verify connection status indicator and merge` — Subtasks: [ ] Verify correct state; [ ] typecheck; [ ] Merge to development
 
 ---
 
@@ -1358,7 +1358,7 @@ Only begin post-MVP work after Epic 9 (MVP Hardening) is fully complete.
 
 **Goal:** Systematically verify every MVP requirement. Unit, integration, and E2E tests for critical paths. Performance audit. Production deployment verification. MVP checklist sign-off.
 
-- [ ] Epic 9 complete (all features below merged to `dev`)
+- [ ] Epic 9 complete (all features below merged to `development`)
 - [ ] All MVP hard gate requirements verified and passing
 - [ ] Performance targets met (60fps, <50ms cursor, <100ms objects)
 - [ ] Production deployment accessible and functional
@@ -1377,7 +1377,7 @@ Only begin post-MVP work after Epic 9 (MVP Hardening) is fully complete.
 #### Feature F9.1: Unit Tests — Core Utilities
 
 - **Branch:** `feature/unit-tests-core-utils`
-- [ ] Feature F9.1 complete (merged to `dev`)
+- [ ] Feature F9.1 complete (merged to `development`)
 
 #### Acceptance Criteria
 
@@ -1388,17 +1388,17 @@ Only begin post-MVP work after Epic 9 (MVP Hardening) is fully complete.
 
 #### Implementation Checklist
 
-- [ ] Branch created from `dev`
+- [ ] Branch created from `development`
 - [ ] Commit 1: Unit tests coordinate math and boardStore (zoom-toward-cursor, pan offset, add/update/remove/select)
 - [ ] Commit 2: Unit tests Zod schemas (BoardObject, socket payloads, edge cases)
-- [ ] Commit 3: Verify all unit tests pass, coverage 60% for utils, merge to dev
+- [ ] Commit 3: Verify all unit tests pass, coverage 60% for utils, merge to development
 
 ---
 
 #### Feature F9.2: Integration Tests — Socket.io Handlers
 
 - **Branch:** `feature/integration-tests-socket-handlers`
-- [ ] Feature F9.2 complete (merged to `dev`)
+- [ ] Feature F9.2 complete (merged to `development`)
 
 #### Acceptance Criteria
 
@@ -1406,18 +1406,18 @@ Only begin post-MVP work after Epic 9 (MVP Hardening) is fully complete.
 
 #### Implementation Checklist
 
-- [ ] Branch created from `dev`
+- [ ] Branch created from `development`
 - [ ] Commit 1: Test server setup with mongodb-memory-server and socket.io-client helpers
 - [ ] Commit 2: Object handler tests (object:create, object:move, object:delete, board:load)
 - [ ] Commit 3: Cursor and presence handler tests
-- [ ] Commit 4: Verify all integration tests pass, merge to dev
+- [ ] Commit 4: Verify all integration tests pass, merge to development
 
 ---
 
 #### Feature F9.3: E2E Test — Multiplayer Sync
 
 - **Branch:** `feature/e2e-multiplayer-sync`
-- [ ] Feature F9.3 complete (merged to `dev`)
+- [ ] Feature F9.3 complete (merged to `development`)
 
 #### Acceptance Criteria
 
@@ -1425,16 +1425,16 @@ Only begin post-MVP work after Epic 9 (MVP Hardening) is fully complete.
 
 #### Implementation Checklist
 
-- [ ] Branch created from `dev`
+- [ ] Branch created from `development`
 - [ ] Commit 1: E2E multiplayer sync spec (two contexts, create sticky in A assert in B, move assert)
-- [ ] Commit 2: Run test:e2e green, merge to dev
+- [ ] Commit 2: Run test:e2e green, merge to development
 
 ---
 
 #### Feature F9.4: Performance Audit
 
 - **Branch:** `feature/performance-audit`
-- [ ] Feature F9.4 complete (merged to `dev`)
+- [ ] Feature F9.4 complete (merged to `development`)
 
 #### Acceptance Criteria
 
@@ -1442,16 +1442,16 @@ Only begin post-MVP work after Epic 9 (MVP Hardening) is fully complete.
 
 #### Implementation Checklist
 
-- [ ] Branch created from `dev`
+- [ ] Branch created from `development`
 - [ ] Commit 1: Measure and document (Chrome DevTools, timestamp comparison, 500 objects, document in docs/PERFORMANCE.md or inline)
-- [ ] Commit 2: Fix any issues, re-measure, merge to dev
+- [ ] Commit 2: Fix any issues, re-measure, merge to development
 
 ---
 
 #### Feature F9.5: Production Deployment Verification
 
 - **Branch:** `feature/production-deploy-verify`
-- [ ] Feature F9.5 complete (merged to `dev`)
+- [ ] Feature F9.5 complete (merged to `development`)
 
 #### Acceptance Criteria
 
@@ -1459,16 +1459,16 @@ Only begin post-MVP work after Epic 9 (MVP Hardening) is fully complete.
 
 #### Implementation Checklist
 
-- [ ] Branch created from `dev`
+- [ ] Branch created from `development`
 - [ ] Commit 1: Merge dev to main, verify Render deploy, test auth and multiplayer on production
-- [ ] Commit 2: Fix production issues (CORS, env), re-deploy, merge to dev
+- [ ] Commit 2: Fix production issues (CORS, env), re-deploy, merge to development
 
 ---
 
 #### Feature F9.6: MVP Requirements Checklist Sign-Off
 
 - **Branch:** `feature/mvp-checklist-signoff`
-- [ ] Feature F9.6 complete (merged to `dev`)
+- [ ] Feature F9.6 complete (merged to `development`)
 
 #### Acceptance Criteria
 
@@ -1476,8 +1476,8 @@ Only begin post-MVP work after Epic 9 (MVP Hardening) is fully complete.
 
 #### Implementation Checklist
 
-- [ ] Branch created from `dev`
-- [ ] Commit 1: Walk through every requirement, verify, update PRD checkboxes, merge to dev
+- [ ] Branch created from `development`
+- [ ] Commit 1: Walk through every requirement, verify, update PRD checkboxes, merge to development
 
 ---
 
@@ -1487,7 +1487,7 @@ Only begin post-MVP work after Epic 9 (MVP Hardening) is fully complete.
 
 **User stories:** US-8.1–US-8.6 (command bar, create sticky/shape via AI, move/color via AI, results shared).
 
-- [ ] Epic 10 complete (all features below merged to `dev`)
+- [ ] Epic 10 complete (all features below merged to `development`)
 
 #### Feature Map (Epic 10)
 
@@ -1511,7 +1511,7 @@ Only begin post-MVP work after Epic 9 (MVP Hardening) is fully complete.
 
 **User stories:** US-9.1–US-9.5 (grid arrangement, SWOT, journey map, retro board, concurrent commands).
 
-- [ ] Epic 11 complete (all features below merged to `dev`)
+- [ ] Epic 11 complete (all features below merged to `development`)
 
 #### Feature Map (Epic 11)
 
@@ -1533,7 +1533,7 @@ Only begin post-MVP work after Epic 9 (MVP Hardening) is fully complete.
 
 **User stories:** US-7.1–US-7.6 (frames, connectors, text, rotation, duplicate, copy/paste).
 
-- [ ] Epic 12 complete (all features below merged to `dev`)
+- [ ] Epic 12 complete (all features below merged to `development`)
 
 #### Feature Map (Epic 12)
 
@@ -1555,7 +1555,7 @@ Only begin post-MVP work after Epic 9 (MVP Hardening) is fully complete.
 
 **User stories:** US-10.1–US-10.6 (unit/integration/E2E tests, Swagger /api-docs, demo video, AI log and cost analysis).
 
-- [ ] Epic 13 complete (all features below merged to `dev`)
+- [ ] Epic 13 complete (all features below merged to `development`)
 - [ ] All submission requirements met
 
 #### Feature Map (Epic 13)

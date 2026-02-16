@@ -1,0 +1,47 @@
+---
+description: Tech stack baseline — React 19, TypeScript, Vite, Bun, Tailwind v4, ShadCN, Vitest, RTL
+alwaysApply: true
+---
+
+# Tech Stack
+
+- **Runtime and package manager**: Bun
+- **Build and dev server**: Vite
+- **Language**: TypeScript (strict)
+- **UI framework**: React 19
+- **Styling**: Tailwind CSS v4
+- **Component library**: ShadCN (latest)
+- **Testing**: Vitest and React Testing Library (RTL)
+
+## React and exports
+
+- **Do not use default exports.** Use named exports only (e.g. `export const MyComponent = ...`).
+- **Do not use `React.FC` or `React.FunctionComponent`.** Use function components with explicit return type `ReactElement` (or `JSX.Element`) when needed.
+
+## SOLID and modular design
+
+- **Single responsibility**: One clear purpose per module/component; one feature per feature branch.
+- **Open/closed**: Prefer config-driven extension (e.g. Tailwind theme, ShadCN theming) over modifying core scaffold.
+- **Interface segregation**: Prefer small, focused interfaces and module boundaries.
+- **Dependency inversion**: Depend on abstractions; app depends on components and styling, not the reverse.
+
+## Naming conventions
+
+- **camelCase**: variables, functions, internal object properties (e.g. `userName`, `handleClick()`).
+- **PascalCase**: components, classes, types, enums (e.g. `UserProfile`, `type User = {}`).
+- **snake_case**: API/DB contract properties (e.g. `user_id`, `created_at`).
+- **IPascalCase**: interfaces only (e.g. `interface IUserData {}`).
+- **CAPITAL_CASE**: global constants (e.g. `const API_BASE_URL = "..."`).
+
+## TypeScript and code quality
+
+- **Do not use `any`.** Use proper types or `unknown` with type guards.
+- **Do not leave `console.log` or other `console.*` in code.**
+- **Prefer type-only imports:** `import type { X } from "..."` for types/interfaces.
+- **Do not add or use Husky** (or other git hooks tooling) in this project.
+
+## React hooks
+
+- **Always type `useState` and `useRef`** (e.g. `useState<number>(0)`, `useRef<HTMLInputElement>(null)`).
+- **Do not call setState directly inside `useEffect`** in a way that can cause infinite loops; use the callback form (e.g. `setCount(prev => prev + 1)`) or move logic to event handlers where appropriate.
+- **Limit to at most 2 `useEffect` per file;** extract complex logic into custom hooks.

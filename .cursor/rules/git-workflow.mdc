@@ -1,0 +1,16 @@
+---
+description: Git workflow — dev integration branch, feature branches, no direct push to main
+alwaysApply: true
+---
+
+# Git Workflow
+
+- **Work on `dev`.** All integration happens on the long-lived **`dev`** branch. Do not push directly to **`main`**.
+- **Feature branches:** Create feature branches from `dev` with naming `feature/<slug>` (kebab-case). Example: `feature/epic0-tech-stack-and-quality-rules`.
+- **Flow per feature:** Create feature branch from `dev` → implement over several commits → write tests → run tests → fix until green → merge feature branch into `dev` → move to next feature.
+- **Merge only to `dev`.** When merging, use `git checkout dev` then `git merge feature/<slug>`. Do not merge or push to `main` for day-to-day work.
+
+## LBI workflow
+
+- Consult **`.cursor/rules/lbi-workflow.mdc`** and **`.cursor/commands/lbi.lbi.md`** when starting or planning a feature.
+- Use LBI slash commands as appropriate: `/lbi.request`, `/lbi.specify`, `/lbi.plan`, `/lbi.implement`, `/lbi.tests`, `/lbi.review`, `/lbi.push` (or the lite variants for small changes).

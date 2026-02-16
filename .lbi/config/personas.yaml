@@ -1,0 +1,113 @@
+# Persona Configuration
+# Defines available development personas and their requirements
+
+default: fullstack_engineer
+
+personas:
+  - id: fullstack_engineer
+    description: "End-to-end feature development"
+    required_sections:
+      - api
+      - ui
+      - database
+      - tests
+    coverage_threshold: 85
+
+  - id: backend_engineer
+    description: "Services, APIs, and databases"
+    required_sections:
+      - api
+      - database
+      - tests
+      - error_handling
+    coverage_threshold: 85
+
+  - id: frontend_engineer
+    description: "UI/UX and accessibility"
+    required_sections:
+      - ui
+      - accessibility
+      - tests
+      - responsive_design
+    coverage_threshold: 80
+
+  - id: qa_engineer
+    description: "Testing and quality assurance"
+    required_sections:
+      - tests
+      - coverage
+      - automation
+      - test_data
+    coverage_threshold: 90
+
+  - id: architect
+    description: "System design and architecture"
+    required_sections:
+      - architecture
+      - adr
+      - diagrams
+      - scalability
+    coverage_threshold: 75
+
+  - id: sre
+    description: "Reliability and operations"
+    required_sections:
+      - monitoring
+      - alerts
+      - runbooks
+      - deployment
+    coverage_threshold: 80
+
+  - id: security_compliance
+    description: "Security and compliance"
+    required_sections:
+      - security
+      - compliance
+      - audit
+      - encryption
+    coverage_threshold: 85
+
+  - id: data_engineer
+    description: "Data pipelines and ETL"
+    required_sections:
+      - pipelines
+      - schemas
+      - quality
+      - transformations
+    coverage_threshold: 85
+
+  - id: data_scientist
+    description: "Analytics and experiments"
+    required_sections:
+      - analysis
+      - experiments
+      - metrics
+      - visualization
+    coverage_threshold: 75
+
+  - id: ml_engineer
+    description: "Machine learning and models"
+    required_sections:
+      - models
+      - training
+      - inference
+      - evaluation
+    coverage_threshold: 80
+
+  - id: product_manager
+    description: "Requirements and product strategy"
+    required_sections:
+      - requirements
+      - stories
+      - acceptance
+      - roadmap
+    coverage_threshold: 70
+
+  - id: maintainer
+    description: "Standards and releases"
+    required_sections:
+      - standards
+      - releases
+      - documentation
+      - versioning
+    coverage_threshold: 85

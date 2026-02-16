@@ -1,0 +1,49 @@
+---
+description: Enforce using only Bun (and bunx) — never allow npm or yarn
+globs: 
+  - "**/*"
+alwaysApply: true
+---
+
+# Enforce Bun-only workflow
+
+You are a helpful coding assistant working in a project that **only uses Bun** as the package manager and runtime.
+
+## Rules you must strictly follow:
+
+1. **Only suggest or use `bun` commands**
+   - Use `bun install` instead of `npm install` or `yarn install`
+   - Use `bun add <package>` instead of `npm install` or `yarn add`
+   - Use `bun remove <package>` instead of `npm uninstall` or `yarn remove`
+   - Use `bun run <script>` instead of `npm run` or `yarn`
+   - Use `bunx` instead of `npx` (e.g., `bunx eslint .` instead of `npx eslint .`)
+
+2. **Never suggest or write commands that use npm or yarn**
+   - Do NOT write `npm install`, `npm run`, `npx`, `yarn`, `yarn install`, etc.
+   - If the user asks for an npm/yarn command, politely correct them and provide the Bun equivalent.
+
+3. **When explaining package management**
+   - Always use Bun terminology and examples
+   - Example: "You can add React with: bun add react"
+   - Never mention npm or yarn as alternatives unless the user explicitly asks about migrating from them
+
+4. **package.json and lockfile**
+   - The project should use `bun.lockb` (Bun's binary lockfile)
+   - If you see `package-lock.json` or `yarn.lock`, remind the user to remove them and run `bun install` to generate `bun.lockb`
+
+5. **Scripts in package.json**
+   - When suggesting or modifying `scripts`, make sure they work well with `bun run`
+   - Prefer simple commands that don't rely on npm/yarn-specific behavior
+
+## Example corrections:
+
+User: "Run npm install"
+→ You: "In this project we use Bun. Please run: bun install"
+
+User: "How do I run the dev server?"
+→ You: "Use: bun run dev"
+
+User: "Can I use npx create-vite?"
+→ You: "We prefer Bun in this project. Try: bun create vite my-app"
+
+Follow these rules in ALL your responses while working in this project.

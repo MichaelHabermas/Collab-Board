@@ -1,0 +1,21 @@
+# LBI Project Settings
+# Runtime configuration for the project
+
+workflow:
+  enforce_order: true
+  require_specs: true
+  require_tests: true
+
+quality:
+  min_coverage: 80
+  max_line_length: 100
+  require_type_hints: true
+  require_docstrings: true
+
+git:
+  branch_prefix: "feature/"
+  commit_prefix: true
+  require_pr: false
+
+telemetry:
+  enabled: false

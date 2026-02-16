@@ -192,6 +192,6 @@
 
 ## Sources & References
 
-- [Pre-Search Checklist (0-PRE-SEARCH-CHECKLIST.md)](0-PRE-SEARCH-CHECKLIST.md) — constraints, architecture, key decisions, cost analysis  
+- [Pre-Search Checklist (1-PRE-SEARCH-CHECKLIST.md)](1-PRE-SEARCH-CHECKLIST.md) — constraints, architecture, key decisions, cost analysis  
 - [G4 Week 1 - Collab-Board (1).pdf](../G4%20Week%201%20-%20CollabBoard%20(1).pdf) — project requirements, MVP gate, Possible Paths table, Pre-Search appendix  
 - Project rule: `.cursor/rules/collab-board-rule.mdc` — React 19, Vite, Bun, Tailwind v4, shadcn, Konva

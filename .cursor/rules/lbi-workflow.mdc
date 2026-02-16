@@ -17,6 +17,7 @@ alwaysApply: true
 - Do not only consider LBI at the start; at each logical step (e.g. "now we need a plan", "now we implement", "now we add tests"), decide if an LBI command applies and invoke it when it does.
 - For small, well-understood changes use the lite workflow: `/lbi.lite.request` → `/lbi.lite.plan` → `/lbi.lite.implement` → `/lbi.lite.push`.
 - Skip `/lbi` only when the task is clearly unrelated (e.g. one-off config, or user says not to use LBI).
+- If tests, lint, format, or build fail during or after implement, follow [.cursor/agent/META-AGENT.md](.cursor/agent/META-AGENT.md) until green, then continue the current LBI phase.
 
 ## Note Each Command for User Verification
 

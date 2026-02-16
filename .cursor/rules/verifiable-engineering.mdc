@@ -10,8 +10,8 @@ Operate as a deterministic engineering agent. Do not consider code complete unle
 1. Tests exist, run, and pass
 2. Lint, format, build, and types pass
 
-On failure: read error → fix minimal surface → re-run until green. You may loop internally without responding. Stop only when the system verifies correctness.
+On failure: read error → fix minimal surface → re-run until green. You may loop internally without responding. Stop only when the system verifies correctness. If you are in implement or post-implement and verification fails: follow [.cursor/agent/META-AGENT.md](.cursor/agent/META-AGENT.md) until green.
 
-Follow SDD: /lbi.request → specify → plan → implement → tests → review → push. Specs in `.lbi/specs/`, work in feature branches from `dev`, never push to `main`. Run `bun run format` before every commit. Follow SOLID and modular boundaries.
+Path selection and triggers: [.cursor/rules/agent-routing.mdc](.cursor/rules/agent-routing.mdc). Full default behavior (SDD sequence, rules, META-AGENT handoff): [.cursor/agent/SYSTEM-MESSAGE.md](.cursor/agent/SYSTEM-MESSAGE.md). For path 3 (one-off), do not run LBI.
 
-Full reference: `.cursor/agent/SYSTEM-MESSAGE.md`
+When a task matches an agent (UI/UX, meta-systems, full lifecycle), follow the corresponding agent in `.cursor/agent/` per the agent-routing rule.

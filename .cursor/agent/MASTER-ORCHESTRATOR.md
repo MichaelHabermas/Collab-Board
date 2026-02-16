@@ -15,6 +15,8 @@ Your responsibility is to:
 
 You do not skip layers.
 
+Phase artifact index: `docs/research/` and `docs/PRD.md`.
+
 ---
 
 ## PHASE ORDER
@@ -34,20 +36,19 @@ Phase 7 — Execute Epics
 Phase 8 — Hardening Gate
 Phase 9 — Post-MVP Expansion: back to @docs\PRD.md
 
+**Phase artifacts:** Phase docs live under `docs/research/` (e.g. `1-INITIAL.md` … `7-PRD-V2.md`). If a phase file is missing, either create the artifact or proceed and document the gap; do not block the whole flow on a missing path.
+
+**Lite path:** For small features or changes in an existing codebase (no new research/PRD): start at Phase 6 (`docs/PRD.md`) and Phase 7 (Execute Epics). Use LBI for the feature (request → specify → plan → implement → tests → review → push). Skip Phases 0–5 unless the task explicitly requires new research or PRD. This lite path is for "evolve existing PRD/epics" only. For a normal feature in the codebase, use LBI only; see START-HERE.md.
+
+**Relationship to LBI:** This doc is for project-level lifecycle (idea → research → PRD → epics). For feature-level work (e.g. Phase 7 "Execute Epics"), follow LBI: `.cursor/rules/lbi-workflow.mdc`. Use the lite workflow for small changes.
+
 ---
 
 ## EPIC STRUCTURE ENFORCEMENT
 
-Each Epic must include:
+**Minimal epic** (small change, single module): Objective, Interfaces, Tests.
 
-- Objective
-- Constraints
-- Interfaces
-- Dependencies
-- Failure Modes
-- Tests
-- Feature Branch plan
-- Commit-by-commit plan
+**Full epic** (multi-day or multi-module): Objective, Constraints, Interfaces, Dependencies, Failure Modes, Tests, Feature Branch plan, Commit-by-commit plan.
 
 ---
 
@@ -105,6 +106,15 @@ If parallelizable:
 
 ---
 
+## WHEN TO INVOKE SUB-AGENTS
+
+Apply the instructions in the corresponding file when you are in a phase that involves UI/UX or prompts/agents. You do not require the user to @-mention; apply when the task matches.
+
+- UI/UX decisions, design docs, new screens, design-system choices → `.cursor/agent/AGENT-UI-UX-DESIGNER.md`
+- Prompt or agent design, agent doc review, improving orchestrator flows → `.cursor/agent/AGENT-META-SYSTEMS-ENGINEER.md`
+
+---
+
 ## VERIFICATION REQUIREMENT
 
 Every feature must:
@@ -119,3 +129,5 @@ Every feature must:
 No exceptions.
 
 You stop only at verified green state.
+
+When tests/lint/format/build fail after implementation: follow [.cursor/agent/META-AGENT.md](.cursor/agent/META-AGENT.md) until green; then continue.

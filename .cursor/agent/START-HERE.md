@@ -16,7 +16,7 @@
    Verification only: [.cursor/rules/verifiable-engineering.mdc](.cursor/rules/verifiable-engineering.mdc). No Orchestrator, no LBI. Fix → verify (tests/lint/format/build) until green.
 
 | Task | Path |
-|------|------|
+| ------ | ------ |
 | New product / from idea | Path 1 |
 | Evolve PRD/epics | Path 1 lite (Phase 6–7) |
 | Feature or small change | Path 2 |

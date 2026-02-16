@@ -1,5 +1,7 @@
 # Product Requirements Document (PRD) — V2
 
+> **Superseded.** This file is archived. All checklists and tasks have been consolidated into [../PRD.md](../PRD.md). Use that document as the single source of truth.
+
 ## 1. Document Metadata
 
 | Field | Value |
@@ -167,7 +169,7 @@ flowchart TB
 <!--              ARCHITECTURE REFERENCE (NEW IN V2)                -->
 <!-- ═══════════════════════════════════════════════════════════════ -->
 
-# ARCHITECTURE REFERENCE
+## ARCHITECTURE REFERENCE
 
 > The following sections consolidate technical architecture specifications from the Design Document, ADRs, Pre-Search Checklist, and Tradeoffs analysis into a single reference. Each section is linked from the relevant epic for in-context reading.
 
@@ -991,7 +993,7 @@ quadrantChart
 <!--                    EPIC ROADMAP                                -->
 <!-- ═══════════════════════════════════════════════════════════════ -->
 
-# EPIC ROADMAP
+## EPIC ROADMAP
 
 ---
 
@@ -1069,7 +1071,7 @@ flowchart LR
 <!--                 COMPLETED EPICS                                -->
 <!-- ═══════════════════════════════════════════════════════════════ -->
 
-# COMPLETED EPICS
+## COMPLETED EPICS
 
 ---
 
@@ -1101,7 +1103,7 @@ flowchart LR
 <!--              MVP SCOPE (24h Hard Gate)              -->
 <!-- ═══════════════════════════════════════════════════ -->
 
-# MVP SCOPE
+## MVP SCOPE
 
 > Everything below through Epic 8 must be functional at the 24-hour mark.
 

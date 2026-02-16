@@ -1,5 +1,7 @@
 # Product Requirements Document (PRD) — V1
 
+> **Superseded.** This file is archived. All checklists and tasks have been consolidated into [../PRD.md](../PRD.md). Use that document as the single source of truth.
+
 ## Document Metadata
 
 | Field | Value |

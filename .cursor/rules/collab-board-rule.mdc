@@ -1,0 +1,114 @@
+---
+description: This is a new rule
+alwaysApply: false
+---
+
+# Tech Stack
+
+- React 19 + Vite + Bun + TypeScript
+- Shadcn UI + Tailwind v4
+- Konva.js for canvas rendering
+
+## React Rules (CRITICAL)
+
+- **TypeScript + React 19 + function components + hooks only**
+- **NEVER use `export default`** → Always named exports: `export const MyComponent = ...`
+- **NEVER use `React.FC<>`, `React.FunctionComponent`, or `React.VFC`**
+  - Return type: `ReactElement` or `JSX.Element` (if no props)
+- **ALWAYS fully destructure React imports**
+
+```typescript
+  // ✅ CORRECT
+  import { useState, useEffect, forwardRef, HTMLAttributes } from 'react';
+  
+  // ❌ WRONG
+  import * as React from 'react';
+  import React, { useState } from 'react';
+```
+
+- **NEVER write `React.useState`, `React.useEffect`, etc.** → Use destructured imports
+- **NEVER use class components, PropTypes, or legacy context**
+
+## Styling
+
+- **Tailwind preferred** → Never use inline styles or styled-jsx
+- Use Tailwind v4 syntax and utilities
+- Leverage Shadcn UI components when applicable
+
+## TypeScript Rules
+
+- **NEVER use `any` type** → Use proper types or `unknown`
+- **NEVER leave `console.log` or any `console.*` in code**
+- Define interfaces for all props and state
+- Use discriminated unions for polymorphic types
+- Prefer `interface` over `type` for object shapes
+- Use `readonly` for immutable data
+
+## Component Design
+
+- **Check for reusable components first** before creating new ones
+- **Limit `useEffect` to max 2 per file** → Extract complex logic into custom hooks
+- **Use `memo` for components with stable props** to optimize re-renders
+- Design components to be reusable and composable
+- **Example structure:**
+
+```typescript
+  import { useState, memo, type ReactElement } from 'react'
+  
+  interface IButtonProps {
+    onClick: () => void
+    label: string
+  }
+  
+  export const Button = memo(({ onClick, label }: IButtonProps): ReactElement => {
+    return <button onClick={onClick}>{label}</button>
+  })
+```
+
+## Konva.js Canvas Best Practices
+
+- Use `react-konva` for React integration
+- Keep Konva nodes in separate components for reusability
+- Store state in React state/context, render to Konva
+- Optimize with `listening={false}` for static objects
+- Use `perfectDrawEnabled={false}` for complex shapes when performance matters
+
+## File Structure Conventions
+
+```text
+src/
+├── components/
+│   ├── feature-name/   # Feature-specific components
+│   └── ui/             # Shadcn and shared UI components
+├── hooks/              # Custom React hooks
+├── lib/                # Utility functions and business logic
+├── types/              # TypeScript type definitions
+└── constants/          # Global constants
+```
+
+## Code Quality Standards
+
+- **NO `console.log`** statements in final code
+- **NO `any` types** - be explicit
+- **Extract magic numbers** to named constants
+- **Document complex algorithms** with comments
+- **Handle errors gracefully** with try-catch and user feedback
+
+## Git Commit Conventions
+
+- `feat:` new features
+- `fix:` bug fixes
+- `perf:` performance improvements
+- `refactor:` code restructuring
+- `docs:` documentation changes
+- `test:` test additions/changes
+
+Always branch off of and into the development branch. Never into main.
+
+## Before Committing Checklist
+
+1. Remove all `console.*` statements
+2. Check for `any` types
+3. Verify no `export default` used
+4. Confirm React imports are destructured
+5. Run TypeScript compiler (`bun run tsc --noEmit`)

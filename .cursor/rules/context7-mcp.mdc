@@ -1,0 +1,10 @@
+---
+description: Use Context7 MCP for latest stable docs when doing setup, config, or library API work
+alwaysApply: true
+---
+
+# Context7 MCP
+
+- **When**: Use Context7 MCP whenever you need code generation, setup or configuration steps, or library/API documentation. Prefer resolving library IDs and fetching docs via Context7 instead of relying only on training data.
+- **Libraries in scope**: React, TypeScript, Vite, Bun, Tailwind v4, ShadCN, Vitest, React Testing Library (RTL).
+- **Intent**: Ensure setup, config, and API usage follow the latest stable documentation for this stack.

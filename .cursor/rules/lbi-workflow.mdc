@@ -1,0 +1,30 @@
+---
+description: Use LBI (slash) commands when the project has .lbi; check as you go and note each command used for user verification.
+alwaysApply: true
+---
+
+# LBI Workflow
+
+## Initial Check
+
+1. **Check if `.lbi` exists** in the project root (e.g. `.lbi/manifest.json`, `.lbi/memory/`, `.lbi/config/`).
+2. **If `.lbi` exists**, treat the project as LBI-enabled and use `/lbi` slash commands when they fit the task.
+3. **Command reference**: Use `.cursor/commands/lbi.lbi.md` for the full list of commands and descriptions; `.cursor/commands/lbi.help.md` for workflow and help.
+
+## Use LBI As You Go
+
+- **Re-check applicability at each phase.** As the task moves from request → spec → plan → implement → tests → review → push, consider whether the current phase maps to an LBI command and use it when useful.
+- Do not only consider LBI at the start; at each logical step (e.g. "now we need a plan", "now we implement", "now we add tests"), decide if an LBI command applies and invoke it when it does.
+- For small, well-understood changes use the lite workflow: `/lbi.lite.request` → `/lbi.lite.plan` → `/lbi.lite.implement` → `/lbi.lite.push`.
+- Skip `/lbi` only when the task is clearly unrelated (e.g. one-off config, or user says not to use LBI).
+
+## Note Each Command for User Verification
+
+- **Whenever an LBI command is used**, state it clearly in the flow so the user can verify:
+  - At the start of the step, call out the command (e.g. "**Using `/lbi.plan`** for this step" or "LBI: `/lbi.specify`").
+  - Or briefly at the end of the step (e.g. "Step completed via **`/lbi.implement`**.").
+- Keep the note short and visible (e.g. one line or a small block) so the user can confirm which command was applied at each stage.
+
+## Summary
+
+- **If `.lbi` exists** → Use `/lbi` commands as the flow progresses; refer to `.cursor/commands/lbi.lbi.md` for the list. **Note each command used in the flow for user verification.**

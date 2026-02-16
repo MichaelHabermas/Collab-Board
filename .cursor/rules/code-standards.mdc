@@ -1,0 +1,47 @@
+---
+description: Code standards for data-testid, non-null assertion, and control flow braces
+alwaysApply: true
+---
+
+# Code Standards
+
+## Unique data-testid
+
+- **Every `data-testid` value in the project must be unique.** Do not reuse the same value on different elements.
+- Use distinct identifiers per element (e.g. per-item suffixes or IDs) so test and E2E selectors target exactly one node.
+
+## No non-null assertion
+
+- **Do not use TypeScript's non-null assertion operator (`!`).** Use optional chaining (`?.`), explicit null/undefined checks, or type guards so types narrow safely.
+
+```typescript
+// ✅ CORRECT
+const x = value?.property;
+if (value !== null) {
+  const x = value.property;
+}
+
+// ❌ WRONG
+const x = value!.property;
+```
+
+## Braces for if / else
+
+- **Always use block statements with curly braces for `if`, `else if`, and `else`.** Do not omit braces for single-statement branches.
+
+```typescript
+// ✅ CORRECT
+if (condition) {
+  return result;
+}
+if (condition) {
+  doSomething();
+} else {
+  doOther();
+}
+
+// ❌ WRONG
+if (condition) return result;
+if (condition) doSomething();
+else doOther();
+```

@@ -1,0 +1,40 @@
+---
+description: Expert visual design guidance for this project's stack (Tailwind v4, Radix, Konva, design tokens)
+globs: "**/*.tsx,**/*.css,src/components/**/*"
+alwaysApply: false
+---
+
+# Visual Design Expert
+
+You are an expert in visual design for **CollabBoard**'s stack. Apply these principles whenever creating or editing UI, canvas, or styles.
+
+## Tech stack (design-relevant)
+
+- **Styling**: Tailwind v4 (`@import 'tailwindcss'`), CSS variables in `@theme` / `@theme dark` in `src/index.css`
+- **Components**: Radix UI primitives (Dialog, Select, Tabs, etc.), shadcn-style primitives in `src/components/ui/` (Button, Card, Input, etc.)
+- **Canvas**: Konva + react-konva for board/canvas visuals
+- **Icons**: Lucide React
+- **Utilities**: `cn()` from `@/lib/utils` (clsx + tailwind-merge), class-variance-authority (cva) for variants
+
+## Design system (single source of truth)
+
+- **Colors**: Use semantic tokens only. Do not hardcode hex/rgb.
+  - Light: `background`, `foreground`, `muted`, `muted-foreground`, `card`, `card-foreground`, `primary`, `primary-foreground`, `secondary`, `secondary-foreground`, `accent`, `accent-foreground`, `destructive`, `destructive-foreground`, `border`, `input`, `ring`
+  - In Tailwind: `bg-background`, `text-foreground`, `bg-primary text-primary-foreground`, `border-border`, etc.
+- **Dark mode**: Class-based (`.dark` on `html`). Tokens switch automatically; use the same semantic names in both themes.
+- **Radius**: `radius-sm` (0.25rem), `radius-md` (0.375rem), `radius-lg` (0.5rem), `radius-xl` (0.75rem). Use `rounded-md`, `rounded-lg`, etc. consistently with existing UI.
+- **Typography**: Inter (or system stack from `index.css`). Prefer `text-sm` / `text-xs` for UI; reserve larger sizes for headings or emphasis.
+- **Spacing**: Use Tailwind spacing scale (e.g. `gap-2`, `p-4`, `space-x-2`). Keep rhythm consistent with existing components.
+
+## Rules
+
+1. **Stay on tokens**: Never introduce new raw colors for UI; extend `@theme` in `index.css` if new semantics are needed (e.g. a new `--color-success`), then use the token in components.
+2. **Reuse primitives**: Prefer `Button`, `Card`, `Input`, etc. from `src/components/ui/` with their variants (e.g. `variant="outline"`, `variant="ghost"`) over custom-styled elements.
+3. **Compose with `cn()`**: All conditional or merged class names go through `cn(...)` so Tailwind and overrides merge correctly.
+4. **Canvas/Konva**: Keep fill/stroke/opacity consistent with the rest of the app; use theme-aware colors when Konva supports it, or mirror the same semantic palette (e.g. primary blue, muted grays) in canvas objects.
+5. **Hierarchy and contrast**: Use `foreground` vs `muted-foreground` for hierarchy; ensure interactive elements have clear focus (e.g. `focus-visible:ring-ring`) and sufficient contrast on both light and dark.
+6. **Density and alignment**: Match existing density (e.g. button heights `h-9`, `h-8` for sm). Align to grid (padding, gaps) so new UI feels part of the same system.
+7. **No inline styles**: Use Tailwind (and theme tokens) only. No `style={{ }}` for layout or colors unless required by Konva/canvas APIs.
+8. **Accessibility**: Preserve focus rings, use semantic HTML, and keep touch targets at least 44px where appropriate.
+
+When proposing changes, cite which tokens or components you are using and why they fit the existing design system.

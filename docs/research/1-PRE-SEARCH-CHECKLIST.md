@@ -2,7 +2,7 @@
 
 **Project:** Real-Time Collaborative Whiteboard with AI Agent  
 **Date:** February 16, 2026  
-**Author:** [Your Name]  
+**Author:** Michael Habermas
 **Status:** Complete - Ready for MVP Implementation
 
 ---
@@ -24,6 +24,12 @@ Building a production-scale collaborative whiteboard (Miro-like) with an AI agen
 - **Traffic:** Spiky (demo day bursts, zero-to-twenty instantly)
 - **Real-time:** WebSocket mandatory (Socket.io) for <50ms cursor latency
 - **Cold start:** Zero tolerance. Always-on Render service (no serverless functions)
+
+#### 5+ Concurrent Users Without Degradation
+
+- **Definition of "without degradation":** Cursor sync &lt;50ms, object sync &lt;100ms, canvas 60fps (no sustained frame drops), AI response &lt;2s.
+- **Verification:** Playwright E2E with 5+ browser contexts on one board (cursor move, object create/move, AI command); optional network throttling; document Render free-tier single-instance limits and upgrade path.
+- **Mitigations:** Cursor broadcast throttled to 30fps; object DB writes batched (e.g. 100ms); Socket.io rooms per board; cursors ephemeral in memory (no DB round-trip).
 
 ### 2. Budget & Cost Ceiling
 
@@ -183,7 +189,7 @@ collabboard/
 - **VS Code Extensions:**
   - ESLint, Prettier, Tailwind CSS IntelliSense
   - Bun for VS Code (debugging support)
-  - Thunder Client (alternative to Swagger for quick tests, but using Swagger/OpenAPI for docs)
+- **API docs/testing:** Swagger/OpenAPI (swagger-ui-express) at `/api-docs`
 - **CLI Tools:**
   - `bun` (package manager + runtime + test runner)
   - `mongosh` (MongoDB shell for debugging)
@@ -195,35 +201,87 @@ collabboard/
 
 ---
 
+## Appendix Checklist — Explicit Answers
+
+Phase 1–3 checklist in appendix format (each sub-question answered for grading).
+
+**1. Scale & Load Profile** — Users at launch? 5–20 (demo/evaluation). In 6 months? Unknown; architecture supports 100+ with horizontal scaling. Traffic pattern? Spiky (demo day bursts). Real-time requirements? WebSocket (Socket.io) mandatory for &lt;50ms cursor latency. Cold start tolerance? Zero; always-on Render service.
+
+**2. Budget & Cost Ceiling** — Monthly spend limit? $0 (free tiers only). Pay-per-use acceptable? Yes for AI (Gemini pay-as-you-go). Where trade money for time? Upgrade Render to $7/month if free-tier sleep causes issues.
+
+**3. Time to Ship** — MVP timeline? 24 hours (hard gate), final 7 days. Speed vs. maintainability? Speed-to-market with interface-driven swapability. Iteration cadence? Daily commits, vertical slicing.
+
+**4. Compliance & Regulatory Needs** — HIPAA/GDPR/SOC 2/data residency? None; class project.
+
+**5. Team & Skill Constraints** — Solo (human + AI agents). Known stack: React, TypeScript, Vite, Bun, Tailwind v4, shadcn. New: Socket.io, Clerk, Gemini, Konva, MongoDB. Learning appetite: high for AI tools, low for infra complexity.
+
+**6. Hosting & Deployment** — Serverless vs. containers vs. edge vs. VPS? Single Render web service (VPS-style, always-on). CI/CD? Git push to main → Render auto-deploy. Scaling? Vertical on Render; horizontal via Socket.io Redis adapter later.
+
+**7. Authentication & Authorization** — Auth approach? Clerk (magic links + Google OAuth). RBAC? Board-level (owner/collaborator) in MongoDB. Multi-tenancy? By `boardId` (Socket.io rooms).
+
+**8. Database & Data Layer** — Type? Document store (MongoDB Atlas). Real-time sync? Via Socket.io (cursors in memory); persistence to MongoDB for objects. Full-text/vector/caching? None for MVP. Read/write ratio? Heavy write on cursors (ephemeral), moderate on objects, light read on board load.
+
+**9. Backend/API Architecture** — Monolith or microservices? Monolith (Express + Bun). REST vs. GraphQL etc.? REST for AI (`/api/ai/execute`), WebSocket for real-time. Background jobs? None.
+
+**10. Frontend Framework & Rendering** — SEO? Not required (whiteboard SPA). Offline/PWA? No. SPA vs. SSR? SPA; Konva canvas, Tailwind v4, shadcn.
+
+**11. Third-Party Integrations** — Services? Clerk, Gemini, MongoDB Atlas, Render. Pricing cliffs/rate limits? Gemini 1,500 req/min; Render free tier sleeps 15min. Vendor lock-in? Mitigated via standard protocols (JWT, OpenAI-compatible API).
+
+**12. Security Vulnerabilities** — Pitfalls? WebSocket auth (verify JWT on connection). Misconfigurations? CORS restrict in production. Dependency risks? Pin versions, `bun audit` before deploy; Zod for input validation; sanitize AI input.
+
+**13. File Structure & Project Organization** — Structure? Monorepo, Bun workspaces (`apps/client`, `apps/server`). Monorepo vs. polyrepo? Monorepo. Feature organization? components, hooks, lib, store, types (client); handlers, routes, lib, types (server).
+
+**14. Naming Conventions & Code Style** — Naming? PascalCase components/hooks, camelCase vars/functions, UPPER_SNAKE_CASE constants. Linter/formatter? ESLint (flat config) + Prettier. Imports? Absolute via `~/` alias.
+
+**15. Testing Strategy** — Unit/integration/e2e? Vitest (unit), socket.io-client + memory MongoDB (integration), Playwright (e2e multiplayer). Coverage target? 60% for MVP. Mocking? MSW for Clerk, mock Gemini for AI tests.
+
+**16. Recommended Tooling & DX** — IDE: Cursor + Claude Code. Extensions: ESLint, Prettier, Tailwind IntelliSense, Bun for VS Code. CLI: `bun`, `mongosh`. Debugging: React DevTools, Socket.io Admin UI, Swagger at `/api-docs`, Render logs.
+
+---
+
 ## Key Architecture Decisions (Defensible)
 
 ### Decision: Socket.io + MongoDB over Firebase/Supabase
 
 **Why:** Firebase Firestore has 100-300ms latency (violates <50ms cursor spec). Socket.io on Render provides 10-30ms cursor updates with persistent connections. MongoDB provides schemaless flexibility for rapid iteration.
 
+**Alternatives considered:** Firebase/Supabase (rejected: 100–300ms latency); Firestore-only (rejected: cannot hit &lt;50ms cursors). Database: PostgreSQL considered (rejected: schema migrations for divergent object types); tradeoff: schemaless MongoDB for iteration speed.
+
 ### Decision: Zustand for Slow State + Direct Konva for Fast State
 
 **Why:** Context API causes app-wide re-renders at 30fps (performance death). Zustand isolates subscriptions to specific components. Cursors bypass React entirely (direct Konva ref updates) to achieve 60fps and <50ms sync without reconciliation overhead.
+
+**Alternatives considered:** Context-only (rejected: 60fps re-renders kill performance); Zustand-for-everything including cursors (rejected: frame drops at 5 users). Tradeoff: mixed pattern (right tool per update frequency).
 
 ### Decision: Google Gemini 2.0 Flash over GPT-4/Groq
 
 **Why:** 90% cost reduction ($0.075 vs $0.70+ per 1M tokens), 1M token context window (can send full board state for complex layout commands), OpenAI-compatible API (easy migration), sub-second latency for simple commands.
 
+**Alternatives considered:** Groq (cheaper initially, rejected for Gemini’s cost/context); GPT-4 (rejected: cost). Tradeoff: Google data processing acceptable for class project; rate limits monitored at scale.
+
 ### Decision: Monolith over Microservices
 
 **Why:** Single deploy target reduces complexity for 24h MVP. Eliminates CORS issues, network latency between services, and deployment coordination. WebSocket server + API + static hosting in one process.
+
+**Alternatives considered:** Split (e.g. Vercel frontend + Render backend) rejected: CORS and two deploy surfaces. Tradeoff: single process for 24h MVP; can split later if needed.
 
 ### Decision: Clerk over Firebase Auth/Custom Auth
 
 **Why:** Pre-built React components save 4-6 hours of UI development. JWT verification middleware works seamlessly with Socket.io. 10k MAU free tier sufficient for launch.
 
+**Alternatives considered:** Lucia/custom auth (rejected: 4–6h to build login UI and session management). Tradeoff: vendor lock-in acceptable for MVP; swappable later (JWT standard).
+
 ### Decision: Optimistic UI with Rollback
 
 **Why:** For object creation/movement, render immediately on client (perceived <50ms latency), emit to server, roll back only on error acknowledgment. Better UX than waiting for MongoDB round-trip.
 
+**Alternatives considered:** Server-confirmation-only (rejected: latency). Tradeoff: possible brief inconsistency on error; rollback handles it.
+
 ### Decision: Bun over Node.js + npm
 
 **Why:** 30% faster cold starts, native TypeScript support (no ts-node), single lockfile, built-in bundler. Eliminates `node_modules` bloat during rapid iteration.
+
+**Alternatives considered:** Node.js + npm (rejected: slower cold starts, extra tooling). Tradeoff: smaller ecosystem than Node for some packages; sufficient for this stack.
 
 ---
 
@@ -311,7 +369,7 @@ collabboard/
 | Requirement | Implementation | Status |
 | ------------- | --------------- | -------- |
 | **Tools** | Cursor (IDE) + Claude Code (CLI) | ✅ |
-| **MCP Usage** | Evaluate Cursor MCPs (Git, MongoDB) during build | ✅ |
+| **MCP Usage** | Evaluate Cursor MCPs (Git, MongoDB) during build; planned: Git (version control from IDE), MongoDB (data exploration). Document actual usage in AI Development Log. | ✅ |
 | **AI Development Log** | Document prompts, % AI-generated code, token costs | ✅ |
 | **Cost Analysis** | Table above + actual spend tracking during dev | ✅ |
 
@@ -326,4 +384,4 @@ collabboard/
 - [x] AI Cost Analysis completed with projections
 - [x] All MVP and project requirements verified
 
-AI chat link: <https://cloud.typingmind.com/share/cd8abfd7-8eb8-42a0-9f84-10813dff9edf>
+**AI conversation (reference document):** [pre-search-ai-conversation.md](pre-search-ai-conversation.md). External link: <https://cloud.typingmind.com/share/cd8abfd7-8eb8-42a0-9f84-10813dff9edf>

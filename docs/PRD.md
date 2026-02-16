@@ -291,6 +291,14 @@ flowchart LR
   E12 --> E13
 ```
 
+### Parallel Execution
+
+The following epics have no dependency on each other and can be implemented in parallel (on separate feature branches from `dev`). Merge order still matters: integrate dependencies before dependents.
+
+- **E3 (Auth) and E4 (Canvas)** — After E2 is complete, these two can be worked in parallel. Two developers (or two agents) can each take one epic; both must be merged before E6 (which needs E3 and E5; E5 needs E4).
+- **E11 (AI Complex) and E12 (Advanced features)** — After E10 is complete, E11 and E12 are independent (E11 depends on E10, E12 on E5). Can be done in parallel; both must be merged before E13.
+- By dependency alone, E12 only depends on E5 and could start after E5; this PRD defers all post-MVP work until after Epic 9 (MVP Hardening) is complete, so E12 is started after E9, in parallel with E10/E11 as above.
+
 ---
 
 ## 10. Completed Epics

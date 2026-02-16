@@ -4,7 +4,8 @@
       "Bash(du:*)",
       "Bash(grep:*)",
       "Bash(git branch:*)",
-      "Bash(git show-branch:*)"
+      "Bash(git show-branch:*)",
+      "Bash(git add:*)"
     ]
   }
 }

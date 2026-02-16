@@ -1,43 +1,58 @@
-# AI React Starter
+# Collab-Board
 
-A production-ready React template with Vite, Bun, TypeScript, Tailwind v4, ShadCN, Vitest, and Playwright. Use it as a starting point for apps that follow a modular, SOLID-aligned structure and consistent tooling.
+Production-scale real-time collaborative whiteboard with an AI agent that manipulates board state via natural language (Miro-like).
 
 ## Stack
 
-| Layer      | Technology                    |
-| ---------- | ----------------------------- |
-| Runtime    | [Bun](https://bun.sh)         |
-| Build      | [Vite](https://vite.dev)      |
-| Language   | TypeScript (strict)           |
-| UI         | React 19                      |
-| Styling    | Tailwind CSS v4               |
+| Layer      | Technology                      |
+| ---------- | ------------------------------- |
+| Runtime    | [Bun](https://bun.sh)           |
+| Build      | [Vite](https://vite.dev)        |
+| Language   | TypeScript (strict)             |
+| UI         | React 19                        |
+| Styling    | Tailwind CSS v4                 |
 | Components | [ShadCN](https://ui.shadcn.com) |
-| Unit tests | Vitest + React Testing Library |
-| E2E tests  | Playwright                    |
-| Lint/format| ESLint + Prettier             |
+| Unit tests | Vitest + React Testing Library  |
+| E2E tests  | Playwright                      |
+| Lint/format| ESLint + Prettier               |
 
-## Prerequisites
+Full stack rationale: [docs/research/2-TECH-STACK-OPTIONS.md](docs/research/2-TECH-STACK-OPTIONS.md).
+
+## Setup
+
+### Prerequisites
 
 - **Bun** (runtime and package manager). Install from [bun.sh](https://bun.sh). Minimum recommended: Bun 1.2.x.
 - **Node** 18+ (for `engines`; Bun satisfies this).
 
-## Quick start
+### Install
 
 ```bash
 bun install
+```
+
+Backend and environment variables will be documented when the backend is added. This first pass is frontend-only.
+
+## Getting started
+
+```bash
 bun run dev
 ```
 
-Open [http://localhost:5173](http://localhost:5173). To build for production:
+Open [http://localhost:5173](http://localhost:5173).
+
+To build for production:
 
 ```bash
 bun run build
 bun run preview
 ```
 
+Use `bun run validate` before commits to run format, typecheck, lint, and tests.
+
 ## Project structure
 
-```
+```text
 ├── src/
 │   ├── main.tsx          # Entry point
 │   ├── App.tsx            # Root component
@@ -46,6 +61,8 @@ bun run preview
 │   │   └── ui/            # ShadCN and shared UI primitives
 │   ├── lib/               # Utilities and helpers
 │   └── test/              # Test setup (e.g. jest-dom)
+├── docs/                  # Documentation
+│   └── research/          # Design doc, PRD, tech stack, ADRs
 ├── e2e/                   # Playwright E2E specs
 ├── scripts/               # Verification and tooling scripts
 ├── vite.config.ts
@@ -55,7 +72,7 @@ bun run preview
 └── components.json        # ShadCN CLI config
 ```
 
-## Scripts
+## Usage
 
 ### Development and build
 
@@ -91,6 +108,16 @@ Or `bunx playwright install` for all browsers.
 
 The `verify:*` scripts run smoke checks for each part of the stack (tooling, Vite, types, React, Tailwind, UI). Use them to confirm the environment is set up correctly.
 
+### Adding UI components
+
+This project uses ShadCN with the `@/` path alias. To add more components:
+
+```bash
+bunx shadcn@latest add <component-name>
+```
+
+Config is in `components.json`; new components land under `src/components/ui/`.
+
 ## Code conventions
 
 - **Exports**: Named exports only; no default exports.
@@ -102,18 +129,10 @@ The `verify:*` scripts run smoke checks for each part of the stack (tooling, Vit
 
 See `.cursor/rules/tech-stack.mdc` and `.cursor/rules/code-standards.mdc` for the full set of project rules.
 
-## Adding UI components
-
-This project uses ShadCN with the `@/` path alias. To add more components:
-
-```bash
-bunx shadcn@latest add <component-name>
-```
-
-Config is in `components.json`; new components land under `src/components/ui/`.
-
 ## References
 
-- **Design and scope**: [DESIGN-DOC.md](DESIGN-DOC.md)
-- **Execution and features**: [PRD.md](PRD.md)
+- **Design**: [docs/research/5-BASIC-DESIGN-DOCUMENT.md](docs/research/5-BASIC-DESIGN-DOCUMENT.md)
+- **PRD (current)**: [docs/research/7-PRD-V2.md](docs/research/7-PRD-V2.md)
+- **Docs index**: [docs/README.md](docs/README.md)
+- **Further reading**: [Tech stack](docs/research/2-TECH-STACK-OPTIONS.md), [Tradeoffs](docs/research/3-IDENTIFY-TRADEOFFS.md), [ADRs](docs/research/4-RECORD-ARCHITECTURE-DECISIONS.md) in `docs/research/`
 - **Workflow and LBI**: `.cursor/rules/lbi-workflow.mdc`, `.cursor/commands/lbi.lbi.md`

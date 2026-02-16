@@ -5,7 +5,23 @@
       "Bash(grep:*)",
       "Bash(git branch:*)",
       "Bash(git show-branch:*)",
-      "Bash(git add:*)"
+      "Bash(git add:*)",
+      "Bash(git commit:*)",
+      "Bash(git config:*)",
+      "Bash(git checkout:*)",
+      "Bash(git mv:*)",
+      "Bash(bun install:*)",
+      "Bash(export PATH=\"/mnt/c/Users/haber/.bun/bin:$PATH\")",
+      "Bash(bun:*)",
+      "Bash(/mnt/c/Users/haber/.bun/bin/bun.exe:*)",
+      "Bash(curl:*)",
+      "Bash(bash)",
+      "Bash(sudo apt-get update:*)",
+      "Bash(sudo apt-get:*)",
+      "Bash(dpkg:*)",
+      "Bash(npm --version:*)",
+      "Bash(node --version:*)",
+      "Bash(npm install:*)"
     ]
   }
 }

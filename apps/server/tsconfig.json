@@ -13,8 +13,7 @@
     "noUnusedLocals": true,
     "noUnusedParameters": true,
     "noFallthroughCasesInSwitch": true,
-    "lib": ["ES2022"],
-    "types": ["bun-types"]
+    "lib": ["ES2022"]
   },
   "include": ["src"],
   "references": [{ "path": "../../packages/shared-types" }]

@@ -959,26 +959,26 @@ Everything below through Epic 8 must be functional at the 24-hour MVP gate.
 
 - **PR:** `Objects: selection, drag-move, and resize handles`
 - **Branch:** `feature/object-select-move-resize`
-- [ ] Feature F5.5 complete (merged to `development`)
+- [x] Feature F5.5 complete (merged to `development`)
 
 #### Acceptance Criteria
 
-- [ ] Clicking object selects it (visual indicator); empty canvas deselects all
-- [ ] Dragging selected object moves it (60fps); position in boardStore on drag end
-- [ ] Selected object shows resize handles; drag handle resizes
-- [ ] Minimum size enforced
+- [x] Clicking object selects it (visual indicator); empty canvas deselects all
+- [x] Dragging selected object moves it (60fps); position in boardStore on drag end
+- [x] Selected object shows resize handles; drag handle resizes
+- [x] Minimum size enforced
 
 #### Implementation Checklist
 
-- [ ] Branch created from `development`
+- [x] Branch created from `development`
 
-**Commit 1:** `feat(objects): add object selection with visual indicator` — Subtasks: [ ] useSelection.ts; [ ] Click object → selectObject(id); empty → deselectAll(); [ ] Selection outline on selected
+**Commit 1:** `feat(objects): add object selection with visual indicator` — Subtasks: [x] useSelection.ts; [x] Click object → selectObject(id); empty → deselectAll(); [x] Selection outline on selected
 
-**Commit 2:** `feat(objects): add drag-to-move for all objects` — Subtasks: [ ] Konva draggable on objects; [ ] Drag only when Select tool active; [ ] Update boardStore on dragend; [ ] 60fps drag
+**Commit 2:** `feat(objects): add drag-to-move for all objects` — Subtasks: [x] Konva draggable on objects; [x] Drag only when Select tool active; [x] Update boardStore on dragend; [x] 60fps drag
 
-**Commit 3:** `feat(objects): add resize handles on selection` — Subtasks: [ ] SelectionTransformer.tsx with Konva Transformer; [ ] Update width/height on transform end; [ ] Min size e.g. 20x20
+**Commit 3:** `feat(objects): add resize handles on selection` — Subtasks: [x] SelectionTransformer.tsx with Konva Transformer; [x] Update width/height on transform end; [x] Min size e.g. 20x20
 
-**Commit 4:** `test(objects): verify selection, move, resize and merge` — Subtasks: [ ] Unit tests selection state; [ ] typecheck and test:run; [ ] Merge to development
+**Commit 4:** `test(objects): verify selection, move, resize and merge` — Subtasks: [x] Unit tests selection state; [x] typecheck and test:run; [x] Merge to development
 
 ---
 

@@ -69,7 +69,11 @@ function createInMemoryRepo(): IInMemoryRepo {
       if (!current) {
         return null;
       }
-      const updated = { ...current, ...patch, updatedAt: new Date().toISOString() };
+      const updated = {
+        ...current,
+        ...(patch as Partial<BoardObject>),
+        updatedAt: new Date().toISOString(),
+      } as unknown as BoardObject;
       objectsById.set(objectId, updated);
       return updated;
     },
@@ -244,8 +248,8 @@ describe('socket handlers integration', () => {
                   }
                 });
               },
-            }) as Socket,
-        }) as Server,
+            }) as unknown as Socket,
+        }) as unknown as Server,
     } as unknown as Server;
 
     socketA = new TestSocket('socket-a', 'user-a');
@@ -280,7 +284,9 @@ describe('socket handlers integration', () => {
     const listB = socketB.outgoingEvents['presence:list'][0];
     expect(joinPayload).toBeDefined();
     expect(joinPayload?.user.userId).toBe('user-b');
-    expect(listB.users.map((user) => user.userId)).toEqual(expect.arrayContaining(['user-a', 'user-b']));
+    expect(listB.users.map((user) => user.userId)).toEqual(
+      expect.arrayContaining(['user-a', 'user-b'])
+    );
 
     await socketA.receive('cursor:move', { x: 101, y: 202 });
     const cursorPayload = socketB.outgoingEvents['cursor:update'].at(-1);
@@ -306,7 +312,12 @@ describe('socket handlers integration', () => {
     const createdObjectId = createdPayload?.object.id;
     expect(typeof createdObjectId).toBe('string');
 
-    await socketA.receive('object:move', { boardId: TEST_BOARD_ID, objectId: createdObjectId, x: 500, y: 600 });
+    await socketA.receive('object:move', {
+      boardId: TEST_BOARD_ID,
+      objectId: createdObjectId,
+      x: 500,
+      y: 600,
+    });
     const movedPayload = socketB.outgoingEvents['object:updated'].at(-1);
     expect(movedPayload).toBeDefined();
     expect(movedPayload?.objectId).toBe(createdObjectId);

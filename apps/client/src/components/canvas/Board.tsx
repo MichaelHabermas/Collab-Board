@@ -290,7 +290,7 @@ export const Board = (): ReactElement => {
           <Transformer ref={transformerRef} onTransformEnd={handleTransformEnd} />
         </Layer>
         <Layer ref={cursorRef} data-testid='canvas-board-layer-cursor' name='cursor'>
-          <CursorOverlay />
+          <CursorOverlay stageScale={stageScale} />
         </Layer>
       </Stage>
     </div>

@@ -1,12 +1,16 @@
 import { useState, useEffect, useRef } from 'react';
-import type { CursorUpdatePayload } from '@collab-board/shared-types';
+import type { CursorUpdatePayload, PresenceLeavePayload } from '@collab-board/shared-types';
 import { useSocket } from './useSocket';
 import { authStore } from '@/store/authStore';
+
+const CURSOR_REMOVAL_DELAY_MS = 2000;
 
 export interface IRemoteCursor {
   userId: string;
   x: number;
   y: number;
+  name?: string;
+  color?: string;
 }
 
 /**
@@ -18,6 +22,7 @@ export function useRemoteCursors(): Map<string, IRemoteCursor> {
   const [cursors, setCursors] = useState<Map<string, IRemoteCursor>>(new Map());
   const pendingRef = useRef<Map<string, IRemoteCursor>>(new Map());
   const rafIdRef = useRef<number | null>(null);
+  const removalTimeoutsRef = useRef<Map<string, ReturnType<typeof setTimeout>>>(new Map());
 
   useEffect(() => {
     if (!socket) {
@@ -31,17 +36,39 @@ export function useRemoteCursors(): Map<string, IRemoteCursor> {
     };
 
     const onCursorUpdate = (payload: CursorUpdatePayload): void => {
-      const { userId, x, y } = payload;
-      pendingRef.current.set(userId, { userId, x, y });
+      const { userId, x, y, name, color } = payload;
+      const existing = removalTimeoutsRef.current.get(userId);
+      if (existing) {
+        clearTimeout(existing);
+        removalTimeoutsRef.current.delete(userId);
+      }
+      pendingRef.current.set(userId, { userId, x, y, name, color });
       if (rafIdRef.current === null) {
         rafIdRef.current = requestAnimationFrame(flush);
       }
     };
 
-    socket.on('cursor:update', onCursorUpdate);
+    const onPresenceLeave = (payload: PresenceLeavePayload): void => {
+      const { userId } = payload;
+      const timeoutId = setTimeout(() => {
+        removalTimeoutsRef.current.delete(userId);
+        pendingRef.current.delete(userId);
+        rafIdRef.current = requestAnimationFrame(flush);
+      }, CURSOR_REMOVAL_DELAY_MS);
+      removalTimeoutsRef.current.set(userId, timeoutId);
+    };
 
+    socket.on('cursor:update', onCursorUpdate);
+    socket.on('presence:leave', onPresenceLeave);
+
+    const timeouts = removalTimeoutsRef.current;
     return () => {
       socket.off('cursor:update', onCursorUpdate);
+      socket.off('presence:leave', onPresenceLeave);
+      for (const id of timeouts.values()) {
+        clearTimeout(id);
+      }
+      timeouts.clear();
       if (rafIdRef.current !== null) {
         cancelAnimationFrame(rafIdRef.current);
       }

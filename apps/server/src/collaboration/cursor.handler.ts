@@ -15,11 +15,11 @@ export function registerCursorHandlers(socket: IAuthenticatedSocket): void {
   socket.on('cursor:move', (payload: unknown) => {
     const parsed = cursorMoveSchema.safeParse(payload);
     if (!parsed.success) return;
-    const { x, y } = parsed.data;
+    const { x, y, name, color } = parsed.data;
     const userId = socket.data.user?.userId;
     if (!userId) return;
     const room = getBoardRoomFromSocket(socket);
     if (!room) return;
-    socket.to(room).emit('cursor:update', { userId, x, y });
+    socket.to(room).emit('cursor:update', { userId, x, y, name, color });
   });
 }

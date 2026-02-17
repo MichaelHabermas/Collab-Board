@@ -31,6 +31,14 @@ io.on('connection', (socket: IAuthenticatedSocket) => {
   registerCursorHandlers(socket);
 
   socket.on('disconnect', () => {
+    const userId = socket.data.user?.userId;
+    if (userId) {
+      for (const room of socket.rooms) {
+        if (room.startsWith('board:')) {
+          io.to(room).emit('presence:leave', { userId });
+        }
+      }
+    }
     logger.info('Client disconnected', { socketId: socket.id });
   });
 });

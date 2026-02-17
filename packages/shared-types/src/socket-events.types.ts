@@ -5,6 +5,8 @@ import type { BoardObject, Board, UserPresence } from './board-object.types';
 export interface CursorMovePayload {
   x: number;
   y: number;
+  name?: string;
+  color?: string;
 }
 
 export interface BoardJoinPayload {
@@ -49,6 +51,8 @@ export interface CursorUpdatePayload {
   userId: string;
   x: number;
   y: number;
+  name?: string;
+  color?: string;
 }
 
 export interface ObjectCreatedPayload {

@@ -29,7 +29,9 @@
       "Bash(netstat:*)",
       "Bash(node:*)",
       "Bash(wget:*)",
-      "Bash(kill:*)"
+      "Bash(kill:*)",
+      "Bash(bunx tsc:*)",
+      "Bash(bunx eslint:*)"
     ]
   }
 }

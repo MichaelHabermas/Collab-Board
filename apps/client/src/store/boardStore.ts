@@ -1,4 +1,5 @@
 import { create } from 'zustand';
+import { useShallow } from 'zustand/shallow';
 import type { BoardObject, ObjectType } from '@collab-board/shared-types';
 
 export type ActiveToolType = 'select' | 'sticky_note' | 'rectangle' | 'circle' | 'line';
@@ -109,11 +110,11 @@ export function useObject(id: string): BoardObject | undefined {
 }
 
 export function useObjectsByType(type: ObjectType): BoardObject[] {
-  return boardStore((state) => state.objects.filter((obj) => obj.type === type));
+  return boardStore(useShallow((state) => state.objects.filter((obj) => obj.type === type)));
 }
 
 export function useBoardMetadata(): { boardId: string; title: string } {
-  return boardStore((state) => ({ boardId: state.boardId, title: state.title }));
+  return boardStore(useShallow((state) => ({ boardId: state.boardId, title: state.title })));
 }
 
 export function useActiveToolType(): ActiveToolType {

@@ -741,7 +741,7 @@ Everything below through Epic 8 must be functional at the 24-hour MVP gate.
 
 **User stories:** US-2.1 (Infinite canvas with pan), US-2.2 (Zoom scroll/pinch), US-2.3 (Grid/dot background).
 
-- [ ] Epic 4 complete (all features below merged to `development`)
+- [x] Epic 4 complete (all features below merged to `development`)
 
 #### Feature Map (Epic 4)
 
@@ -755,24 +755,24 @@ Everything below through Epic 8 must be functional at the 24-hour MVP gate.
 
 - **PR:** `Canvas: Konva Stage with fullscreen viewport`
 - **Branch:** `feature/konva-stage-viewport`
-- [ ] Feature F4.1 complete (merged to `development`)
+- [x] Feature F4.1 complete (merged to `development`)
 
 #### Acceptance Criteria
 
-- [ ] Konva Stage renders fullscreen in viewport
-- [ ] Stage resizes on window resize
-- [ ] Layer architecture: grid, objects, cursor, selection layers
-- [ ] Canvas position persists during session
+- [x] Konva Stage renders fullscreen in viewport
+- [x] Stage resizes on window resize
+- [x] Layer architecture: grid, objects, cursor, selection layers
+- [x] Canvas position persists during session
 
 #### Implementation Checklist
 
-- [ ] Branch created from `development`
+- [x] Branch created from `development`
 
-**Commit 1:** `feat(canvas): install konva and create board component` — Subtasks: [ ] bun add konva react-konva; [ ] Create Board.tsx with Stage and Layer; [ ] Stage fills viewport; [ ] Window resize listener
+**Commit 1:** `feat(canvas): install konva and create board component` — Subtasks: [x] bun add konva react-konva; [x] Create Board.tsx with Stage and Layer; [x] Stage fills viewport; [x] Window resize listener
 
-**Commit 2:** `feat(canvas): establish layer architecture` — Subtasks: [ ] Grid, objects, cursor, selection layers; [ ] useRef for layer refs; [ ] Create InfiniteCanvas.tsx wrapper
+**Commit 2:** `feat(canvas): establish layer architecture` — Subtasks: [x] Grid, objects, cursor, selection layers; [x] useRef for layer refs; [x] Create InfiniteCanvas.tsx wrapper
 
-**Commit 3:** `test(canvas): verify konva stage renders and merge` — Subtasks: [ ] Unit test Board; [ ] Verify viewport; [ ] typecheck and test:run; [ ] Merge to development
+**Commit 3:** `test(canvas): verify konva stage renders and merge` — Subtasks: [x] Unit test Board; [x] Verify viewport; [x] typecheck and test:run; [x] Merge to development
 
 ---
 
@@ -780,26 +780,26 @@ Everything below through Epic 8 must be functional at the 24-hour MVP gate.
 
 - **PR:** `Canvas: pan and zoom controls`
 - **Branch:** `feature/canvas-pan-and-zoom`
-- [ ] Feature F4.2 complete (merged to `development`)
+- [x] Feature F4.2 complete (merged to `development`)
 
 #### Acceptance Criteria
 
-- [ ] Click-and-drag on empty canvas pans viewport
-- [ ] Pan smooth at 60fps
-- [ ] Scroll wheel zooms toward cursor
-- [ ] Zoom range 10% to 500%
-- [ ] Zoom smooth, no flickering
-- [ ] Objects scale correctly with zoom
+- [x] Click-and-drag on empty canvas pans viewport
+- [x] Pan smooth at 60fps
+- [x] Scroll wheel zooms toward cursor
+- [x] Zoom range 10% to 500%
+- [x] Zoom smooth, no flickering
+- [x] Objects scale correctly with zoom
 
 #### Implementation Checklist
 
-- [ ] Branch created from `development`
+- [x] Branch created from `development`
 
-**Commit 1:** `feat(canvas): add click-drag pan` — Subtasks: [ ] Create usePanZoom.ts; [ ] Stage draggable for pan; [ ] Pan only on empty canvas; [ ] 60fps position updates
+**Commit 1:** `feat(canvas): add click-drag pan` — Subtasks: [x] Create usePanZoom.ts; [x] Stage draggable for pan; [x] Pan only on empty canvas; [x] 60fps position updates
 
-**Commit 2:** `feat(canvas): add scroll-wheel and pinch zoom` — Subtasks: [ ] wheel handler zoom toward cursor; [ ] Bounded scale 0.1–5.0; [ ] Adjust stage position for zoom; [ ] Pinch for touch
+**Commit 2:** `feat(canvas): add scroll-wheel and pinch zoom` — Subtasks: [x] wheel handler zoom toward cursor; [x] Bounded scale 0.1–5.0; [x] Adjust stage position for zoom; [x] Pinch for touch
 
-**Commit 3:** `test(canvas): verify pan and zoom behavior and merge` — Subtasks: [ ] Unit test zoom math; [ ] Manual verify smooth; [ ] typecheck and test:run; [ ] Merge to development
+**Commit 3:** `test(canvas): verify pan and zoom behavior and merge` — Subtasks: [x] Unit test zoom math; [x] Manual verify smooth; [x] typecheck and test:run; [x] Merge to development
 
 ---
 
@@ -807,22 +807,22 @@ Everything below through Epic 8 must be functional at the 24-hour MVP gate.
 
 - **PR:** `Canvas: grid/dot background pattern`
 - **Branch:** `feature/canvas-grid-background`
-- [ ] Feature F4.3 complete (merged to `development`)
+- [x] Feature F4.3 complete (merged to `development`)
 
 #### Acceptance Criteria
 
-- [ ] Background layer renders repeating dot or line pattern
-- [ ] Pattern scales with zoom
-- [ ] Pattern does not interfere with object interaction
-- [ ] Grid renders without dropping below 60fps
+- [x] Background layer renders repeating dot or line pattern
+- [x] Pattern scales with zoom
+- [x] Pattern does not interfere with object interaction
+- [x] Grid renders without dropping below 60fps
 
 #### Implementation Checklist
 
-- [ ] Branch created from `development`
+- [x] Branch created from `development`
 
-**Commit 1:** `feat(canvas): add grid background pattern` — Subtasks: [ ] Create GridBackground.tsx; [ ] Dots or lines on grid layer; [ ] Scale pattern with zoom; [ ] listening=false on grid layer
+**Commit 1:** `feat(canvas): add grid background pattern` — Subtasks: [x] Create GridBackground.tsx; [x] Dots or lines on grid layer; [x] Scale pattern with zoom; [x] listening=false on grid layer
 
-**Commit 2:** `test(canvas): verify grid background and merge` — Subtasks: [ ] Verify grid renders and scales; [ ] Verify no interference with pan/zoom/clicks; [ ] typecheck; [ ] Merge to development
+**Commit 2:** `test(canvas): verify grid background and merge` — Subtasks: [x] Verify grid renders and scales; [x] Verify no interference with pan/zoom/clicks; [x] typecheck; [x] Merge to development
 
 ---
 

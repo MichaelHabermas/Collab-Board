@@ -23,7 +23,10 @@ export const App = (): ReactElement => {
       <AppLayout>
         <div data-testid='app-root' className='flex h-full min-h-0 flex-1 flex-row'>
           <Toolbar />
-          <div className='relative h-full min-h-0 min-w-0 flex-1' data-testid='canvas-column-wrapper'>
+          <div
+            className='relative h-full min-h-0 min-w-0 flex-1'
+            data-testid='canvas-column-wrapper'
+          >
             <div className='absolute inset-0'>
               <InfiniteCanvas />
             </div>

@@ -49,6 +49,25 @@ describe('useBoardRoom', () => {
     expect(mockEmit).not.toHaveBeenCalled();
   });
 
+  it('sets boardLoadStatus to idle when socket is null', () => {
+    boardStore.setState({ boardLoadStatus: 'loading' });
+    vi.mocked(useSocket).mockReturnValue({
+      socket: null,
+      isConnected: false,
+      error: '',
+    });
+    renderHook(() => useBoardRoom('board-123'));
+    expect(boardStore.getState().boardLoadStatus).toBe('idle');
+    expect(mockEmit).not.toHaveBeenCalled();
+  });
+
+  it('sets boardLoadStatus to idle on unmount', () => {
+    const { unmount } = renderHook(() => useBoardRoom('board-456'));
+    expect(boardStore.getState().boardLoadStatus).toBe('loading');
+    unmount();
+    expect(boardStore.getState().boardLoadStatus).toBe('idle');
+  });
+
   it('emits board:leave on unmount when boardId was set', () => {
     const { unmount } = renderHook(() => useBoardRoom('board-456'));
     expect(mockEmit).toHaveBeenCalledWith('board:join', { boardId: 'board-456' });

@@ -3,6 +3,8 @@ import { registerRoomHandlers } from './room.handler';
 import type { IAuthenticatedSocket } from '../auth/socket-auth';
 import type { BoardRepository } from '../modules/board/board.repo';
 
+const VALID_OBJECT_ID = '507f1f77bcf86cd799439011';
+
 describe('registerRoomHandlers', () => {
   let mockJoin: ReturnType<typeof vi.fn>;
   let mockLeave: ReturnType<typeof vi.fn>;
@@ -31,7 +33,7 @@ describe('registerRoomHandlers', () => {
     } as unknown as IAuthenticatedSocket;
     mockBoardRepo = {
       findBoardById: vi.fn().mockResolvedValue({
-        id: 'board-abc',
+        id: VALID_OBJECT_ID,
         title: 'Test Board',
         ownerId: 'user-1',
         collaborators: [],
@@ -45,15 +47,15 @@ describe('registerRoomHandlers', () => {
   it('joins socket to board room on valid board:join payload', async () => {
     registerRoomHandlers(mockSocket, mockBoardRepo);
     expect(boardJoinHandlers).toHaveLength(1);
-    await boardJoinHandlers[0]!({ boardId: 'board-abc' });
-    expect(mockJoin).toHaveBeenCalledWith('board:board-abc');
+    await boardJoinHandlers[0]!({ boardId: VALID_OBJECT_ID });
+    expect(mockJoin).toHaveBeenCalledWith(`board:${VALID_OBJECT_ID}`);
   });
 
   it('emits board:load with board and objects after join', async () => {
     const objects = [
       {
         id: 'obj-1',
-        boardId: 'board-abc',
+        boardId: VALID_OBJECT_ID,
         type: 'sticky_note' as const,
         x: 0,
         y: 0,
@@ -70,10 +72,10 @@ describe('registerRoomHandlers', () => {
     ];
     vi.mocked(mockBoardRepo.findObjectsByBoard).mockResolvedValue(objects);
     registerRoomHandlers(mockSocket, mockBoardRepo);
-    await boardJoinHandlers[0]!({ boardId: 'board-abc' });
+    await boardJoinHandlers[0]!({ boardId: VALID_OBJECT_ID });
 
     expect(mockEmit).toHaveBeenCalledWith('board:load', {
-      board: expect.objectContaining({ id: 'board-abc', title: 'Test Board' }),
+      board: expect.objectContaining({ id: VALID_OBJECT_ID, title: 'Test Board' }),
       objects,
       users: [],
     });
@@ -91,5 +93,54 @@ describe('registerRoomHandlers', () => {
     expect(boardLeaveHandlers).toHaveLength(1);
     boardLeaveHandlers[0]!({ boardId: 'board-xyz' });
     expect(mockLeave).toHaveBeenCalledWith('board:board-xyz');
+  });
+
+  it('emits board:load with fallback and does not call repo when boardId is not a valid ObjectId', async () => {
+    registerRoomHandlers(mockSocket, mockBoardRepo);
+    await boardJoinHandlers[0]!({ boardId: 'default-board' });
+
+    expect(mockBoardRepo.findBoardById).not.toHaveBeenCalled();
+    expect(mockBoardRepo.findObjectsByBoard).not.toHaveBeenCalled();
+    expect(mockEmit).toHaveBeenCalledWith('board:load', {
+      board: expect.objectContaining({
+        id: 'default-board',
+        title: 'Untitled Board',
+        ownerId: '',
+        collaborators: [],
+      }),
+      objects: [],
+      users: [],
+    });
+  });
+
+  it('emits board:load with fallback board and empty objects when findBoardById rejects', async () => {
+    vi.mocked(mockBoardRepo.findBoardById).mockRejectedValue(new Error('DB error'));
+    registerRoomHandlers(mockSocket, mockBoardRepo);
+    await boardJoinHandlers[0]!({ boardId: VALID_OBJECT_ID });
+
+    expect(mockEmit).toHaveBeenCalledTimes(1);
+    expect(mockEmit).toHaveBeenCalledWith('board:load', {
+      board: expect.objectContaining({
+        id: VALID_OBJECT_ID,
+        title: 'Untitled Board',
+        ownerId: '',
+        collaborators: [],
+      }),
+      objects: [],
+      users: [],
+    });
+  });
+
+  it('emits board:load with fallback when findObjectsByBoard rejects', async () => {
+    vi.mocked(mockBoardRepo.findObjectsByBoard).mockRejectedValue(new Error('DB error'));
+    registerRoomHandlers(mockSocket, mockBoardRepo);
+    await boardJoinHandlers[0]!({ boardId: VALID_OBJECT_ID });
+
+    expect(mockEmit).toHaveBeenCalledTimes(1);
+    expect(mockEmit).toHaveBeenCalledWith('board:load', {
+      board: expect.objectContaining({ id: VALID_OBJECT_ID, title: 'Untitled Board' }),
+      objects: [],
+      users: [],
+    });
   });
 });

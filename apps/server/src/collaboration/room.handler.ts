@@ -6,8 +6,16 @@ import type { BoardRepository } from '../modules/board/board.repo';
 
 const ROOM_PREFIX = 'board:';
 
+/** MongoDB ObjectIds are 24 hex characters; avoid Cast errors for slugs like "default-board". */
+const OBJECT_ID_HEX_LENGTH = 24;
+const OBJECT_ID_REGEX = /^[a-f0-9]{24}$/i;
+
 function getRoomName(boardId: string): string {
   return `${ROOM_PREFIX}${boardId}`;
+}
+
+function isValidObjectId(id: string): boolean {
+  return id.length === OBJECT_ID_HEX_LENGTH && OBJECT_ID_REGEX.test(id);
 }
 
 /**
@@ -37,22 +45,46 @@ export function registerRoomHandlers(
       userId: socket.data.user?.userId,
     });
 
-    const [board, objects] = await Promise.all([
-      boardRepo.findBoardById(boardId),
-      boardRepo.findObjectsByBoard(boardId),
-    ]);
-    socket.emit('board:load', {
-      board: board ?? {
-        id: boardId,
-        title: 'Untitled Board',
-        ownerId: '',
-        collaborators: [],
-        createdAt: new Date(0).toISOString(),
-        updatedAt: new Date(0).toISOString(),
-      },
-      objects,
-      users: [],
-    });
+    const fallbackBoard = {
+      id: boardId,
+      title: 'Untitled Board',
+      ownerId: '',
+      collaborators: [],
+      createdAt: new Date(0).toISOString(),
+      updatedAt: new Date(0).toISOString(),
+    };
+
+    if (!isValidObjectId(boardId)) {
+      socket.emit('board:load', {
+        board: fallbackBoard,
+        objects: [],
+        users: [],
+      });
+      return;
+    }
+
+    try {
+      const [board, objects] = await Promise.all([
+        boardRepo.findBoardById(boardId),
+        boardRepo.findObjectsByBoard(boardId),
+      ]);
+      socket.emit('board:load', {
+        board: board ?? fallbackBoard,
+        objects,
+        users: [],
+      });
+    } catch (err) {
+      logger.warn('Board load failed, sending fallback', {
+        socketId: socket.id,
+        boardId,
+        error: err instanceof Error ? err.message : String(err),
+      });
+      socket.emit('board:load', {
+        board: fallbackBoard,
+        objects: [],
+        users: [],
+      });
+    }
   });
 
   socket.on('board:leave', (payload: unknown) => {

@@ -13,6 +13,7 @@ export function useBoardRoom(boardId: string): void {
 
   useEffect(() => {
     if (!socket || !boardId) {
+      boardStore.getState().setBoardLoadStatus('idle');
       return;
     }
 
@@ -36,6 +37,7 @@ export function useBoardRoom(boardId: string): void {
       socket.off('board:load', onBoardLoad);
       socket.off('connect', onConnect);
       socket.emit('board:leave', { boardId });
+      boardStore.getState().setBoardLoadStatus('idle');
     };
   }, [socket, boardId]);
 }

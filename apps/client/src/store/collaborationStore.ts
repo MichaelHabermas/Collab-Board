@@ -1,4 +1,5 @@
 import { create } from 'zustand';
+import { useShallow } from 'zustand/shallow';
 import type { UserPresence } from '@collab-board/shared-types';
 
 interface ICollaborationState {
@@ -42,5 +43,5 @@ export function useOnlineUsers(): Map<string, UserPresence> {
 }
 
 export function useOnlineUsersList(): UserPresence[] {
-  return collaborationStore((state) => Array.from(state.onlineUsers.values()));
+  return collaborationStore(useShallow((state) => Array.from(state.onlineUsers.values())));
 }

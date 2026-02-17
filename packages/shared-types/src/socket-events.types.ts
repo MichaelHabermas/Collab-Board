@@ -97,5 +97,5 @@ export interface ServerToClientEvents {
   'object:updated': (payload: ObjectUpdatedPayload) => void;
   'object:deleted': (payload: ObjectDeletedPayload) => void;
   'ai:result': (payload: AIResultPayload) => void;
-  'error': (payload: ErrorPayload) => void;
+  error: (payload: ErrorPayload) => void;
 }

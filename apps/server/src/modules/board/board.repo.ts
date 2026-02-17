@@ -30,19 +30,58 @@ const toObjectEntity = (doc: InstanceType<typeof BoardObjectModel>): BoardObject
 
   switch (doc.type) {
     case 'sticky_note':
-      return { ...base, type: 'sticky_note', content: doc.content ?? '', fontSize: doc.fontSize ?? 14 };
+      return {
+        ...base,
+        type: 'sticky_note',
+        content: doc.content ?? '',
+        fontSize: doc.fontSize ?? 14,
+      };
     case 'rectangle':
-      return { ...base, type: 'rectangle', strokeColor: doc.strokeColor ?? '#000000', strokeWidth: doc.strokeWidth ?? 1, fillOpacity: doc.fillOpacity ?? 1 };
+      return {
+        ...base,
+        type: 'rectangle',
+        strokeColor: doc.strokeColor ?? '#000000',
+        strokeWidth: doc.strokeWidth ?? 1,
+        fillOpacity: doc.fillOpacity ?? 1,
+      };
     case 'circle':
-      return { ...base, type: 'circle', radius: doc.radius ?? 50, strokeColor: doc.strokeColor ?? '#000000', strokeWidth: doc.strokeWidth ?? 1, fillOpacity: doc.fillOpacity ?? 1 };
+      return {
+        ...base,
+        type: 'circle',
+        radius: doc.radius ?? 50,
+        strokeColor: doc.strokeColor ?? '#000000',
+        strokeWidth: doc.strokeWidth ?? 1,
+        fillOpacity: doc.fillOpacity ?? 1,
+      };
     case 'line':
-      return { ...base, type: 'line', points: doc.points ?? [], strokeColor: doc.strokeColor ?? '#000000', strokeWidth: doc.strokeWidth ?? 1 };
+      return {
+        ...base,
+        type: 'line',
+        points: doc.points ?? [],
+        strokeColor: doc.strokeColor ?? '#000000',
+        strokeWidth: doc.strokeWidth ?? 1,
+      };
     case 'frame':
       return { ...base, type: 'frame', label: doc.label ?? '', childIds: doc.childIds ?? [] };
     case 'connector':
-      return { ...base, type: 'connector', sourceId: doc.sourceId ?? '', targetId: doc.targetId ?? '', points: doc.points ?? [], strokeColor: doc.strokeColor ?? '#000000', strokeWidth: doc.strokeWidth ?? 1 };
+      return {
+        ...base,
+        type: 'connector',
+        sourceId: doc.sourceId ?? '',
+        targetId: doc.targetId ?? '',
+        points: doc.points ?? [],
+        strokeColor: doc.strokeColor ?? '#000000',
+        strokeWidth: doc.strokeWidth ?? 1,
+      };
     case 'text':
-      return { ...base, type: 'text', content: doc.content ?? '', fontSize: doc.fontSize ?? 14, fontWeight: doc.fontWeight ?? 'normal', textAlign: doc.textAlign ?? 'left' };
+      return {
+        ...base,
+        type: 'text',
+        content: doc.content ?? '',
+        fontSize: doc.fontSize ?? 14,
+        fontWeight: doc.fontWeight ?? 'normal',
+        textAlign: doc.textAlign ?? 'left',
+      };
     default:
       return { ...base, type: 'sticky_note', content: '', fontSize: 14 };
   }

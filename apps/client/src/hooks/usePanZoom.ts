@@ -9,10 +9,7 @@ export interface IStagePosition {
   y: number;
 }
 
-function distance(
-  a: { x: number; y: number },
-  b: { x: number; y: number }
-): number {
+function distance(a: { x: number; y: number }, b: { x: number; y: number }): number {
   return Math.hypot(b.x - a.x, b.y - a.y);
 }
 
@@ -63,10 +60,7 @@ export function usePanZoom(): {
       };
       const direction = e.deltaY > 0 ? 1 : -1;
       const scaleFactor = direction > 0 ? 1 / SCALE_BY : SCALE_BY;
-      const newScale = Math.min(
-        MAX_SCALE,
-        Math.max(MIN_SCALE, stageScale * scaleFactor)
-      );
+      const newScale = Math.min(MAX_SCALE, Math.max(MIN_SCALE, stageScale * scaleFactor));
       const contentX = (pointer.x - stagePosition.x) / stageScale;
       const contentY = (pointer.y - stagePosition.y) / stageScale;
       setStagePosition({
@@ -78,12 +72,9 @@ export function usePanZoom(): {
     [stagePosition, stageScale]
   );
 
-  const handleStageDragEnd = useCallback(
-    (e: { target: { x: () => number; y: () => number } }) => {
-      setStagePosition({ x: e.target.x(), y: e.target.y() });
-    },
-    []
-  );
+  const handleStageDragEnd = useCallback((e: { target: { x: () => number; y: () => number } }) => {
+    setStagePosition({ x: e.target.x(), y: e.target.y() });
+  }, []);
 
   const getTouchPoint = useCallback((touch: React.Touch, rect: DOMRect) => {
     return { x: touch.clientX - rect.left, y: touch.clientY - rect.top };
@@ -122,10 +113,7 @@ export function usePanZoom(): {
       const scaleRatio = newDistance / pinchStartRef.current.distance;
       const pos = lastPositionRef.current;
       const scale = lastScaleRef.current;
-      const newScale = Math.min(
-        MAX_SCALE,
-        Math.max(MIN_SCALE, scale * scaleRatio)
-      );
+      const newScale = Math.min(MAX_SCALE, Math.max(MIN_SCALE, scale * scaleRatio));
       const newPos = zoomTowardPoint(center, pos, scale, newScale);
       setStagePosition(newPos);
       setStageScale(newScale);

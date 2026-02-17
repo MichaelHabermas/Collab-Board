@@ -21,7 +21,15 @@
       "Bash(dpkg:*)",
       "Bash(npm --version:*)",
       "Bash(node --version:*)",
-      "Bash(npm install:*)"
+      "Bash(npm install:*)",
+      "Bash(git merge:*)",
+      "Bash(git stash:*)",
+      "Bash(echo:*)",
+      "Bash(ss:*)",
+      "Bash(netstat:*)",
+      "Bash(node:*)",
+      "Bash(wget:*)",
+      "Bash(kill:*)"
     ]
   }
 }

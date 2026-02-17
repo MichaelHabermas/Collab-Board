@@ -27,6 +27,7 @@ function midpoint(
 export function usePanZoom(): {
   stagePosition: IStagePosition;
   stageScale: number;
+  setStagePosition: React.Dispatch<React.SetStateAction<IStagePosition>>;
   handleWheel: (e: React.WheelEvent<HTMLDivElement>) => void;
   handleStageDragEnd: (e: { target: { x: () => number; y: () => number } }) => void;
   handleTouchStart: (e: React.TouchEvent<HTMLDivElement>) => void;
@@ -125,6 +126,7 @@ export function usePanZoom(): {
   return {
     stagePosition,
     stageScale,
+    setStagePosition,
     handleWheel,
     handleStageDragEnd,
     handleTouchStart,

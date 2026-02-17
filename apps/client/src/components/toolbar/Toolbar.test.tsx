@@ -12,6 +12,7 @@ describe('Toolbar', () => {
     render(<Toolbar />);
     expect(screen.getByTestId('toolbar')).toBeInTheDocument();
     expect(screen.getByRole('button', { name: /select/i })).toBeInTheDocument();
+    expect(screen.getByRole('button', { name: /^pan$/i })).toBeInTheDocument();
     expect(screen.getByRole('button', { name: /sticky note/i })).toBeInTheDocument();
     expect(screen.getByRole('button', { name: /rectangle/i })).toBeInTheDocument();
     expect(screen.getByRole('button', { name: /circle/i })).toBeInTheDocument();

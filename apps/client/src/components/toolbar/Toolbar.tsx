@@ -1,6 +1,6 @@
 import type { ReactElement } from 'react';
 import { memo, useEffect } from 'react';
-import { MousePointer, StickyNote, Square, Circle, Minus } from 'lucide-react';
+import { MousePointer, Hand, StickyNote, Square, Circle, Minus } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { ColorPicker } from '@/components/objects/ColorPicker';
 import {
@@ -14,6 +14,7 @@ import { cn } from '@/lib/utils';
 
 const TOOLS: { tool: ActiveToolType; icon: ReactElement; label: string }[] = [
   { tool: 'select', icon: <MousePointer aria-hidden />, label: 'Select' },
+  { tool: 'pan', icon: <Hand aria-hidden />, label: 'Pan' },
   { tool: 'sticky_note', icon: <StickyNote aria-hidden />, label: 'Sticky note' },
   { tool: 'rectangle', icon: <Square aria-hidden />, label: 'Rectangle' },
   { tool: 'circle', icon: <Circle aria-hidden />, label: 'Circle' },
@@ -22,6 +23,7 @@ const TOOLS: { tool: ActiveToolType; icon: ReactElement; label: string }[] = [
 
 const CURSOR_BY_TOOL: Record<ActiveToolType, string> = {
   select: 'default',
+  pan: 'grab',
   sticky_note: 'crosshair',
   rectangle: 'crosshair',
   circle: 'crosshair',

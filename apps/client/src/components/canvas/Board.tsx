@@ -11,7 +11,7 @@ import { CursorOverlay } from './CursorOverlay';
 import { GridBackground } from './GridBackground';
 import { BoardObjectsLayer } from '@/components/objects/BoardObjectsLayer';
 import { StickyNoteTextEdit } from '@/components/objects/StickyNoteTextEdit';
-import { boardStore, useObject, useSelectedObjectIds } from '@/store/boardStore';
+import { boardStore, useObject, useSelectedObjectIds, useActiveToolType } from '@/store/boardStore';
 import { authStore } from '@/store/authStore';
 import {
   createStickyNote,
@@ -31,12 +31,14 @@ export const Board = (): ReactElement => {
   const {
     stagePosition,
     stageScale,
+    setStagePosition,
     handleWheel,
     handleStageDragEnd,
     handleTouchStart,
     handleTouchMove,
     containerRef,
   } = usePanZoom();
+  const activeToolType = useActiveToolType();
   const { width, height } = useContainerSize(containerRef);
   const [editingStickyId, setEditingStickyId] = useState<string | null>(null);
   const editingSticky = useObject(editingStickyId ?? '') as StickyNote | undefined;
@@ -49,6 +51,10 @@ export const Board = (): ReactElement => {
   const selectionRef = useRef<Konva.Layer>(null);
   const dragStartRef = useRef<{ x: number; y: number } | null>(null);
   const selectionStartRef = useRef<{ x: number; y: number } | null>(null);
+  const middlePanStartRef = useRef<{
+    pointer: { x: number; y: number };
+    stagePosition: { x: number; y: number };
+  } | null>(null);
   const [selectionRect, setSelectionRect] = useState<{
     x: number;
     y: number;
@@ -137,14 +143,27 @@ export const Board = (): ReactElement => {
         getStage: () => { getPointerPosition: () => { x: number; y: number } | null } | null;
         getType?: () => string;
       };
+      evt?: MouseEvent;
     }) => {
       const stage = e.target.getStage();
       if (!stage) return;
       const pos = stage.getPointerPosition();
       if (!pos) return;
-      dragStartRef.current = { x: pos.x, y: pos.y };
+      const button = e.evt?.button ?? 0;
       const isEmptyArea = (e.target as unknown) === stage || e.target.getType?.() === 'Layer';
       const tool = boardStore.getState().activeToolType;
+
+      if (button === 1) {
+        middlePanStartRef.current = {
+          pointer: { x: pos.x, y: pos.y },
+          stagePosition: { ...stagePosition },
+        };
+        return;
+      }
+
+      if (button !== 0) return;
+
+      dragStartRef.current = { x: pos.x, y: pos.y };
       if (isEmptyArea && tool === 'select') {
         const boardX = (pos.x - stagePosition.x) / stageScale;
         const boardY = (pos.y - stagePosition.y) / stageScale;
@@ -165,6 +184,18 @@ export const Board = (): ReactElement => {
       if (!stage) return;
       const pos = stage.getPointerPosition();
       if (!pos) return;
+
+      if (middlePanStartRef.current) {
+        const start = middlePanStartRef.current;
+        const dx = pos.x - start.pointer.x;
+        const dy = pos.y - start.pointer.y;
+        setStagePosition({
+          x: start.stagePosition.x + dx,
+          y: start.stagePosition.y + dy,
+        });
+        return;
+      }
+
       const boardX = (pos.x - stagePosition.x) / stageScale;
       const boardY = (pos.y - stagePosition.y) / stageScale;
       handleCursorMove(boardX, boardY);
@@ -176,7 +207,7 @@ export const Board = (): ReactElement => {
       const height = Math.abs(boardY - start.y);
       setSelectionRect({ x, y, width, height });
     },
-    [handleCursorMove, selectionRect, stagePosition, stageScale]
+    [handleCursorMove, selectionRect, stagePosition, stageScale, setStagePosition]
   );
 
   const handleStageMouseUp = useCallback(
@@ -185,7 +216,15 @@ export const Board = (): ReactElement => {
         getStage: () => { getPointerPosition: () => { x: number; y: number } | null } | null;
         getType?: () => string;
       };
+      evt?: MouseEvent;
     }) => {
+      const button = e.evt?.button ?? 0;
+      if (button === 1) {
+        middlePanStartRef.current = null;
+        return;
+      }
+      if (button !== 0) return;
+
       const stage = e.target.getStage();
       if (!stage) return;
       const isEmptyArea = (e.target as unknown) === stage || e.target.getType?.() === 'Layer';
@@ -256,6 +295,10 @@ export const Board = (): ReactElement => {
     [stagePosition, stageScale, selectionRect, socket]
   );
 
+  const handleStageMouseLeave = useCallback(() => {
+    middlePanStartRef.current = null;
+  }, []);
+
   return (
     <div
       ref={containerRef}
@@ -286,11 +329,13 @@ export const Board = (): ReactElement => {
         y={stagePosition.y}
         scaleX={stageScale}
         scaleY={stageScale}
-        draggable
+        draggable={activeToolType === 'pan'}
         onDragEnd={handleStageDragEnd}
         onMouseDown={handleStageMouseDown}
         onMouseMove={handleStageMouseMove}
         onMouseUp={handleStageMouseUp}
+        onMouseLeave={handleStageMouseLeave}
+        onContextMenu={(e) => e.evt?.preventDefault()}
         style={{ display: 'block' }}
       >
         <Layer ref={gridRef} data-testid='canvas-board-layer-grid' name='grid' listening={false}>

@@ -2,7 +2,7 @@ import { create } from 'zustand';
 import { useShallow } from 'zustand/shallow';
 import type { BoardObject, ObjectType } from '@collab-board/shared-types';
 
-export type ActiveToolType = 'select' | 'sticky_note' | 'rectangle' | 'circle' | 'line';
+export type ActiveToolType = 'select' | 'pan' | 'sticky_note' | 'rectangle' | 'circle' | 'line';
 
 export type BoardLoadStatus = 'idle' | 'loading' | 'loaded';
 

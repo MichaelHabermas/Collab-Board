@@ -2,12 +2,28 @@ import type { ReactNode } from 'react';
 import { render, screen } from '@testing-library/react';
 import { describe, it, expect, vi, beforeEach } from 'vitest';
 import { Board } from './Board';
+import { boardStore } from '@/store/boardStore';
 
 const mockWidth = 800;
 const mockHeight = 600;
 
+const mockSetStagePosition = vi.fn();
+
 vi.mock('@/hooks/useContainerSize', () => ({
   useContainerSize: () => ({ width: mockWidth, height: mockHeight }),
+}));
+
+vi.mock('@/hooks/usePanZoom', () => ({
+  usePanZoom: () => ({
+    stagePosition: { x: 0, y: 0 },
+    stageScale: 1,
+    setStagePosition: mockSetStagePosition,
+    handleWheel: vi.fn(),
+    handleStageDragEnd: vi.fn(),
+    handleTouchStart: vi.fn(),
+    handleTouchMove: vi.fn(),
+    containerRef: { current: null },
+  }),
 }));
 
 vi.mock('@/hooks/useCursorEmit', () => ({
@@ -32,14 +48,21 @@ vi.mock('react-konva', () => ({
     width,
     height,
     'data-testid': testId,
+    draggable,
     children,
   }: {
     width: number;
     height: number;
     'data-testid'?: string;
+    draggable?: boolean;
     children: ReactNode;
   }) => (
-    <div data-testid={testId ?? 'canvas-stage-mock'} data-width={width} data-height={height}>
+    <div
+      data-testid={testId ?? 'canvas-stage-mock'}
+      data-width={width}
+      data-height={height}
+      data-draggable={String(draggable ?? false)}
+    >
       {children}
     </div>
   ),
@@ -82,5 +105,19 @@ describe('Board', () => {
     render(<Board />);
     expect(screen.getByTestId('canvas-grid-horizontal')).toBeInTheDocument();
     expect(screen.getByTestId('canvas-grid-vertical')).toBeInTheDocument();
+  });
+
+  it('Stage is not draggable when select tool is active', () => {
+    boardStore.getState().setActiveTool('select');
+    render(<Board />);
+    const stage = screen.getByTestId('canvas-board-stage');
+    expect(stage).toHaveAttribute('data-draggable', 'false');
+  });
+
+  it('Stage is draggable when pan tool is active', () => {
+    boardStore.getState().setActiveTool('pan');
+    render(<Board />);
+    const stage = screen.getByTestId('canvas-board-stage');
+    expect(stage).toHaveAttribute('data-draggable', 'true');
   });
 });

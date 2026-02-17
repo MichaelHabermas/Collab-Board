@@ -337,7 +337,7 @@ Everything below through Epic 8 must be functional at the 24-hour MVP gate.
 
 **User stories:** US-1.1 (Initialize monorepo), US-1.2 (Deploy skeleton to Render).
 
-- [ ] Epic 2 complete (all features below merged to `development`)
+- [x] Epic 2 complete (all features below merged to `development`)
 
 #### Feature Map
 
@@ -354,56 +354,56 @@ Everything below through Epic 8 must be functional at the 24-hour MVP gate.
 - **PR:** `Infra: Bun monorepo with client/server workspaces`
 - **Branch:** `feature/monorepo-workspace-setup`
 - **SOLID:** SRP — separate workspaces per concern; DIP — shared-types as abstraction boundary
-- [ ] Feature F2.1 complete (merged to `development`)
+- [x] Feature F2.1 complete (merged to `development`)
 
 #### Acceptance Criteria
 
-- [ ] `bun install` succeeds at root
-- [ ] `apps/client/` contains the existing React + Vite app (migrated from `src/`)
-- [ ] `apps/server/` contains a new Express project stub
-- [ ] `packages/shared-types/` is importable from both client and server
-- [ ] Root `package.json` defines Bun workspaces
-- [ ] TypeScript strict mode enabled across all workspaces
+- [x] `bun install` succeeds at root
+- [x] `apps/client/` contains the existing React + Vite app (migrated from `src/`)
+- [x] `apps/server/` contains a new Express project stub
+- [x] `packages/shared-types/` is importable from both client and server
+- [x] Root `package.json` defines Bun workspaces
+- [x] TypeScript strict mode enabled across all workspaces
 
 #### Implementation Checklist
 
-- [ ] Branch created from `development`
+- [x] Branch created from `development`
 
 **Commit 1: Create workspace structure and root config**
 
-- [ ] `chore(infra): create bun monorepo workspace structure`
-- [ ] Subtasks:
-  - [ ] Create `apps/client/`, `apps/server/`, `packages/shared-types/` directories
-  - [ ] Add root `package.json` with `workspaces: ["apps/*", "packages/*"]`
-  - [ ] Add root `tsconfig.json` with project references
-  - [ ] Configure root ESLint flat config extending to workspaces
+- [x] `chore(infra): create bun monorepo workspace structure`
+- [x] Subtasks:
+  - [x] Create `apps/client/`, `apps/server/`, `packages/shared-types/` directories
+  - [x] Add root `package.json` with `workspaces: ["apps/*", "packages/*"]`
+  - [x] Add root `tsconfig.json` with project references
+  - [x] Configure root ESLint flat config extending to workspaces
 
 **Commit 2: Migrate existing app to apps/client**
 
-- [ ] `refactor(client): migrate react app to apps/client workspace`
-- [ ] Subtasks:
-  - [ ] Move `src/`, `index.html`, `vite.config.ts`, `tsconfig.json` to `apps/client/`
-  - [ ] Update import paths and `@` alias to work from new location
-  - [ ] Add `apps/client/package.json` with client-specific deps
-  - [ ] Verify `bun run dev` still works from `apps/client/`
+- [x] `refactor(client): migrate react app to apps/client workspace`
+- [x] Subtasks:
+  - [x] Move `src/`, `index.html`, `vite.config.ts`, `tsconfig.json` to `apps/client/`
+  - [x] Update import paths and `@` alias to work from new location
+  - [x] Add `apps/client/package.json` with client-specific deps
+  - [x] Verify `bun run dev` still works from `apps/client/`
 
 **Commit 3: Scaffold apps/server workspace**
 
-- [ ] `chore(server): scaffold express server workspace`
-- [ ] Subtasks:
-  - [ ] Create `apps/server/package.json` with Express, Socket.io, Mongoose, Zod deps
-  - [ ] Create `apps/server/tsconfig.json` extending root
-  - [ ] Create `apps/server/src/server.ts` (entry point stub)
-  - [ ] Create `apps/server/src/app.ts` (Express app setup)
+- [x] `chore(server): scaffold express server workspace`
+- [x] Subtasks:
+  - [x] Create `apps/server/package.json` with Express, Socket.io, Mongoose, Zod deps
+  - [x] Create `apps/server/tsconfig.json` extending root
+  - [x] Create `apps/server/src/server.ts` (entry point stub)
+  - [x] Create `apps/server/src/app.ts` (Express app setup)
 
 **Commit 4: Verify monorepo and merge**
 
-- [ ] `test(infra): verify monorepo setup and merge`
-- [ ] Subtasks:
-  - [ ] Run `bun install` at root (succeeds)
-  - [ ] Run `bun run typecheck` across workspaces
-  - [ ] Run `bun run test:run` in client workspace
-  - [ ] Merge feature branch into `development`
+- [x] `test(infra): verify monorepo setup and merge`
+- [x] Subtasks:
+  - [x] Run `bun install` at root (succeeds)
+  - [x] Run `bun run typecheck` across workspaces
+  - [x] Run `bun run test:run` in client workspace
+  - [x] Merge feature branch into `development`
 
 ---
 
@@ -412,53 +412,53 @@ Everything below through Epic 8 must be functional at the 24-hour MVP gate.
 - **PR:** `Backend: Express server with health check and static serving`
 - **Branch:** `feature/express-server-skeleton`
 - **SOLID:** SRP — server entry separate from app config separate from route definitions
-- [ ] Feature F2.2 complete (merged to `development`)
+- [x] Feature F2.2 complete (merged to `development`)
 
 #### Acceptance Criteria
 
-- [ ] `bun run dev` in server starts Express on configurable port
-- [ ] `GET /api/health` returns `{ status: "ok" }`
-- [ ] Express serves static files from client build output
-- [ ] Socket.io server initializes and accepts connections
-- [ ] CORS configured for development
+- [x] `bun run dev` in server starts Express on configurable port
+- [x] `GET /api/health` returns `{ status: "ok" }`
+- [x] Express serves static files from client build output
+- [x] Socket.io server initializes and accepts connections
+- [x] CORS configured for development
 
 #### Implementation Checklist
 
-- [ ] Branch created from `development`
+- [x] Branch created from `development`
 
 **Commit 1: Express app and health endpoint**
 
-- [ ] `feat(server): add express app with health endpoint`
-- [ ] Subtasks:
-  - [ ] Create `apps/server/src/app.ts` with Express middleware (json, cors, static)
-  - [ ] Create `apps/server/src/routes/health.routes.ts` with `/api/health`
-  - [ ] Add Zod validation middleware pattern
+- [x] `feat(server): add express app with health endpoint`
+- [x] Subtasks:
+  - [x] Create `apps/server/src/app.ts` with Express middleware (json, cors, static)
+  - [x] Create `apps/server/src/routes/health.routes.ts` with `/api/health`
+  - [x] Add Zod validation middleware pattern
 
 **Commit 2: Socket.io server initialization**
 
-- [ ] `feat(server): initialize socket.io server`
-- [ ] Subtasks:
-  - [ ] Create `apps/server/src/server.ts` with HTTP + Socket.io setup
-  - [ ] Configure Socket.io with CORS for development
-  - [ ] Add connection logging (removable before merge)
-  - [ ] Add `dev` script to `apps/server/package.json`
+- [x] `feat(server): initialize socket.io server`
+- [x] Subtasks:
+  - [x] Create `apps/server/src/server.ts` with HTTP + Socket.io setup
+  - [x] Configure Socket.io with CORS for development
+  - [x] Add connection logging (removable before merge)
+  - [x] Add `dev` script to `apps/server/package.json`
 
 **Commit 3: Static file serving and concurrent dev**
 
-- [ ] `chore(server): add static serving and concurrent dev scripts`
-- [ ] Subtasks:
-  - [ ] Configure Express to serve `apps/client/dist/` in production
-  - [ ] Add root `dev` script that runs client + server concurrently
-  - [ ] Add root `build` script that builds client then starts server
+- [x] `chore(server): add static serving and concurrent dev scripts`
+- [x] Subtasks:
+  - [x] Configure Express to serve `apps/client/dist/` in production
+  - [x] Add root `dev` script that runs client + server concurrently
+  - [x] Add root `build` script that builds client then starts server
 
 **Commit 4: Verify server and merge**
 
-- [ ] `test(server): verify server starts and merge`
-- [ ] Subtasks:
-  - [ ] Verify health endpoint returns 200
-  - [ ] Verify Socket.io accepts a test connection
-  - [ ] Run `bun run typecheck` (green)
-  - [ ] Merge feature branch into `development`
+- [x] `test(server): verify server starts and merge`
+- [x] Subtasks:
+  - [x] Verify health endpoint returns 200
+  - [x] Verify Socket.io accepts a test connection
+  - [x] Run `bun run typecheck` (green)
+  - [x] Merge feature branch into `development`
 
 ---
 
@@ -467,53 +467,53 @@ Everything below through Epic 8 must be functional at the 24-hour MVP gate.
 - **PR:** `Data: MongoDB Atlas connection and Mongoose models`
 - **Branch:** `feature/mongodb-connection-and-models`
 - **SOLID:** DIP — StorageAdapter interface with MongoDB implementation; SRP — models separate from repository
-- [ ] Feature F2.3 complete (merged to `development`)
+- [x] Feature F2.3 complete (merged to `development`)
 
 #### Acceptance Criteria
 
-- [ ] Mongoose connects to MongoDB Atlas (URI from env var)
-- [ ] `Board` and `BoardObject` Mongoose schemas defined
-- [ ] `BoardRepository` implements `StorageAdapter` interface
-- [ ] Indexes on `objects.boardId`, `boards.ownerId`, `boards.collaborators`
-- [ ] Connection error handling with graceful retry
+- [x] Mongoose connects to MongoDB Atlas (URI from env var)
+- [x] `Board` and `BoardObject` Mongoose schemas defined
+- [x] `BoardRepository` implements `StorageAdapter` interface
+- [x] Indexes on `objects.boardId`, `boards.ownerId`, `boards.collaborators`
+- [x] Connection error handling with graceful retry
 
 #### Implementation Checklist
 
-- [ ] Branch created from `development`
+- [x] Branch created from `development`
 
 **Commit 1: StorageAdapter interface and MongoDB connection**
 
-- [ ] `feat(data): add storage adapter interface and mongodb connection`
-- [ ] Subtasks:
-  - [ ] Create `apps/server/src/shared/interfaces/storage-adapter.ts`
-  - [ ] Create `apps/server/src/modules/board/db.ts` with Mongoose connection logic
-  - [ ] Add `MONGODB_URI` to `.env.example`
-  - [ ] Add dotenv or equivalent env loading
+- [x] `feat(data): add storage adapter interface and mongodb connection`
+- [x] Subtasks:
+  - [x] Create `apps/server/src/shared/interfaces/storage-adapter.ts`
+  - [x] Create `apps/server/src/modules/board/db.ts` with Mongoose connection logic
+  - [x] Add `MONGODB_URI` to `.env.example`
+  - [x] Add dotenv or equivalent env loading
 
 **Commit 2: Board and BoardObject Mongoose models**
 
-- [ ] `feat(data): add board and board-object mongoose models`
-- [ ] Subtasks:
-  - [ ] Create `apps/server/src/modules/board/board.model.ts` (Board schema)
-  - [ ] Create `apps/server/src/modules/board/object.model.ts` (BoardObject schema with discriminated `type`)
-  - [ ] Add indexes: `boardId` on objects, `ownerId` and `collaborators` on boards
-  - [ ] Add Zod schemas for input validation
+- [x] `feat(data): add board and board-object mongoose models`
+- [x] Subtasks:
+  - [x] Create `apps/server/src/modules/board/board.model.ts` (Board schema)
+  - [x] Create `apps/server/src/modules/board/object.model.ts` (BoardObject schema with discriminated `type`)
+  - [x] Add indexes: `boardId` on objects, `ownerId` and `collaborators` on boards
+  - [x] Add Zod schemas for input validation
 
 **Commit 3: BoardRepository implementation**
 
-- [ ] `feat(data): implement board repository with storage adapter`
-- [ ] Subtasks:
-  - [ ] Create `apps/server/src/modules/board/board.repo.ts` implementing `StorageAdapter`
-  - [ ] Methods: `findObjectsByBoard`, `createObject`, `updateObject`, `deleteObject`
-  - [ ] Add board CRUD methods: `createBoard`, `findBoardById`, `findBoardsByUser`
+- [x] `feat(data): implement board repository with storage adapter`
+- [x] Subtasks:
+  - [x] Create `apps/server/src/modules/board/board.repo.ts` implementing `StorageAdapter`
+  - [x] Methods: `findObjectsByBoard`, `createObject`, `updateObject`, `deleteObject`
+  - [x] Add board CRUD methods: `createBoard`, `findBoardById`, `findBoardsByUser`
 
 **Commit 4: Verify connection and merge**
 
-- [ ] `test(data): verify mongodb connection and merge`
-- [ ] Subtasks:
-  - [ ] Add a startup log confirming MongoDB connection
-  - [ ] Run `bun run typecheck` (green)
-  - [ ] Merge feature branch into `development`
+- [x] `test(data): verify mongodb connection and merge`
+- [x] Subtasks:
+  - [x] Add a startup log confirming MongoDB connection
+  - [x] Run `bun run typecheck` (green)
+  - [x] Merge feature branch into `development`
 
 ---
 
@@ -522,45 +522,45 @@ Everything below through Epic 8 must be functional at the 24-hour MVP gate.
 - **PR:** `Types: shared-types package for client/server`
 - **Branch:** `feature/shared-types-package`
 - **SOLID:** ISP — separate type files per domain; LSP — BoardObject base with subtypes
-- [ ] Feature F2.4 complete (merged to `development`)
+- [x] Feature F2.4 complete (merged to `development`)
 
 #### Acceptance Criteria
 
-- [ ] `packages/shared-types/` exports all shared interfaces
-- [ ] `BoardObject` interface with discriminated union for object types
-- [ ] Socket event payload types for all event categories
-- [ ] AI command types for tool definitions
-- [ ] Importable from both client and server via workspace reference
+- [x] `packages/shared-types/` exports all shared interfaces
+- [x] `BoardObject` interface with discriminated union for object types
+- [x] Socket event payload types for all event categories
+- [x] AI command types for tool definitions
+- [x] Importable from both client and server via workspace reference
 
 #### Implementation Checklist
 
-- [ ] Branch created from `development`
+- [x] Branch created from `development`
 
 **Commit 1: BoardObject types and discriminated unions**
 
-- [ ] `feat(types): add board object types with discriminated unions`
-- [ ] Subtasks:
-  - [ ] Create `packages/shared-types/src/board-object.types.ts`
-  - [ ] Define `BoardObject` base interface (id, boardId, type, x, y, width, height, etc.)
-  - [ ] Define subtypes: StickyNote, RectangleShape, CircleShape, LineShape, Frame, Connector, TextElement
-  - [ ] Define `ObjectType` enum/union
+- [x] `feat(types): add board object types with discriminated unions`
+- [x] Subtasks:
+  - [x] Create `packages/shared-types/src/board-object.types.ts`
+  - [x] Define `BoardObject` base interface (id, boardId, type, x, y, width, height, etc.)
+  - [x] Define subtypes: StickyNote, RectangleShape, CircleShape, LineShape, Frame, Connector, TextElement
+  - [x] Define `ObjectType` enum/union
 
 **Commit 2: Socket event and AI command types**
 
-- [ ] `feat(types): add socket event and ai command types`
-- [ ] Subtasks:
-  - [ ] Create `packages/shared-types/src/socket-events.types.ts` (cursor, object, presence, AI event payloads)
-  - [ ] Create `packages/shared-types/src/ai-command.types.ts` (tool definitions, tool call results)
-  - [ ] Create `packages/shared-types/src/index.ts` barrel export
+- [x] `feat(types): add socket event and ai command types`
+- [x] Subtasks:
+  - [x] Create `packages/shared-types/src/socket-events.types.ts` (cursor, object, presence, AI event payloads)
+  - [x] Create `packages/shared-types/src/ai-command.types.ts` (tool definitions, tool call results)
+  - [x] Create `packages/shared-types/src/index.ts` barrel export
 
 **Commit 3: Verify imports and merge**
 
-- [ ] `test(types): verify cross-workspace imports and merge`
-- [ ] Subtasks:
-  - [ ] Import shared types in a client file (verify builds)
-  - [ ] Import shared types in a server file (verify builds)
-  - [ ] Run `bun run typecheck` (green)
-  - [ ] Merge feature branch into `development`
+- [x] `test(types): verify cross-workspace imports and merge`
+- [x] Subtasks:
+  - [x] Import shared types in a client file (verify builds)
+  - [x] Import shared types in a server file (verify builds)
+  - [x] Run `bun run typecheck` (green)
+  - [x] Merge feature branch into `development`
 
 ---
 
@@ -568,45 +568,45 @@ Everything below through Epic 8 must be functional at the 24-hour MVP gate.
 
 - **PR:** `Deploy: Render deployment with build scripts`
 - **Branch:** `feature/render-deployment-pipeline`
-- [ ] Feature F2.5 complete (merged to `development`)
+- [x] Feature F2.5 complete (merged to `development`)
 
 #### Acceptance Criteria
 
-- [ ] Git push to `main` triggers auto-deploy on Render
-- [ ] Build completes in under 60 seconds
-- [ ] Static files served from Express at root URL
-- [ ] Health check endpoint accessible at production URL
-- [ ] Environment variables configured (MONGODB_URI, CLERK keys, PORT)
+- [x] Git push to `main` triggers auto-deploy on Render
+- [x] Build completes in under 60 seconds
+- [x] Static files served from Express at root URL
+- [x] Health check endpoint accessible at production URL
+- [x] Environment variables configured (MONGODB_URI, CLERK keys, PORT)
 
 #### Implementation Checklist
 
-- [ ] Branch created from `development`
+- [x] Branch created from `development`
 
 **Commit 1: Production build scripts**
 
-- [ ] `chore(deploy): add production build scripts`
-- [ ] Subtasks:
-  - [ ] Add root `build` script: builds client (Vite) then compiles server
-  - [ ] Add root `start` script: runs compiled server with static serving
-  - [ ] Add `render.yaml` or configure Render dashboard settings
-  - [ ] Create `.env.example` with all required env vars
+- [x] `chore(deploy): add production build scripts`
+- [x] Subtasks:
+  - [x] Add root `build` script: builds client (Vite) then compiles server
+  - [x] Add root `start` script: runs compiled server with static serving
+  - [x] Add `render.yaml` or configure Render dashboard settings
+  - [x] Create `.env.example` with all required env vars
 
 **Commit 2: Environment and deploy config**
 
-- [ ] `chore(deploy): configure render environment`
-- [ ] Subtasks:
-  - [ ] Document Render environment variable setup
-  - [ ] Add `NODE_ENV=production` handling in server
-  - [ ] Verify CORS restricts to production domain in production mode
+- [x] `chore(deploy): configure render environment`
+- [x] Subtasks:
+  - [x] Document Render environment variable setup
+  - [x] Add `NODE_ENV=production` handling in server
+  - [x] Verify CORS restricts to production domain in production mode
 
 **Commit 3: Verify deployment and merge**
 
-- [ ] `test(deploy): verify deployment pipeline and merge`
-- [ ] Subtasks:
-  - [ ] Run `bun run build` locally (succeeds)
-  - [ ] Run `bun run start` locally (server starts, serves static files)
-  - [ ] Verify `/api/health` returns 200
-  - [ ] Merge feature branch into `development`
+- [x] `test(deploy): verify deployment pipeline and merge`
+- [x] Subtasks:
+  - [x] Run `bun run build` locally (succeeds)
+  - [x] Run `bun run start` locally (server starts, serves static files)
+  - [x] Verify `/api/health` returns 200
+  - [x] Merge feature branch into `development`
 
 ---
 

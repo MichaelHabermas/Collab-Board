@@ -1,7 +1,7 @@
 services:
   - type: web
     name: collab-board
-    runtime: node
+    runtime: bun
     plan: free
     buildCommand: bun install && bun run build
     startCommand: bun run --cwd apps/server start

@@ -2,6 +2,7 @@ import type { Socket } from 'socket.io';
 import { boardJoinSchema, boardLeaveSchema } from '../shared/validation/board.schemas';
 import type { IAuthenticatedSocket } from '../auth/socket-auth';
 import { logger } from '../shared/lib/logger';
+import type { BoardRepository } from '../modules/board/board.repo';
 
 const ROOM_PREFIX = 'board:';
 
@@ -10,10 +11,14 @@ function getRoomName(boardId: string): string {
 }
 
 /**
- * Registers board:join and board:leave handlers. Joins socket to room board:${boardId}; on leave, socket leaves the room.
+ * Registers board:join and board:leave handlers. Joins socket to room board:${boardId};
+ * on join, loads board and objects from DB and emits board:load to the joining socket.
  */
-export function registerRoomHandlers(socket: IAuthenticatedSocket): void {
-  socket.on('board:join', (payload: unknown) => {
+export function registerRoomHandlers(
+  socket: IAuthenticatedSocket,
+  boardRepo: BoardRepository
+): void {
+  socket.on('board:join', async (payload: unknown) => {
     const parsed = boardJoinSchema.safeParse(payload);
     if (!parsed.success) {
       logger.warn('Invalid board:join payload', {
@@ -30,6 +35,23 @@ export function registerRoomHandlers(socket: IAuthenticatedSocket): void {
       socketId: socket.id,
       room,
       userId: socket.data.user?.userId,
+    });
+
+    const [board, objects] = await Promise.all([
+      boardRepo.findBoardById(boardId),
+      boardRepo.findObjectsByBoard(boardId),
+    ]);
+    socket.emit('board:load', {
+      board: board ?? {
+        id: boardId,
+        title: 'Untitled Board',
+        ownerId: '',
+        collaborators: [],
+        createdAt: new Date(0).toISOString(),
+        updatedAt: new Date(0).toISOString(),
+      },
+      objects,
+      users: [],
     });
   });
 

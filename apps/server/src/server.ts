@@ -6,6 +6,7 @@ import type { IAuthenticatedSocket } from './auth/socket-auth';
 import { registerRoomHandlers } from './collaboration/room.handler';
 import { registerCursorHandlers } from './collaboration/cursor.handler';
 import { connectDatabase, disconnectDatabase } from './modules/board/db';
+import { BoardRepository } from './modules/board/board.repo';
 import { logger } from './shared/lib/logger';
 import type { ClientToServerEvents, ServerToClientEvents } from '@collab-board/shared-types';
 
@@ -23,11 +24,13 @@ const io = new Server<ClientToServerEvents, ServerToClientEvents>(httpServer, {
 
 io.use(socketAuthMiddleware);
 
+const boardRepo = new BoardRepository();
+
 io.on('connection', (socket: IAuthenticatedSocket) => {
   const user = socket.data.user;
   logger.info('Client connected', { socketId: socket.id, userId: user?.userId });
 
-  registerRoomHandlers(socket);
+  registerRoomHandlers(socket, boardRepo);
   registerCursorHandlers(socket);
 
   socket.on('disconnect', () => {

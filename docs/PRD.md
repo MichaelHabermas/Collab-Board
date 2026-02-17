@@ -1523,16 +1523,16 @@ Only begin post-MVP work after Epic 9 (MVP Hardening) is fully complete.
 #### Feature F9.6: MVP Requirements Checklist Sign-Off
 
 - **Branch:** `feature/mvp-checklist-signoff`
-- [ ] Feature F9.6 complete (merged to `development`)
+- [x] Feature F9.6 complete (merged to `development`)
 
 #### Acceptance Criteria
 
-- [ ] Every MVP hard gate requirement verified; performance verified; checkboxes in this PRD updated; sign-off merged
+- [x] Every MVP hard gate requirement verified; performance verified; checkboxes in this PRD updated; sign-off merged
 
 #### Implementation Checklist
 
-- [ ] Branch created from `development`
-- [ ] Commit 1: Walk through every requirement, verify, update PRD checkboxes, merge to development
+- [x] Branch created from `development`
+- [x] Commit 1: Walk through every requirement, verify, update PRD checkboxes, merge to development
 
 ---
 

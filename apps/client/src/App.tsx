@@ -4,6 +4,7 @@ import { useAuth } from '@clerk/clerk-react';
 import { AuthGuard } from '@/components/AuthGuard';
 import { AppLayout } from '@/components/AppLayout';
 import { InfiniteCanvas } from '@/components/canvas';
+import { Toolbar } from '@/components/toolbar';
 import { authStore } from '@/store/authStore';
 
 export const App = (): ReactElement => {
@@ -20,8 +21,11 @@ export const App = (): ReactElement => {
   return (
     <AuthGuard>
       <AppLayout>
-        <div data-testid='app-root' className='flex min-h-0 flex-1 flex-col'>
-          <InfiniteCanvas />
+        <div data-testid='app-root' className='flex min-h-0 flex-1 flex-row'>
+          <Toolbar />
+          <div className='min-h-0 min-w-0 flex-1'>
+            <InfiniteCanvas />
+          </div>
         </div>
       </AppLayout>
     </AuthGuard>

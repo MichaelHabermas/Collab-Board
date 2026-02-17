@@ -15,6 +15,6 @@
     "noFallthroughCasesInSwitch": true,
     "lib": ["ES2022"]
   },
-  "include": ["src"],
+  "include": ["src", "scripts"],
   "references": [{ "path": "../../packages/shared-types" }]
 }

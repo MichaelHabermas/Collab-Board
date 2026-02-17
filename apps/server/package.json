@@ -3,6 +3,7 @@
   "version": "0.1.0",
   "private": true,
   "scripts": {
+    "clear-board-objects": "bun run scripts/clear-board-objects.ts",
     "dev": "bun --watch src/server.ts",
     "start": "bun src/server.ts",
     "typecheck": "tsc --noEmit",
@@ -20,6 +21,7 @@
   "devDependencies": {
     "@types/cors": "^2.8.17",
     "@types/express": "^5.0.0",
+    "@types/node": "^25.2.3",
     "@types/supertest": "^6.0.3",
     "supertest": "^7.2.2",
     "vitest": "^4.0.18"

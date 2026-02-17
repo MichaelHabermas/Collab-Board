@@ -988,6 +988,7 @@ When the **select** tool is active:
 - **Single pointer down on an object**: That object becomes the only selected object (selection is committed on pointer down when the target is an object, not only on click). Shift+pointer down toggles that object in the selection.
 - **Click and drag on an object**: The object moves (drag-move). Because object position is controlled (x, y from store), the client must update the store on each drag move (`onDragMove`) so that re-renders do not reset the node position during drag. Position is persisted and synced (e.g. `object:move`) on drag end.
 - **Single pointer down on empty area**: Start the selection rectangle if the user drags; on release without drag, clear selection.
+- **Selection rectangle (marquee) on release**: When the user releases the mouse button after dragging the selection rectangle, the marquee must always be cleared and intersecting objects must be selected (if any), regardless of whether the pointer is over empty area or over an object. The marquee must not remain visible or “stuck” after release.
 - **Shift+click**: Toggle the object in the current selection (unchanged).
 - **Resize (circle/ellipse)**: When the user resizes a circle via the transformer, the shape’s width and height are updated and persisted so the rendered shape matches the transformer box. The shape can be resized non-uniformly to become an ellipse/oval (width and height may differ). Radius (or derived radius) is kept in sync for compatibility. The fill stays in sync with the selection bounds.
 - **Circle/ellipse hit area**: Selection and hit detection for circle (and ellipse) must be only on the shape (the circle/ellipse path), not on a rectangular bounding box; the hit area must not be offset or larger than the shape (e.g. a click outside the shape but inside the bounding box must not select the object).
@@ -1025,6 +1026,10 @@ Layer order must keep the objects layer above the selection layer so the object 
 - [x] Shift+click toggles object in selection
 - [x] Drag on empty canvas draws selection rectangle; release selects intersecting objects
 - [x] Selected objects show unified bounding box
+
+**Selection rectangle (marquee) behavior (verify when implemented):**
+
+- [ ] On release after dragging the marquee, the marquee is cleared and intersecting objects are selected whether the pointer is over empty area or over an object (no stuck marquee).
 
 #### Implementation Checklist
 

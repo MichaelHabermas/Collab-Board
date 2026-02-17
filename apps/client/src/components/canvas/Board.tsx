@@ -273,11 +273,7 @@ export const Board = (): ReactElement => {
 
       const stage = e.target.getStage();
       if (!stage) return;
-      const targetType = e.target.getType?.();
-      const isEmptyArea =
-        (e.target as unknown) === stage || targetType === 'Layer' || targetType === 'Stage';
-      if (!isEmptyArea) return;
-      const tool = boardStore.getState().activeToolType;
+
       if (selectionRect !== null) {
         const objects = boardStore.getState().objects;
         const ids = objects
@@ -297,6 +293,12 @@ export const Board = (): ReactElement => {
         selectionStartRef.current = null;
         return;
       }
+
+      const targetType = e.target.getType?.();
+      const isEmptyArea =
+        (e.target as unknown) === stage || targetType === 'Layer' || targetType === 'Stage';
+      if (!isEmptyArea) return;
+      const tool = boardStore.getState().activeToolType;
       if (tool === 'select') {
         boardStore.getState().deselectAll();
         return;
@@ -415,7 +417,8 @@ export const Board = (): ReactElement => {
         </Layer>
         <Layer ref={selectionRef} data-testid='canvas-board-layer-selection' name='selection'>
           {selectionRect && (
-            <Rect
+              <Rect
+              data-testid='canvas-selection-rect'
               x={selectionRect.x}
               y={selectionRect.y}
               width={selectionRect.width}

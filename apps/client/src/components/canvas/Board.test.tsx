@@ -56,12 +56,14 @@ vi.mock('react-konva', () => {
     };
     evt: MouseEvent;
   } {
+    const el = domEvt.target as HTMLElement | null;
+    const isObject = el?.closest?.('[data-testid^="object-"]');
     return {
       target: {
         getStage: () => ({
           getPointerPosition: () => ({ x: domEvt.clientX, y: domEvt.clientY }),
         }),
-        getType: () => 'Layer',
+        getType: () => (isObject ? 'Group' : 'Layer'),
       },
       evt: domEvt,
     };
@@ -74,6 +76,7 @@ vi.mock('react-konva', () => {
       draggable,
       onMouseDown,
       onMouseUp,
+      onMouseMove,
       onDragEnd,
       onDragMove: _onDragMove,
       children,
@@ -84,6 +87,7 @@ vi.mock('react-konva', () => {
       draggable?: boolean;
       onMouseDown?: (e: unknown) => void;
       onMouseUp?: (e: unknown) => void;
+      onMouseMove?: (e: unknown) => void;
       onDragEnd?: (e: { target: { getStage: () => unknown; x: () => number; y: () => number } }) => void;
       onDragMove?: (e: unknown) => void;
       children: ReactNode;
@@ -102,6 +106,7 @@ vi.mock('react-konva', () => {
           data-draggable={String(draggable ?? false)}
           onMouseDown={(e: React.MouseEvent) => onMouseDown?.(makeKonvaMouseEvent(e.nativeEvent))}
           onMouseUp={(e: React.MouseEvent) => onMouseUp?.(makeKonvaMouseEvent(e.nativeEvent))}
+          onMouseMove={(e: React.MouseEvent) => onMouseMove?.(makeKonvaMouseEvent(e.nativeEvent))}
         >
           {children}
           {onDragEnd && (
@@ -192,7 +197,8 @@ vi.mock('react-konva', () => {
     Circle: (): null => null,
     Ellipse: (): null => null,
     Transformer: (): null => null,
-    Rect: (): null => null,
+    Rect: (props: { 'data-testid'?: string }) =>
+      props['data-testid'] ? <div data-testid={props['data-testid']} /> : null,
     Text: (): null => null,
   };
 });
@@ -387,6 +393,24 @@ describe('Board', () => {
       fireEvent.mouseDown(stage, { clientX: 500, clientY: 500, button: 0 });
       fireEvent.mouseUp(stage, { clientX: 500, clientY: 500, button: 0 });
       expect(boardStore.getState().selectedObjectIds).toHaveLength(0);
+    });
+
+    it('clears marquee and selects intersecting objects when release is over an object', () => {
+      const sticky = createStickyNote('test-board', 10, 20, 'test-user');
+      boardStore.getState().clearBoard();
+      boardStore.getState().setObjects([sticky]);
+      boardStore.getState().setBoardMetadata('test-board', 'Test');
+      boardStore.getState().setActiveTool('select');
+      boardStore.getState().deselectAll();
+      render(<Board />);
+      const stage = screen.getByTestId('canvas-board-stage');
+      const stickyEl = screen.getByTestId(`object-sticky-${sticky.id}`);
+      fireEvent.mouseDown(stage, { clientX: 50, clientY: 50, button: 0 });
+      fireEvent.mouseMove(stage, { clientX: 100, clientY: 80 });
+      expect(screen.getByTestId('canvas-selection-rect')).toBeInTheDocument();
+      fireEvent.mouseUp(stickyEl, { clientX: 100, clientY: 80, button: 0 });
+      expect(boardStore.getState().selectedObjectIds).toContain(sticky.id);
+      expect(screen.queryByTestId('canvas-selection-rect')).not.toBeInTheDocument();
     });
 
     it('toggles object in selection on shift+pointer down', () => {

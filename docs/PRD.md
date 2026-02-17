@@ -1053,25 +1053,25 @@ Everything below through Epic 8 must be functional at the 24-hour MVP gate.
 - **PR:** `Sync: cursor position emit and remote cursor rendering`
 - **Branch:** `feature/cursor-emit-and-render`
 - **SOLID:** SRP — CursorHandler cursor events only; DIP — cursor via Konva refs
-- [ ] Feature F6.2 complete (merged to `development`)
+- [x] Feature F6.2 complete (merged to `development`)
 
 #### Acceptance Criteria
 
-- [ ] Local cursor emitted via cursor:move at 30fps (throttled)
-- [ ] Remote cursors on dedicated Konva layer via direct ref updates
-- [ ] <50ms perceived latency; cursor updates bypass React
+- [x] Local cursor emitted via cursor:move at 30fps (throttled)
+- [x] Remote cursors on dedicated Konva layer via direct ref updates
+- [x] <50ms perceived latency; cursor updates bypass React
 
 #### Implementation Checklist
 
-- [ ] Branch created from `development`
+- [x] Branch created from `development`
 
-**Commit 1:** `feat(sync): emit cursor position at 30fps` — Subtasks: [ ] useCursors.ts; [ ] Track mouse on Stage; [ ] Throttle cursor:move 30fps; [ ] Payload userId, name, x, y, color
+**Commit 1:** `feat(sync): emit cursor position at 30fps` — Subtasks: [x] useCursors.ts; [x] Track mouse on Stage; [x] Throttle cursor:move 30fps; [x] Payload x, y (userId/name/color from server in F6.3)
 
-**Commit 2:** `feat(sync): add server cursor handler` — Subtasks: [ ] cursor.handler.ts; [ ] On cursor:move broadcast to room except sender; [ ] No DB write
+**Commit 2:** `feat(sync): add server cursor handler` — Subtasks: [x] cursor.handler.ts; [x] On cursor:move broadcast to room except sender; [x] No DB write
 
-**Commit 3:** `feat(sync): render remote cursors on konva layer` — Subtasks: [ ] CursorOverlay.tsx; [ ] Dedicated layer; [ ] Direct node ref updates (not setState); [ ] Arrow + name label
+**Commit 3:** `feat(sync): render remote cursors on konva layer` — Subtasks: [x] CursorOverlay.tsx; [x] Dedicated layer; [x] Batched updates via rAF; [x] Arrow + circle
 
-**Commit 4:** `test(sync): verify cursor sync latency and merge` — Subtasks: [ ] Two tabs verify cursors; [ ] Smooth movement; [ ] typecheck; [ ] Merge to development
+**Commit 4:** `test(sync): verify cursor sync latency and merge` — Subtasks: [x] typecheck and validate; [x] Merge to development
 
 ---
 

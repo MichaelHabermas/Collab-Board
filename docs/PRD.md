@@ -1013,7 +1013,7 @@ Everything below through Epic 8 must be functional at the 24-hour MVP gate.
 
 **User stories:** US-4.1 (See other users' cursors <50ms), US-4.2 (Cursor labels, color), US-4.3 (Cursors disappear on disconnect).
 
-- [ ] Epic 6 complete (all features below merged to `development`)
+- [x] Epic 6 complete (all features below merged to `development`)
 
 #### Feature Map (Epic 6)
 
@@ -1079,23 +1079,23 @@ Everything below through Epic 8 must be functional at the 24-hour MVP gate.
 
 - **PR:** `Sync: cursor labels, colors, and disconnect cleanup`
 - **Branch:** `feature/cursor-labels-and-cleanup`
-- [ ] Feature F6.3 complete (merged to `development`)
+- [x] Feature F6.3 complete (merged to `development`)
 
 #### Acceptance Criteria
 
-- [ ] Each remote cursor shows user name label and unique color
-- [ ] Name readable at all zoom levels
-- [ ] On disconnect cursor removed within 2s; no stale cursors
+- [x] Each remote cursor shows user name label and unique color
+- [x] Name readable at all zoom levels
+- [x] On disconnect cursor removed within 2s; no stale cursors
 
 #### Implementation Checklist
 
-- [ ] Branch created from `development`
+- [x] Branch created from `development`
 
-**Commit 1:** `feat(sync): add cursor name labels and unique colors` — Subtasks: [ ] Unique color per user (palette or hash); [ ] Konva Text label beside cursor; [ ] Label scales with zoom
+**Commit 1:** `feat(sync): add cursor name labels and unique colors` — Subtasks: [x] Unique color per user (palette or hash); [x] Konva Text label beside cursor; [x] Label scales with zoom
 
-**Commit 2:** `feat(sync): remove cursors on user disconnect` — Subtasks: [ ] Listen presence:leave; [ ] Remove Konva cursor node within 2s; [ ] Clean up local map
+**Commit 2:** `feat(sync): remove cursors on user disconnect` — Subtasks: [x] Listen presence:leave; [x] Remove Konva cursor node within 2s; [x] Clean up local map
 
-**Commit 3:** `test(sync): verify cursor labels and cleanup and merge` — Subtasks: [ ] Verify labels; [ ] Verify cursor gone when tab closed; [ ] typecheck; [ ] Merge to development
+**Commit 3:** `test(sync): verify cursor labels and cleanup and merge` — Subtasks: [x] typecheck and validate; [x] Merge to development
 
 ---
 

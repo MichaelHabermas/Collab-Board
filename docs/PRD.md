@@ -932,26 +932,26 @@ Everything below through Epic 8 must be functional at the 24-hour MVP gate.
 - **PR:** `Objects: rectangle, circle, and line shapes`
 - **Branch:** `feature/shape-creation`
 - **SOLID:** LSP — all shapes implement BoardObject
-- [ ] Feature F5.4 complete (merged to `development`)
+- [x] Feature F5.4 complete (merged to `development`)
 
 #### Acceptance Criteria
 
-- [ ] Toolbar tools for rectangle, circle, line
-- [ ] Each shape type renders correctly
-- [ ] Configurable width, height (or radius), color
-- [ ] Shapes added to boardStore on creation
+- [x] Toolbar tools for rectangle, circle, line
+- [x] Each shape type renders correctly
+- [x] Configurable width, height (or radius), color
+- [x] Shapes added to boardStore on creation
 
 #### Implementation Checklist
 
-- [ ] Branch created from `development`
+- [x] Branch created from `development`
 
-**Commit 1:** `feat(objects): add rectangle and circle shape components` — Subtasks: [ ] RectangleShape.tsx, CircleShape.tsx; [ ] Konva Rect and Circle; [ ] Register in object factory by type
+**Commit 1:** `feat(objects): add rectangle and circle shape components` — Subtasks: [x] RectangleShape.tsx, CircleShape.tsx; [x] Konva Rect and Circle; [x] Register in object factory by type
 
-**Commit 2:** `feat(objects): add line shape component` — Subtasks: [ ] LineShape.tsx; [ ] Konva Line start/end; [ ] Stroke color and width
+**Commit 2:** `feat(objects): add line shape component` — Subtasks: [x] LineShape.tsx; [x] Konva Line start/end; [x] Stroke color and width
 
-**Commit 3:** `feat(objects): wire shape creation to toolbar actions` — Subtasks: [ ] Canvas click for rectangle, circle, line tools; [ ] Create BoardObject with type and defaults; [ ] Add to boardStore
+**Commit 3:** `feat(objects): wire shape creation to toolbar actions` — Subtasks: [x] Canvas click for rectangle, circle, line tools; [x] Create BoardObject with type and defaults; [x] Add to boardStore
 
-**Commit 4:** `test(objects): verify shape creation and merge` — Subtasks: [ ] Unit tests shape rendering; [ ] typecheck and test:run; [ ] Merge to development
+**Commit 4:** `test(objects): verify shape creation and merge` — Subtasks: [x] Unit tests shape rendering; [x] typecheck and test:run; [x] Merge to development
 
 ---
 

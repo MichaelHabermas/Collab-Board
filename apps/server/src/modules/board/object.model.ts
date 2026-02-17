@@ -2,6 +2,7 @@ import mongoose, { type Document } from 'mongoose';
 import type { ObjectType } from '@collab-board/shared-types';
 
 export interface BoardObjectDocument extends Document {
+  id: string;
   boardId: string;
   type: ObjectType;
   x: number;
@@ -53,6 +54,7 @@ const OBJECT_TYPES: ObjectType[] = [
 
 const boardObjectSchema = new mongoose.Schema<BoardObjectDocument>(
   {
+    id: { type: String, required: true, unique: true },
     boardId: { type: String, required: true, index: true },
     type: { type: String, required: true, enum: OBJECT_TYPES },
     x: { type: Number, required: true, default: 0 },

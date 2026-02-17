@@ -17,7 +17,7 @@ export const CircleShapeComponent = memo(function CircleShapeComponent({
   isSelected,
   registerRef,
 }: ICircleShapeProps): ReactElement {
-  const { id, x, y, radius, color, strokeColor, strokeWidth, fillOpacity } = shape;
+  const { id, x, y, rotation, radius, color, strokeColor, strokeWidth, fillOpacity } = shape;
   const activeToolType = useActiveToolType();
   const { boardId } = useBoardMetadata();
   const { socket } = useSocket();
@@ -47,6 +47,7 @@ export const CircleShapeComponent = memo(function CircleShapeComponent({
       data-testid={`object-circle-${id}`}
       x={x}
       y={y}
+      rotation={rotation}
       draggable={draggable}
       onClick={handleClick}
       onTap={handleClick}

@@ -40,7 +40,13 @@ export function registerObjectHandlers(
     }
     const room = getRoomName(boardId);
     const now = new Date().toISOString();
-    const id = crypto.randomUUID();
+    const id =
+      typeof inputObject.id === 'string' &&
+      /^[0-9a-f]{8}-[0-9a-f]{4}-[1-5][0-9a-f]{3}-[89ab][0-9a-f]{3}-[0-9a-f]{12}$/i.test(
+        inputObject.id
+      )
+        ? inputObject.id
+        : crypto.randomUUID();
     const toCreate: BoardObject = {
       ...inputObject,
       id,

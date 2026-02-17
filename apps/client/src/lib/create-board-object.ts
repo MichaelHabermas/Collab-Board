@@ -92,7 +92,7 @@ export function createLine(boardId: string, x: number, y: number, createdBy: str
     x,
     y,
     width: length,
-    height: 0,
+    height: 1, // server requires positive; line uses points for drawing
     rotation: 0,
     zIndex: 0,
     color: '#64748b',

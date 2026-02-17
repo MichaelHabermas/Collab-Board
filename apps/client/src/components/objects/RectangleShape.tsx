@@ -17,7 +17,8 @@ export const RectangleShapeComponent = memo(function RectangleShapeComponent({
   isSelected,
   registerRef,
 }: IRectangleShapeProps): ReactElement {
-  const { id, x, y, width, height, color, strokeColor, strokeWidth, fillOpacity } = shape;
+  const { id, x, y, width, height, rotation, color, strokeColor, strokeWidth, fillOpacity } =
+    shape;
   const activeToolType = useActiveToolType();
   const { boardId } = useBoardMetadata();
   const { socket } = useSocket();
@@ -47,6 +48,7 @@ export const RectangleShapeComponent = memo(function RectangleShapeComponent({
       data-testid={`object-rectangle-${id}`}
       x={x}
       y={y}
+      rotation={rotation}
       draggable={draggable}
       onClick={handleClick}
       onTap={handleClick}

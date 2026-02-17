@@ -14,7 +14,7 @@ const toBoardEntity = (doc: InstanceType<typeof BoardModel>): Board => ({
 
 const toObjectEntity = (doc: InstanceType<typeof BoardObjectModel>): BoardObject => {
   const base = {
-    id: String(doc._id),
+    id: doc.id,
     boardId: doc.boardId,
     type: doc.type,
     x: doc.x,
@@ -99,12 +99,16 @@ export class BoardRepository implements StorageAdapter {
   }
 
   async updateObject(id: string, delta: Partial<BoardObject>): Promise<BoardObject | null> {
-    const doc = await BoardObjectModel.findByIdAndUpdate(id, { $set: delta }, { new: true });
+    const doc = await BoardObjectModel.findOneAndUpdate(
+      { id },
+      { $set: delta },
+      { new: true }
+    );
     return doc ? toObjectEntity(doc) : null;
   }
 
   async deleteObject(id: string): Promise<void> {
-    await BoardObjectModel.findByIdAndDelete(id);
+    await BoardObjectModel.deleteOne({ id });
   }
 
   async createBoard(board: Omit<Board, 'id' | 'createdAt' | 'updatedAt'>): Promise<Board> {

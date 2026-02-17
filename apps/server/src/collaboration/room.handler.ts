@@ -54,18 +54,12 @@ export function registerRoomHandlers(
       updatedAt: new Date(0).toISOString(),
     };
 
-    if (!isValidObjectId(boardId)) {
-      socket.emit('board:load', {
-        board: fallbackBoard,
-        objects: [],
-        users: [],
-      });
-      return;
-    }
-
     try {
+      const boardPromise = isValidObjectId(boardId)
+        ? boardRepo.findBoardById(boardId)
+        : Promise.resolve(null);
       const [board, objects] = await Promise.all([
-        boardRepo.findBoardById(boardId),
+        boardPromise,
         boardRepo.findObjectsByBoard(boardId),
       ]);
       socket.emit('board:load', {

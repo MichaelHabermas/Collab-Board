@@ -19,7 +19,7 @@ export const StickyNoteShape = memo(function StickyNoteShape({
   onDoubleClick,
   registerRef,
 }: IStickyNoteShapeProps): ReactElement {
-  const { id, x, y, width, height, color, content, fontSize } = sticky;
+  const { id, x, y, width, height, rotation, color, content, fontSize } = sticky;
   const activeToolType = useActiveToolType();
   const { boardId } = useBoardMetadata();
   const { socket } = useSocket();
@@ -53,6 +53,7 @@ export const StickyNoteShape = memo(function StickyNoteShape({
       data-testid={`object-sticky-${id}`}
       x={x}
       y={y}
+      rotation={rotation}
       draggable={draggable}
       onClick={handleClick}
       onTap={handleClick}

@@ -20,8 +20,12 @@ export function useObjectSync(): void {
     const onObjectCreated = (payload: ObjectCreatedPayload): void => {
       const { object } = payload;
       const state = boardStore.getState();
-      const exists = state.objects.some((o) => o.id === object.id);
-      if (!exists) {
+      const index = state.objects.findIndex((o) => o.id === object.id);
+      if (index >= 0) {
+        const next = [...state.objects];
+        next[index] = object;
+        boardStore.setState({ objects: next });
+      } else {
         state.addObject(object);
       }
     };

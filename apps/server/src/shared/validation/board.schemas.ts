@@ -50,6 +50,7 @@ export const cursorMoveSchema = z.object({
 });
 
 const boardObjectCreateFieldsSchema = z.object({
+  id: z.string().uuid().optional(),
   content: z.string().optional(),
   fontSize: z.number().positive().optional(),
   fontWeight: z.enum(['normal', 'bold']).optional(),

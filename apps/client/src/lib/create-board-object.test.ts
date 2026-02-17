@@ -59,4 +59,25 @@ describe('createLine', () => {
     expect(line.points).toEqual([0, 0, 100, 0]);
     expect(line.strokeWidth).toBe(2);
   });
+
+  it('has positive height for server validation', () => {
+    const line = createLine('board-1', 0, 0, 'user-1');
+    expect(line.width).toBeGreaterThan(0);
+    expect(line.height).toBeGreaterThan(0);
+  });
+});
+
+describe('create-board-object server compatibility', () => {
+  it('every created object has positive width and height for object:create schema', () => {
+    const boardId = 'b';
+    const createdBy = 'u';
+    const sticky = createStickyNote(boardId, 0, 0, createdBy);
+    const rect = createRectangle(boardId, 0, 0, createdBy);
+    const circle = createCircle(boardId, 0, 0, createdBy);
+    const line = createLine(boardId, 0, 0, createdBy);
+    for (const obj of [sticky, rect, circle, line]) {
+      expect(obj.width, `${obj.type}.width`).toBeGreaterThan(0);
+      expect(obj.height, `${obj.type}.height`).toBeGreaterThan(0);
+    }
+  });
 });

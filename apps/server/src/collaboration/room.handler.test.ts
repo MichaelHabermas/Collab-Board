@@ -95,12 +95,31 @@ describe('registerRoomHandlers', () => {
     expect(mockLeave).toHaveBeenCalledWith('board:board-xyz');
   });
 
-  it('emits board:load with fallback and does not call repo when boardId is not a valid ObjectId', async () => {
+  it('emits board:load with fallback board and loads objects for non-ObjectId boardId (e.g. default-board)', async () => {
+    const objects = [
+      {
+        id: 'obj-uuid-1',
+        boardId: 'default-board',
+        type: 'sticky_note' as const,
+        x: 10,
+        y: 20,
+        width: 120,
+        height: 80,
+        rotation: 0,
+        zIndex: 0,
+        color: '#fef08a',
+        createdBy: 'user-1',
+        updatedAt: new Date().toISOString(),
+        content: '',
+        fontSize: 14,
+      },
+    ];
+    vi.mocked(mockBoardRepo.findObjectsByBoard).mockResolvedValue(objects);
     registerRoomHandlers(mockSocket, mockBoardRepo);
     await boardJoinHandlers[0]!({ boardId: 'default-board' });
 
     expect(mockBoardRepo.findBoardById).not.toHaveBeenCalled();
-    expect(mockBoardRepo.findObjectsByBoard).not.toHaveBeenCalled();
+    expect(mockBoardRepo.findObjectsByBoard).toHaveBeenCalledWith('default-board');
     expect(mockEmit).toHaveBeenCalledWith('board:load', {
       board: expect.objectContaining({
         id: 'default-board',
@@ -108,7 +127,7 @@ describe('registerRoomHandlers', () => {
         ownerId: '',
         collaborators: [],
       }),
-      objects: [],
+      objects,
       users: [],
     });
   });

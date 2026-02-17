@@ -1,6 +1,7 @@
 import type { ReactElement } from 'react';
 import { Layer } from 'react-konva';
 import { useAllObjects, useSelectedObjectIds } from '@/store/boardStore';
+import { StableRefWrapper } from './StableRefWrapper';
 import { StickyNoteShape } from './StickyNoteShape';
 import { RectangleShapeComponent } from './RectangleShape';
 import { CircleShapeComponent } from './CircleShape';
@@ -33,37 +34,28 @@ export const BoardObjectsLayer = ({
   return (
     <Layer data-testid='canvas-board-layer-objects' name='objects'>
       {stickies.map((sticky) => (
-        <StickyNoteShape
-          key={sticky.id}
-          sticky={sticky}
-          isSelected={selectedSet.has(sticky.id)}
-          onDoubleClick={onStickyDoubleClick}
-          registerRef={registerNodeRef ? (node) => registerNodeRef(sticky.id, node) : undefined}
-        />
+        <StableRefWrapper key={sticky.id} id={sticky.id} registerNodeRef={registerNodeRef}>
+          <StickyNoteShape
+            sticky={sticky}
+            isSelected={selectedSet.has(sticky.id)}
+            onDoubleClick={onStickyDoubleClick}
+          />
+        </StableRefWrapper>
       ))}
       {rectangles.map((shape) => (
-        <RectangleShapeComponent
-          key={shape.id}
-          shape={shape}
-          isSelected={selectedSet.has(shape.id)}
-          registerRef={registerNodeRef ? (node) => registerNodeRef(shape.id, node) : undefined}
-        />
+        <StableRefWrapper key={shape.id} id={shape.id} registerNodeRef={registerNodeRef}>
+          <RectangleShapeComponent shape={shape} isSelected={selectedSet.has(shape.id)} />
+        </StableRefWrapper>
       ))}
       {circles.map((shape) => (
-        <CircleShapeComponent
-          key={shape.id}
-          shape={shape}
-          isSelected={selectedSet.has(shape.id)}
-          registerRef={registerNodeRef ? (node) => registerNodeRef(shape.id, node) : undefined}
-        />
+        <StableRefWrapper key={shape.id} id={shape.id} registerNodeRef={registerNodeRef}>
+          <CircleShapeComponent shape={shape} isSelected={selectedSet.has(shape.id)} />
+        </StableRefWrapper>
       ))}
       {lines.map((shape) => (
-        <LineShapeComponent
-          key={shape.id}
-          shape={shape}
-          isSelected={selectedSet.has(shape.id)}
-          registerRef={registerNodeRef ? (node) => registerNodeRef(shape.id, node) : undefined}
-        />
+        <StableRefWrapper key={shape.id} id={shape.id} registerNodeRef={registerNodeRef}>
+          <LineShapeComponent shape={shape} isSelected={selectedSet.has(shape.id)} />
+        </StableRefWrapper>
       ))}
     </Layer>
   );

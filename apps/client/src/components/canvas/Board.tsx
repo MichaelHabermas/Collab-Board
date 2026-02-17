@@ -11,14 +11,15 @@ import { CursorOverlay } from './CursorOverlay';
 import { GridBackground } from './GridBackground';
 import { BoardObjectsLayer } from '@/components/objects/BoardObjectsLayer';
 import { StickyNoteTextEdit } from '@/components/objects/StickyNoteTextEdit';
-import { boardStore, useObject, useSelectedObjectIds, useActiveToolType } from '@/store/boardStore';
-import { authStore } from '@/store/authStore';
 import {
-  createStickyNote,
-  createRectangle,
-  createCircle,
-  createLine,
-} from '@/lib/create-board-object';
+  boardStore,
+  useObject,
+  useSelectedObjectIds,
+  useActiveToolType,
+  useAllObjects,
+} from '@/store/boardStore';
+import { authStore } from '@/store/authStore';
+import { executeObjectCreation } from '@/lib/execute-object-creation';
 import type { StickyNote } from '@collab-board/shared-types';
 
 /**
@@ -39,6 +40,7 @@ export const Board = (): ReactElement => {
     containerRef,
   } = usePanZoom();
   const activeToolType = useActiveToolType();
+  const objects = useAllObjects();
   const { width, height } = useContainerSize(containerRef);
   const [editingStickyId, setEditingStickyId] = useState<string | null>(null);
   const editingSticky = useObject(editingStickyId ?? '') as StickyNote | undefined;
@@ -68,9 +70,16 @@ export const Board = (): ReactElement => {
   const registerNodeRef = useCallback((id: string, node: unknown) => {
     const group = node as Konva.Group | null;
     if (group) {
+      const existing = nodeRefsMapRef.current.get(id);
+      if (existing === group) {
+        return;
+      }
       group.setAttr('objectId', id);
       nodeRefsMapRef.current.set(id, group);
     } else {
+      if (!nodeRefsMapRef.current.has(id)) {
+        return;
+      }
       nodeRefsMapRef.current.delete(id);
     }
     setRefsVersion((v) => v + 1);
@@ -109,18 +118,25 @@ export const Board = (): ReactElement => {
 
   const handleTransformEnd = useCallback(() => {
     const boardId = boardStore.getState().boardId;
+    const objects = boardStore.getState().objects;
     const nodes = selectedIds
       .map((id) => nodeRefsMapRef.current.get(id))
       .filter(Boolean) as Konva.Node[];
     for (const node of nodes) {
       const id = node.getAttr('objectId') as string | undefined;
       if (!id) continue;
+      const obj = objects.find((o) => o.id === id);
+      if (!obj) continue;
       const scaleX = node.scaleX();
       const scaleY = node.scaleY();
-      const w = Math.max(MIN_RESIZE, (node.width() ?? 0) * scaleX);
-      const h = Math.max(MIN_RESIZE, (node.height() ?? 0) * scaleY);
+      const rotation = node.rotation();
+      const baseW = Math.max(1, obj.width);
+      const baseH = Math.max(1, obj.height);
+      const w = Math.max(MIN_RESIZE, baseW * scaleX);
+      const h = Math.max(MIN_RESIZE, baseH * scaleY);
       node.scaleX(1);
       node.scaleY(1);
+      node.rotation(0);
       node.width(w);
       node.height(h);
       const children = (node as Konva.Group).getChildren?.() ?? [];
@@ -129,7 +145,7 @@ export const Board = (): ReactElement => {
         (child as Konva.Shape).width(w);
         (child as Konva.Shape).height(h);
       }
-      const delta = { width: w, height: h, x: node.x(), y: node.y() };
+      const delta = { width: w, height: h, x: node.x(), y: node.y(), rotation };
       boardStore.getState().updateObject(id, delta);
       if (socket && boardId) {
         socket.emit('object:update', { boardId, objectId: id, delta });
@@ -150,7 +166,9 @@ export const Board = (): ReactElement => {
       const pos = stage.getPointerPosition();
       if (!pos) return;
       const button = e.evt?.button ?? 0;
-      const isEmptyArea = (e.target as unknown) === stage || e.target.getType?.() === 'Layer';
+      const targetType = e.target.getType?.();
+      const isEmptyArea =
+        (e.target as unknown) === stage || targetType === 'Layer' || targetType === 'Stage';
       const tool = boardStore.getState().activeToolType;
 
       if (button === 1) {
@@ -227,7 +245,9 @@ export const Board = (): ReactElement => {
 
       const stage = e.target.getStage();
       if (!stage) return;
-      const isEmptyArea = (e.target as unknown) === stage || e.target.getType?.() === 'Layer';
+      const targetType = e.target.getType?.();
+      const isEmptyArea =
+        (e.target as unknown) === stage || targetType === 'Layer' || targetType === 'Stage';
       if (!isEmptyArea) return;
       const tool = boardStore.getState().activeToolType;
       if (selectionRect !== null) {
@@ -257,40 +277,14 @@ export const Board = (): ReactElement => {
       const start = dragStartRef.current;
       dragStartRef.current = null;
       if (!pos || !start) return;
-      const dist = Math.hypot(pos.x - start.x, pos.y - start.y);
-      if (dist > 5) return;
       const pointer = stagePosition;
       const scale = stageScale;
-      const boardX = (pos.x - pointer.x) / scale;
-      const boardY = (pos.y - pointer.y) / scale;
+      // Use mousedown position so creation works even if user drags slightly
+      const boardX = (start.x - pointer.x) / scale;
+      const boardY = (start.y - pointer.y) / scale;
       const boardId = boardStore.getState().boardId || 'default-board';
       const createdBy = authStore.getState().userId || 'anonymous';
-      if (!socket) return;
-      const emitCreate = (
-        obj:
-          | StickyNote
-          | ReturnType<typeof createRectangle>
-          | ReturnType<typeof createCircle>
-          | ReturnType<typeof createLine>
-      ): void => {
-        const object = Object.fromEntries(
-          Object.entries(obj).filter(([k]) => k !== 'id' && k !== 'updatedAt')
-        ) as Omit<typeof obj, 'id' | 'updatedAt'>;
-        socket.emit('object:create', { boardId, object });
-      };
-      if (tool === 'sticky_note') {
-        const sticky = createStickyNote(boardId, boardX, boardY, createdBy);
-        emitCreate(sticky);
-      } else if (tool === 'rectangle') {
-        const rect = createRectangle(boardId, boardX, boardY, createdBy);
-        emitCreate(rect);
-      } else if (tool === 'circle') {
-        const circle = createCircle(boardId, boardX, boardY, createdBy);
-        emitCreate(circle);
-      } else if (tool === 'line') {
-        const line = createLine(boardId, boardX, boardY, createdBy);
-        emitCreate(line);
-      }
+      executeObjectCreation(socket, tool, boardId, boardX, boardY, createdBy);
     },
     [stagePosition, stageScale, selectionRect, socket]
   );
@@ -307,6 +301,7 @@ export const Board = (): ReactElement => {
       onTouchMove={handleTouchMove}
       style={{ width: '100%', height: '100%', overflow: 'hidden', position: 'relative' }}
       data-testid='canvas-board-container'
+      data-object-count={objects.length}
     >
       {editingSticky && (
         <div className='pointer-events-none absolute inset-0' style={{ zIndex: 10 }}>
@@ -341,10 +336,6 @@ export const Board = (): ReactElement => {
         <Layer ref={gridRef} data-testid='canvas-board-layer-grid' name='grid' listening={false}>
           <GridBackground />
         </Layer>
-        <BoardObjectsLayer
-          onStickyDoubleClick={(id) => setEditingStickyId(id)}
-          registerNodeRef={registerNodeRef}
-        />
         <Layer ref={selectionRef} data-testid='canvas-board-layer-selection' name='selection'>
           {selectionRect && (
             <Rect
@@ -358,9 +349,22 @@ export const Board = (): ReactElement => {
               listening={false}
             />
           )}
-          <Transformer ref={transformerRef} onTransformEnd={handleTransformEnd} />
+          <Transformer
+          ref={transformerRef}
+          onTransformEnd={handleTransformEnd}
+          shouldOverdrawWholeArea={false}
+        />
         </Layer>
-        <Layer ref={cursorRef} data-testid='canvas-board-layer-cursor' name='cursor'>
+        <BoardObjectsLayer
+          onStickyDoubleClick={(id) => setEditingStickyId(id)}
+          registerNodeRef={registerNodeRef}
+        />
+        <Layer
+          ref={cursorRef}
+          data-testid='canvas-board-layer-cursor'
+          name='cursor'
+          listening={false}
+        >
           <CursorOverlay stageScale={stageScale} />
         </Layer>
       </Stage>

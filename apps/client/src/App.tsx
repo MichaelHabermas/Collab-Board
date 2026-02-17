@@ -6,9 +6,12 @@ import { AppLayout } from '@/components/AppLayout';
 import { InfiniteCanvas } from '@/components/canvas';
 import { Toolbar } from '@/components/toolbar';
 import { authStore } from '@/store/authStore';
+import { useBoardSettingsPersistence } from '@/hooks/useBoardSettingsPersistence';
 
 export const App = (): ReactElement => {
   const { isSignedIn, userId } = useAuth();
+
+  useBoardSettingsPersistence();
 
   useEffect(() => {
     if (isSignedIn && userId) {

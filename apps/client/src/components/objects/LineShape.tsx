@@ -17,7 +17,7 @@ export const LineShapeComponent = memo(function LineShapeComponent({
   isSelected,
   registerRef,
 }: ILineShapeProps): ReactElement {
-  const { id, x, y, points, strokeColor, strokeWidth } = shape;
+  const { id, x, y, rotation, points, strokeColor, strokeWidth } = shape;
   const activeToolType = useActiveToolType();
   const { boardId } = useBoardMetadata();
   const { socket } = useSocket();
@@ -47,6 +47,7 @@ export const LineShapeComponent = memo(function LineShapeComponent({
       data-testid={`object-line-${id}`}
       x={x}
       y={y}
+      rotation={rotation}
       draggable={draggable}
       onClick={handleClick}
       onTap={handleClick}

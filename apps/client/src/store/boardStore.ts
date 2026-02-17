@@ -3,18 +3,22 @@ import type { BoardObject, ObjectType } from '@collab-board/shared-types';
 
 export type ActiveToolType = 'select' | 'sticky_note' | 'rectangle' | 'circle' | 'line';
 
+export type BoardLoadStatus = 'idle' | 'loading' | 'loaded';
+
 const now = (): string => new Date().toISOString();
 
 interface IBoardState {
   boardId: string;
   title: string;
   objects: BoardObject[];
+  boardLoadStatus: BoardLoadStatus;
   activeToolType: ActiveToolType;
   selectedObjectIds: string[];
   addObject: (object: BoardObject) => void;
   updateObject: (id: string, patch: Partial<BoardObject>) => void;
   removeObject: (id: string) => void;
   setObjects: (objects: BoardObject[]) => void;
+  setBoardLoadStatus: (status: BoardLoadStatus) => void;
   clearBoard: () => void;
   setActiveTool: (tool: ActiveToolType) => void;
   selectObject: (id: string) => void;
@@ -28,6 +32,7 @@ export const boardStore = create<IBoardState>((set) => ({
   boardId: '',
   title: '',
   objects: [],
+  boardLoadStatus: 'idle',
   activeToolType: 'select',
   selectedObjectIds: [],
 
@@ -54,6 +59,10 @@ export const boardStore = create<IBoardState>((set) => ({
 
   setObjects: (objects: BoardObject[]) => {
     set({ objects });
+  },
+
+  setBoardLoadStatus: (boardLoadStatus: BoardLoadStatus) => {
+    set({ boardLoadStatus });
   },
 
   clearBoard: () => {
@@ -113,4 +122,8 @@ export function useActiveToolType(): ActiveToolType {
 
 export function useSelectedObjectIds(): string[] {
   return boardStore((state) => state.selectedObjectIds);
+}
+
+export function useBoardLoadStatus(): BoardLoadStatus {
+  return boardStore((state) => state.boardLoadStatus);
 }

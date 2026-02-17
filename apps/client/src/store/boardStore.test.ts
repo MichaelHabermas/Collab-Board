@@ -26,6 +26,7 @@ describe('boardStore', () => {
       boardId: '',
       title: '',
       objects: [],
+      boardLoadStatus: 'idle',
       activeToolType: 'select',
       selectedObjectIds: [],
     });

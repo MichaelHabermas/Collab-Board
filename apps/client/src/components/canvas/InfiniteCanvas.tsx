@@ -1,5 +1,5 @@
 import type { ReactElement } from 'react';
-import { useBoardMetadata } from '@/store/boardStore';
+import { useBoardMetadata, useBoardLoadStatus } from '@/store/boardStore';
 import { useBoardRoom } from '@/hooks/useBoardRoom';
 import { Board } from './Board';
 
@@ -8,14 +8,24 @@ const DEFAULT_BOARD_ID = 'default-board';
 /**
  * Wrapper for the infinite canvas. Renders Board (Stage + grid, objects, selection, cursor layers) in a full-viewport container.
  * Joins the socket room for the current board when connected.
+ * Shows a loading indicator until board:load is received.
  */
 export const InfiniteCanvas = (): ReactElement => {
   const { boardId } = useBoardMetadata();
+  const boardLoadStatus = useBoardLoadStatus();
   const effectiveBoardId = boardId || DEFAULT_BOARD_ID;
   useBoardRoom(effectiveBoardId);
 
   return (
-    <div data-testid='canvas-infinite-canvas' className='h-full w-full overflow-hidden'>
+    <div data-testid='canvas-infinite-canvas' className='relative h-full w-full overflow-hidden'>
+      {boardLoadStatus === 'loading' && (
+        <div
+          data-testid='canvas-loading-indicator'
+          className='absolute inset-0 z-10 flex items-center justify-center bg-background/80'
+        >
+          <span className='text-muted-foreground'>Loading board…</span>
+        </div>
+      )}
       <Board />
     </div>
   );

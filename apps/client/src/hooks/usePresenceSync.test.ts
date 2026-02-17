@@ -22,7 +22,9 @@ describe('usePresenceSync', () => {
     vi.mocked(useSocket).mockReturnValue({
       socket: mockSocket as never,
       isConnected: true,
+      isReconnecting: false,
       error: '',
+      connectionStatus: 'connected',
     });
   });
 
@@ -38,7 +40,9 @@ describe('usePresenceSync', () => {
     vi.mocked(useSocket).mockReturnValue({
       socket: null,
       isConnected: false,
+      isReconnecting: false,
       error: '',
+      connectionStatus: 'disconnected',
     });
     renderHook(() => usePresenceSync());
     expect(collaborationStore.getState().onlineUsers.size).toBe(0);

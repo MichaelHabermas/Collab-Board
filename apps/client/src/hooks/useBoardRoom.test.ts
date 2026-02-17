@@ -24,7 +24,9 @@ describe('useBoardRoom', () => {
     vi.mocked(useSocket).mockReturnValue({
       socket: mockSocket as never,
       isConnected: true,
+      isReconnecting: false,
       error: '',
+      connectionStatus: 'connected',
     });
     boardStore.setState({
       boardId: '',
@@ -43,7 +45,9 @@ describe('useBoardRoom', () => {
     vi.mocked(useSocket).mockReturnValue({
       socket: mockSocket as never,
       isConnected: true,
+      isReconnecting: false,
       error: '',
+      connectionStatus: 'connected',
     });
     renderHook(() => useBoardRoom(''));
     expect(mockEmit).not.toHaveBeenCalled();
@@ -54,7 +58,9 @@ describe('useBoardRoom', () => {
     vi.mocked(useSocket).mockReturnValue({
       socket: null,
       isConnected: false,
+      isReconnecting: false,
       error: '',
+      connectionStatus: 'disconnected',
     });
     renderHook(() => useBoardRoom('board-123'));
     expect(boardStore.getState().boardLoadStatus).toBe('idle');

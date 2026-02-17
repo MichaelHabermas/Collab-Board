@@ -17,10 +17,14 @@ export const SOCKET_RECONNECT_OPTIONS = {
 
 export type CollabSocket = Socket<ServerToClientEvents, ClientToServerEvents>;
 
+export type ConnectionStatus = 'connected' | 'reconnecting' | 'disconnected';
+
 export interface IUseSocketResult {
   socket: CollabSocket | null;
   isConnected: boolean;
+  isReconnecting: boolean;
   error: string;
+  connectionStatus: ConnectionStatus;
 }
 
 /**
@@ -32,6 +36,7 @@ export const useSocket = (): IUseSocketResult => {
   const getToken = useClerkToken();
   const [socket, setSocket] = useState<CollabSocket | null>(null);
   const [isConnected, setIsConnected] = useState(false);
+  const [isReconnecting, setIsReconnecting] = useState(false);
   const [error, setError] = useState('');
   const socketRef = useRef<CollabSocket | null>(null);
 
@@ -43,6 +48,7 @@ export const useSocket = (): IUseSocketResult => {
         queueMicrotask(() => {
           setSocket(null);
           setIsConnected(false);
+          setIsReconnecting(false);
           setError('');
         });
       } else {
@@ -69,9 +75,21 @@ export const useSocket = (): IUseSocketResult => {
         s.on('connect', () => {
           if (!cancelled) {
             setIsConnected(true);
+            setIsReconnecting(false);
             setError('');
           }
           setSocket(s);
+        });
+        s.on('reconnect', () => {
+          if (!cancelled) {
+            setIsReconnecting(false);
+            setIsConnected(true);
+          }
+        });
+        s.io.on('reconnect_attempt', () => {
+          if (!cancelled) {
+            setIsReconnecting(true);
+          }
         });
         s.on('connect_error', (err) => {
           if (!cancelled) {
@@ -82,7 +100,9 @@ export const useSocket = (): IUseSocketResult => {
           }
         });
         s.on('disconnect', () => {
-          if (!cancelled) setIsConnected(false);
+          if (!cancelled) {
+            setIsConnected(false);
+          }
         });
       } catch (err) {
         if (!cancelled) {
@@ -101,9 +121,19 @@ export const useSocket = (): IUseSocketResult => {
         socketRef.current = null;
         setSocket(null);
         setIsConnected(false);
+        setIsReconnecting(false);
       }
     };
   }, [isLoaded, isSignedIn, getToken]);
 
-  return { socket, isConnected, error };
+  const connectionStatus: ConnectionStatus =
+    !socket && !isConnected
+      ? 'disconnected'
+      : isReconnecting
+        ? 'reconnecting'
+        : isConnected
+          ? 'connected'
+          : 'disconnected';
+
+  return { socket, isConnected, isReconnecting, error, connectionStatus };
 };

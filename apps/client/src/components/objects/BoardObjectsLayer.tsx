@@ -14,10 +14,12 @@ import type {
 
 interface IBoardObjectsLayerProps {
   onStickyDoubleClick?: (id: string) => void;
+  registerNodeRef?: (id: string, node: unknown) => void;
 }
 
 export const BoardObjectsLayer = ({
   onStickyDoubleClick,
+  registerNodeRef,
 }: IBoardObjectsLayerProps): ReactElement => {
   const objects = useAllObjects();
   const selectedIds = useSelectedObjectIds();
@@ -36,6 +38,7 @@ export const BoardObjectsLayer = ({
           sticky={sticky}
           isSelected={selectedSet.has(sticky.id)}
           onDoubleClick={onStickyDoubleClick}
+          registerRef={registerNodeRef ? (node) => registerNodeRef(sticky.id, node) : undefined}
         />
       ))}
       {rectangles.map((shape) => (
@@ -43,13 +46,24 @@ export const BoardObjectsLayer = ({
           key={shape.id}
           shape={shape}
           isSelected={selectedSet.has(shape.id)}
+          registerRef={registerNodeRef ? (node) => registerNodeRef(shape.id, node) : undefined}
         />
       ))}
       {circles.map((shape) => (
-        <CircleShapeComponent key={shape.id} shape={shape} isSelected={selectedSet.has(shape.id)} />
+        <CircleShapeComponent
+          key={shape.id}
+          shape={shape}
+          isSelected={selectedSet.has(shape.id)}
+          registerRef={registerNodeRef ? (node) => registerNodeRef(shape.id, node) : undefined}
+        />
       ))}
       {lines.map((shape) => (
-        <LineShapeComponent key={shape.id} shape={shape} isSelected={selectedSet.has(shape.id)} />
+        <LineShapeComponent
+          key={shape.id}
+          shape={shape}
+          isSelected={selectedSet.has(shape.id)}
+          registerRef={registerNodeRef ? (node) => registerNodeRef(shape.id, node) : undefined}
+        />
       ))}
     </Layer>
   );

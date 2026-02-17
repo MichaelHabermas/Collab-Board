@@ -1,19 +1,24 @@
 import type { ReactElement } from 'react';
 import { memo } from 'react';
+import type Konva from 'konva';
 import { Group, Rect } from 'react-konva';
 import type { RectangleShape as IRectangleShape } from '@collab-board/shared-types';
-import { boardStore } from '@/store/boardStore';
+import { boardStore, useActiveToolType } from '@/store/boardStore';
 
 interface IRectangleShapeProps {
   shape: IRectangleShape;
   isSelected: boolean;
+  registerRef?: (node: Konva.Group | null) => void;
 }
 
 export const RectangleShapeComponent = memo(function RectangleShapeComponent({
   shape,
   isSelected,
+  registerRef,
 }: IRectangleShapeProps): ReactElement {
   const { id, x, y, width, height, color, strokeColor, strokeWidth, fillOpacity } = shape;
+  const activeToolType = useActiveToolType();
+  const draggable = activeToolType === 'select';
 
   const handleClick = (): void => {
     boardStore.getState().selectObject(id);
@@ -28,10 +33,11 @@ export const RectangleShapeComponent = memo(function RectangleShapeComponent({
 
   return (
     <Group
+      ref={registerRef}
       data-testid={`object-rectangle-${id}`}
       x={x}
       y={y}
-      draggable
+      draggable={draggable}
       onClick={handleClick}
       onTap={handleClick}
       onDragEnd={handleDragEnd}

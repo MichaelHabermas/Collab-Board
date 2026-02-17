@@ -1,13 +1,13 @@
 import type { ReactElement } from 'react';
-import { useRef, useCallback, useState } from 'react';
+import { useRef, useCallback, useState, useEffect } from 'react';
 import type Konva from 'konva';
-import { Stage, Layer } from 'react-konva';
+import { Stage, Layer, Transformer } from 'react-konva';
 import { useViewportSize } from '@/hooks/useViewportSize';
 import { usePanZoom } from '@/hooks/usePanZoom';
 import { GridBackground } from './GridBackground';
 import { BoardObjectsLayer } from '@/components/objects/BoardObjectsLayer';
 import { StickyNoteTextEdit } from '@/components/objects/StickyNoteTextEdit';
-import { boardStore, useObject } from '@/store/boardStore';
+import { boardStore, useObject, useSelectedObjectIds } from '@/store/boardStore';
 import { authStore } from '@/store/authStore';
 import {
   createStickyNote,
@@ -21,10 +21,16 @@ import type { StickyNote } from '@collab-board/shared-types';
  * Konva Stage with four layers: grid (bottom), objects, selection, cursor (top).
  * Pan via drag; zoom via wheel toward cursor. Resizes when the window is resized.
  */
+const MIN_RESIZE = 20;
+
 export const Board = (): ReactElement => {
   const { width, height } = useViewportSize();
   const [editingStickyId, setEditingStickyId] = useState<string | null>(null);
   const editingSticky = useObject(editingStickyId ?? '') as StickyNote | undefined;
+  const selectedIds = useSelectedObjectIds();
+  const nodeRefsMapRef = useRef<Map<string, Konva.Group>>(new Map());
+  const [refsVersion, setRefsVersion] = useState(0);
+  const transformerRef = useRef<Konva.Transformer>(null);
   const {
     stagePosition,
     stageScale,
@@ -38,6 +44,51 @@ export const Board = (): ReactElement => {
   const cursorRef = useRef<Konva.Layer>(null);
   const selectionRef = useRef<Konva.Layer>(null);
   const dragStartRef = useRef<{ x: number; y: number } | null>(null);
+
+  const registerNodeRef = useCallback((id: string, node: unknown) => {
+    const group = node as Konva.Group | null;
+    if (group) {
+      group.setAttr('objectId', id);
+      nodeRefsMapRef.current.set(id, group);
+    } else {
+      nodeRefsMapRef.current.delete(id);
+    }
+    setRefsVersion((v) => v + 1);
+  }, []);
+
+  useEffect(() => {
+    const tr = transformerRef.current;
+    if (!tr) return;
+    const nodes = selectedIds
+      .map((id) => nodeRefsMapRef.current.get(id))
+      .filter(Boolean) as Konva.Node[];
+    tr.nodes(nodes);
+  }, [selectedIds, refsVersion]);
+
+  const handleTransformEnd = useCallback(() => {
+    const nodes = selectedIds
+      .map((id) => nodeRefsMapRef.current.get(id))
+      .filter(Boolean) as Konva.Node[];
+    for (const node of nodes) {
+      const id = node.getAttr('objectId') as string | undefined;
+      if (!id) continue;
+      const scaleX = node.scaleX();
+      const scaleY = node.scaleY();
+      const w = Math.max(MIN_RESIZE, (node.width() ?? 0) * scaleX);
+      const h = Math.max(MIN_RESIZE, (node.height() ?? 0) * scaleY);
+      node.scaleX(1);
+      node.scaleY(1);
+      node.width(w);
+      node.height(h);
+      const children = (node as Konva.Group).getChildren?.() ?? [];
+      const child = children[0];
+      if (child && 'width' in child && typeof (child as Konva.Shape).width === 'function') {
+        (child as Konva.Shape).width(w);
+        (child as Konva.Shape).height(h);
+      }
+      boardStore.getState().updateObject(id, { width: w, height: h, x: node.x(), y: node.y() });
+    }
+  }, [selectedIds]);
 
   const handleStageMouseDown = useCallback(
     (e: {
@@ -137,8 +188,13 @@ export const Board = (): ReactElement => {
         <Layer ref={gridRef} data-testid='canvas-board-layer-grid' name='grid' listening={false}>
           <GridBackground />
         </Layer>
-        <BoardObjectsLayer onStickyDoubleClick={(id) => setEditingStickyId(id)} />
-        <Layer ref={selectionRef} data-testid='canvas-board-layer-selection' name='selection' />
+        <BoardObjectsLayer
+          onStickyDoubleClick={(id) => setEditingStickyId(id)}
+          registerNodeRef={registerNodeRef}
+        />
+        <Layer ref={selectionRef} data-testid='canvas-board-layer-selection' name='selection'>
+          <Transformer ref={transformerRef} onTransformEnd={handleTransformEnd} />
+        </Layer>
         <Layer ref={cursorRef} data-testid='canvas-board-layer-cursor' name='cursor' />
       </Stage>
     </div>

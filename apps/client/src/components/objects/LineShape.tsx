@@ -1,19 +1,24 @@
 import type { ReactElement } from 'react';
 import { memo } from 'react';
+import type Konva from 'konva';
 import { Group, Line } from 'react-konva';
 import type { LineShape as ILineShape } from '@collab-board/shared-types';
-import { boardStore } from '@/store/boardStore';
+import { boardStore, useActiveToolType } from '@/store/boardStore';
 
 interface ILineShapeProps {
   shape: ILineShape;
   isSelected: boolean;
+  registerRef?: (node: Konva.Group | null) => void;
 }
 
 export const LineShapeComponent = memo(function LineShapeComponent({
   shape,
   isSelected,
+  registerRef,
 }: ILineShapeProps): ReactElement {
   const { id, x, y, points, strokeColor, strokeWidth } = shape;
+  const activeToolType = useActiveToolType();
+  const draggable = activeToolType === 'select';
 
   const handleClick = (): void => {
     boardStore.getState().selectObject(id);
@@ -28,10 +33,11 @@ export const LineShapeComponent = memo(function LineShapeComponent({
 
   return (
     <Group
+      ref={registerRef}
       data-testid={`object-line-${id}`}
       x={x}
       y={y}
-      draggable
+      draggable={draggable}
       onClick={handleClick}
       onTap={handleClick}
       onDragEnd={handleDragEnd}

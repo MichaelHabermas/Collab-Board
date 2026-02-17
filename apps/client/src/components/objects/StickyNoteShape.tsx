@@ -1,21 +1,26 @@
 import type { ReactElement } from 'react';
 import { memo } from 'react';
+import type Konva from 'konva';
 import { Group, Rect, Text } from 'react-konva';
 import type { StickyNote as IStickyNote } from '@collab-board/shared-types';
-import { boardStore } from '@/store/boardStore';
+import { boardStore, useActiveToolType } from '@/store/boardStore';
 
 interface IStickyNoteShapeProps {
   sticky: IStickyNote;
   isSelected: boolean;
   onDoubleClick?: (id: string) => void;
+  registerRef?: (node: Konva.Group | null) => void;
 }
 
 export const StickyNoteShape = memo(function StickyNoteShape({
   sticky,
   isSelected,
   onDoubleClick,
+  registerRef,
 }: IStickyNoteShapeProps): ReactElement {
   const { id, x, y, width, height, color, content, fontSize } = sticky;
+  const activeToolType = useActiveToolType();
+  const draggable = activeToolType === 'select';
 
   const handleClick = (): void => {
     boardStore.getState().selectObject(id);
@@ -34,10 +39,11 @@ export const StickyNoteShape = memo(function StickyNoteShape({
 
   return (
     <Group
+      ref={registerRef}
       data-testid={`object-sticky-${id}`}
       x={x}
       y={y}
-      draggable
+      draggable={draggable}
       onClick={handleClick}
       onTap={handleClick}
       onDblClick={handleDoubleClick}

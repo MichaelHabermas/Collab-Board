@@ -255,7 +255,7 @@ Assumption: estimates include implementation + tests + validation, and are for o
 Goal: remove highest-risk production blockers first (socket lifecycle, render hotspots, authz, reconnect safety).
 
 | Task ID | Task | Effort | Notes |
-|---|---|---:|---|
+| --- | --- | ---: | --- |
 | 1.1 | Single shared socket instance on client | M (3-4d) | Foundational; reduces duplicate connections and event storms |
 | 2.1 | Remove global object-array rerender hotspot | M (3-4d) | Highest impact for 500+ object smoothness |
 | 4.1 | Board-level authorization for socket mutations | M (2-3d) | Critical security control before scale |
@@ -270,7 +270,7 @@ Goal: remove highest-risk production blockers first (socket lifecycle, render ho
 Goal: improve multi-user concurrency behavior and make large-board performance predictable.
 
 | Task ID | Task | Effort | Notes |
-|---|---|---:|---|
+| --- | --- | ---: | --- |
 | 1.2 | Decouple cursor path from object sync path | M (2-3d) | Keeps cursor latency stable under object churn |
 | 1.3 | Server event rate limiting/backpressure | M (2-3d) | Protects server from mutation floods |
 | 2.2 | Object layer rendering/type dispatch optimization | M (2-3d) | Reduces repeated filter/map overhead |
@@ -289,7 +289,7 @@ Goal: improve multi-user concurrency behavior and make large-board performance p
 Goal: complete AI architecture safely, then lock in quality with benchmark and CI gates.
 
 | Task ID | Task | Effort | Notes |
-|---|---|---:|---|
+| --- | --- | ---: | --- |
 | 6.1 | AI execution endpoint + orchestration | L (5-7d) | New server capability with contract/test breadth |
 | 6.2 | AI board-context summarization/filtering | M (2-4d) | Key to `<2s` response target |
 | 6.3 | AI multi-step atomicity/rollback strategy | L (5-8d) | Correctness-critical for partial failure handling |

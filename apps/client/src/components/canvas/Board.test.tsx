@@ -78,7 +78,6 @@ vi.mock('react-konva', () => {
       onMouseUp,
       onMouseMove,
       onDragEnd,
-      onDragMove: _onDragMove,
       children,
     }: {
       width: number;
@@ -88,7 +87,9 @@ vi.mock('react-konva', () => {
       onMouseDown?: (e: unknown) => void;
       onMouseUp?: (e: unknown) => void;
       onMouseMove?: (e: unknown) => void;
-      onDragEnd?: (e: { target: { getStage: () => unknown; x: () => number; y: () => number } }) => void;
+      onDragEnd?: (e: {
+        target: { getStage: () => unknown; x: () => number; y: () => number };
+      }) => void;
       onDragMove?: (e: unknown) => void;
       children: ReactNode;
     }) => {
@@ -393,6 +394,22 @@ describe('Board', () => {
       const stage = screen.getByTestId('canvas-board-stage');
       fireEvent.mouseDown(stage, { clientX: 500, clientY: 500, button: 0 });
       fireEvent.mouseUp(stage, { clientX: 500, clientY: 500, button: 0 });
+      expect(boardStore.getState().selectedObjectIds).toHaveLength(0);
+    });
+
+    it('does not select by bbox on empty click without drag (regression: zero-size marquee)', () => {
+      const sticky = createStickyNote('test-board', 10, 20, 'test-user');
+      boardStore.getState().clearBoard();
+      boardStore.getState().setObjects([sticky]);
+      boardStore.getState().setBoardMetadata('test-board', 'Test');
+      boardStore.getState().setActiveTool('select');
+      boardStore.getState().selectObject(sticky.id);
+      render(<Board />);
+      const stage = screen.getByTestId('canvas-board-stage');
+      // Click empty-stage target at a point that is inside sticky bbox coordinates.
+      // Without drag threshold, this used to behave like zero-size marquee and reselect by bbox.
+      fireEvent.mouseDown(stage, { clientX: sticky.x + 1, clientY: sticky.y + 1, button: 0 });
+      fireEvent.mouseUp(stage, { clientX: sticky.x + 1, clientY: sticky.y + 1, button: 0 });
       expect(boardStore.getState().selectedObjectIds).toHaveLength(0);
     });
 

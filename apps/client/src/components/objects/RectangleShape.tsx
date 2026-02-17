@@ -3,8 +3,7 @@ import { memo } from 'react';
 import type Konva from 'konva';
 import { Group, Rect } from 'react-konva';
 import type { RectangleShape as IRectangleShape } from '@collab-board/shared-types';
-import { boardStore, useActiveToolType, useBoardMetadata } from '@/store/boardStore';
-import { useSocket } from '@/hooks/useSocket';
+import { useDraggableBoardObject } from '@/hooks/useDraggableBoardObject';
 
 interface IRectangleShapeProps {
   shape: IRectangleShape;
@@ -18,44 +17,8 @@ export const RectangleShapeComponent = memo(function RectangleShapeComponent({
   registerRef,
 }: IRectangleShapeProps): ReactElement {
   const { id, x, y, width, height, rotation, color, strokeColor, strokeWidth, fillOpacity } = shape;
-  const activeToolType = useActiveToolType();
-  const { boardId } = useBoardMetadata();
-  const { socket } = useSocket();
-  const draggable = activeToolType === 'select';
-
-  const handlePointerDown = (e: { evt: MouseEvent | TouchEvent }): void => {
-    if (activeToolType !== 'select') {
-      return;
-    }
-    const shiftKey = !!e.evt?.shiftKey;
-    if (shiftKey) {
-      boardStore.getState().toggleSelection(id);
-    } else {
-      boardStore.getState().selectObject(id);
-    }
-  };
-
-  const handleClick = (e: { evt: MouseEvent | TouchEvent }): void => {
-    const shiftKey = !!e.evt?.shiftKey;
-    if (shiftKey) {
-      boardStore.getState().toggleSelection(id);
-    } else {
-      boardStore.getState().selectObject(id);
-    }
-  };
-
-  const handleDragMove = (e: { target: { x: () => number; y: () => number } }): void => {
-    boardStore.getState().updateObject(id, { x: e.target.x(), y: e.target.y() });
-  };
-
-  const handleDragEnd = (e: { target: { x: () => number; y: () => number } }): void => {
-    const nx = e.target.x();
-    const ny = e.target.y();
-    boardStore.getState().updateObject(id, { x: nx, y: ny });
-    if (socket && boardId) {
-      socket.emit('object:move', { boardId, objectId: id, x: nx, y: ny });
-    }
-  };
+  const { draggable, handlePointerDown, handleClick, handleDragMove, handleDragEnd } =
+    useDraggableBoardObject(id);
 
   return (
     <Group

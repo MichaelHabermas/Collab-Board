@@ -992,12 +992,18 @@ When the **select** tool is active:
 - **Shift+click**: Toggle the object in the current selection (unchanged).
 - **Resize (circle/ellipse)**: When the user resizes a circle via the transformer, the shape’s width and height are updated and persisted so the rendered shape matches the transformer box. The shape can be resized non-uniformly to become an ellipse/oval (width and height may differ). Radius (or derived radius) is kept in sync for compatibility. The fill stays in sync with the selection bounds.
 - **Circle/ellipse hit area**: Selection and hit detection for circle (and ellipse) must be only on the shape (the circle/ellipse path), not on a rectangular bounding box; the hit area must not be offset or larger than the shape (e.g. a click outside the shape but inside the bounding box must not select the object). Implementation must use a custom Konva `hitFunc` on the Ellipse so the hit region is the elliptical path only (no rectangular bbox). The Group must be in the hit graph (`listening={true}`) so that when the Ellipse is hit, Konva can find the draggable Group; the Group (Container) does not draw a hit region, so the effective hit area remains only the Ellipse path.
+- **Rotated shape hit area**: For any shape with rotation (rectangle, circle, ellipse), hit detection must remain restricted to the actual shape path, not to an axis-aligned bounding box or to the Group container. After resize or rotate via the transformer, the Group must not be given explicit width/height (which would create an extra rectangular hit region); only the child shape dimensions are updated so the hit graph stays on the shape.
 
 **Circle/ellipse behavior (verify when implemented):**
 
 - [ ] Circle/ellipse hit area is only in the shape (no rectangular hit box; click outside shape but inside bbox does not select; Ellipse hitFunc defines path; Group in hit graph for drag).
 - [ ] Hit area implemented via Ellipse hitFunc (elliptical path only); click outside shape but inside bbox does not select.
 - [ ] Circle can be resized to an oval (ellipse) and dimensions are persisted (width, height, and optionally radius for compatibility).
+
+**Rotated-shape hit behavior (verify when implemented):**
+
+- [ ] No extra hit area after rotate/resize: rectangle and circle/ellipse do not gain a separate hit region outside the visible shape (e.g. no rectangular Group hit; click outside shape but inside bbox does not select).
+- [ ] Transform-end flow does not set width/height on object Group nodes; only child shape dimensions are updated.
 
 Layer order must keep the objects layer above the selection layer so the object receives the hit and can be selected and dragged. Draggable object Groups must participate in Konva’s hit graph (e.g. the main body shape—Rect, Circle, or Line—must have `listening` enabled) so the Group receives pointer events and drag can start; otherwise clicks fall through to the Layer and are treated as empty area.
 

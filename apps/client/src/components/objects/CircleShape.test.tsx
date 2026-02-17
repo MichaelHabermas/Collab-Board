@@ -17,16 +17,16 @@ vi.mock('react-konva', () => ({
     const testId = (props['data-testid'] as string) ?? 'circle-shape-group-mock';
     return <div data-testid={testId}>{props.children as ReactNode}</div>;
   },
-  Shape: (_props: Record<string, unknown>) => {
-    return <div data-testid="shape-mock" />;
+  Shape: () => {
+    return <div data-testid='shape-mock' />;
   },
   Ellipse: (props: Record<string, unknown>) => {
     // Capture props from the body Ellipse (the one with hitFunc); ignore the selection ring.
     if (props.hitFunc !== undefined) {
       capturedBodyEllipseProps = { ...props };
-      return <div data-testid="circle-body-ellipse-mock" />;
+      return <div data-testid='circle-body-ellipse-mock' />;
     }
-    return <div data-testid="ellipse-mock" />;
+    return <div data-testid='ellipse-mock' />;
   },
 }));
 
@@ -73,6 +73,13 @@ describe('CircleShapeComponent', () => {
     const circle = createCircle('board-1', 10, 20, 'user-1');
     render(<CircleShapeComponent shape={circle} isSelected={false} />);
     expect(capturedBodyEllipseProps.hitStrokeWidth).toBe(0);
+  });
+
+  it('body Ellipse receives width and height so hitFunc can draw correct ellipse path', () => {
+    const circle = createCircle('board-1', 0, 0, 'user-1');
+    render(<CircleShapeComponent shape={circle} isSelected={false} />);
+    expect(capturedBodyEllipseProps.width).toBe(circle.width);
+    expect(capturedBodyEllipseProps.height).toBe(circle.height);
   });
 
   it('hitFunc draws ellipse path centered at (0,0) only (no rect), uses fillShape only (no stroke)', () => {

@@ -79,13 +79,7 @@ export const GridBackground = ({
         stagePosition,
         stageScale,
       }),
-    [
-      viewportWidth,
-      viewportHeight,
-      stagePosition.x,
-      stagePosition.y,
-      stageScale,
-    ]
+    [viewportWidth, viewportHeight, stagePosition, stageScale]
   );
 
   const horizontalSegments = useMemo(() => {
@@ -108,24 +102,12 @@ export const GridBackground = ({
     <>
       <Group data-testid='canvas-grid-horizontal' listening={false}>
         {horizontalSegments.map((points, i) => (
-          <Line
-            key={`h-${i}`}
-            points={points}
-            stroke={STROKE}
-            strokeWidth={1}
-            listening={false}
-          />
+          <Line key={`h-${i}`} points={points} stroke={STROKE} strokeWidth={1} listening={false} />
         ))}
       </Group>
       <Group data-testid='canvas-grid-vertical' listening={false}>
         {verticalSegments.map((points, i) => (
-          <Line
-            key={`v-${i}`}
-            points={points}
-            stroke={STROKE}
-            strokeWidth={1}
-            listening={false}
-          />
+          <Line key={`v-${i}`} points={points} stroke={STROKE} strokeWidth={1} listening={false} />
         ))}
       </Group>
     </>

@@ -19,6 +19,7 @@ import {
   useAllObjects,
 } from '@/store/boardStore';
 import { authStore } from '@/store/authStore';
+import { commitNodeTransform, MIN_RESIZE } from '@/lib/commit-node-transform';
 import { executeObjectCreation } from '@/lib/execute-object-creation';
 import type { StickyNote } from '@collab-board/shared-types';
 
@@ -27,9 +28,9 @@ import type { StickyNote } from '@collab-board/shared-types';
  * Objects layer must stay above selection layer so object hit-test and drag receive events first.
  * Pan via drag; zoom via wheel toward cursor. Resizes when the window is resized.
  */
-const MIN_RESIZE = 20;
 const EDGE_PAN_MARGIN = 50;
 const EDGE_PAN_SPEED = 12;
+const MARQUEE_DRAG_THRESHOLD = 3;
 
 export const Board = (): ReactElement => {
   const {
@@ -124,7 +125,7 @@ export const Board = (): ReactElement => {
     const objects = boardStore.getState().objects;
     const nodes = selectedIds
       .map((id) => nodeRefsMapRef.current.get(id))
-      .filter(Boolean) as Konva.Node[];
+      .filter(Boolean) as Konva.Group[];
     for (const node of nodes) {
       const id = node.getAttr('objectId') as string | undefined;
       if (!id) continue;
@@ -132,51 +133,15 @@ export const Board = (): ReactElement => {
       if (!obj) continue;
       const scaleX = node.scaleX();
       const scaleY = node.scaleY();
-      const rotation = node.rotation();
       const baseW = Math.max(1, obj.width);
       const baseH = Math.max(1, obj.height);
       const w = Math.max(MIN_RESIZE, baseW * scaleX);
       const h = Math.max(MIN_RESIZE, baseH * scaleY);
-      node.scaleX(1);
-      node.scaleY(1);
-      node.rotation(0);
-      node.width(w);
-      node.height(h);
-      const children = (node as Konva.Group).getChildren?.() ?? [];
-      const child = children[0];
-      const isCircle = obj.type === 'circle';
-
-      if (child && 'width' in child && typeof (child as Konva.Shape).width === 'function') {
-        (child as Konva.Shape).width(w);
-        (child as Konva.Shape).height(h);
-      }
-      const childEllipse = child as Konva.Shape & {
-        radiusX?: (r: number) => number;
-        radiusY?: (r: number) => number;
-      };
-      if (
-        isCircle &&
-        childEllipse &&
-        typeof childEllipse.radiusX === 'function' &&
-        typeof childEllipse.radiusY === 'function'
-      ) {
-        childEllipse.radiusX(w / 2);
-        childEllipse.radiusY(h / 2);
-      }
-
-      const delta: Record<string, number> = {
-        width: w,
-        height: h,
-        x: node.x(),
-        y: node.y(),
-        rotation,
-      };
-      if (isCircle) {
-        delta.radius = Math.max(MIN_RESIZE / 2, Math.min(w, h) / 2);
-      }
-      boardStore.getState().updateObject(id, delta);
+      const result = commitNodeTransform(node, obj, w, h);
+      if (!result) continue;
+      boardStore.getState().updateObject(result.id, result.delta);
       if (socket && boardId) {
-        socket.emit('object:update', { boardId, objectId: id, delta });
+        socket.emit('object:update', { boardId, objectId: result.id, delta: result.delta });
       }
     }
   }, [selectedIds, socket]);
@@ -214,7 +179,6 @@ export const Board = (): ReactElement => {
         const boardX = (pos.x - stagePosition.x) / stageScale;
         const boardY = (pos.y - stagePosition.y) / stageScale;
         selectionStartRef.current = { x: boardX, y: boardY };
-        setSelectionRect({ x: boardX, y: boardY, width: 0, height: 0 });
       }
     },
     [stagePosition, stageScale]
@@ -245,12 +209,19 @@ export const Board = (): ReactElement => {
       const boardX = (pos.x - stagePosition.x) / stageScale;
       const boardY = (pos.y - stagePosition.y) / stageScale;
       handleCursorMove(boardX, boardY);
-      if (selectionRect === null || !selectionStartRef.current) return;
+      if (!selectionStartRef.current) return;
       const start = selectionStartRef.current;
-      const x = Math.min(start.x, boardX);
-      const y = Math.min(start.y, boardY);
       const width = Math.abs(boardX - start.x);
       const height = Math.abs(boardY - start.y);
+      if (
+        selectionRect === null &&
+        width < MARQUEE_DRAG_THRESHOLD &&
+        height < MARQUEE_DRAG_THRESHOLD
+      ) {
+        return;
+      }
+      const x = Math.min(start.x, boardX);
+      const y = Math.min(start.y, boardY);
       setSelectionRect({ x, y, width, height });
     },
     [handleCursorMove, selectionRect, stagePosition, stageScale, setStagePosition]
@@ -291,6 +262,7 @@ export const Board = (): ReactElement => {
         boardStore.getState().setSelectedObjectIds(ids);
         setSelectionRect(null);
         selectionStartRef.current = null;
+        dragStartRef.current = null;
         return;
       }
 
@@ -301,11 +273,14 @@ export const Board = (): ReactElement => {
       const tool = boardStore.getState().activeToolType;
       if (tool === 'select') {
         boardStore.getState().deselectAll();
+        selectionStartRef.current = null;
+        dragStartRef.current = null;
         return;
       }
       const pos = stage.getPointerPosition();
       const start = dragStartRef.current;
       dragStartRef.current = null;
+      selectionStartRef.current = null;
       if (!pos || !start) return;
       const pointer = stagePosition;
       const scale = stageScale;
@@ -321,10 +296,19 @@ export const Board = (): ReactElement => {
 
   const handleStageMouseLeave = useCallback(() => {
     middlePanStartRef.current = null;
+    selectionStartRef.current = null;
+    dragStartRef.current = null;
+    setSelectionRect(null);
   }, []);
 
   const handleStageDragEndOnlyWhenStage = useCallback(
-    (e: { target: { getStage: () => { x: () => number; y: () => number } | null; x: () => number; y: () => number } }) => {
+    (e: {
+      target: {
+        getStage: () => { x: () => number; y: () => number } | null;
+        x: () => number;
+        y: () => number;
+      };
+    }) => {
       const stage = e.target.getStage();
       if (stage && e.target === stage) {
         handleStageDragEnd(e);
@@ -335,7 +319,9 @@ export const Board = (): ReactElement => {
 
   const handleStageDragMove = useCallback(
     (e: {
-      target: { getStage: () => { getPointerPosition: () => { x: number; y: number } | null } | null };
+      target: {
+        getStage: () => { getPointerPosition: () => { x: number; y: number } | null } | null;
+      };
     }) => {
       const stage = e.target.getStage();
       if (!stage || (e.target as unknown) === stage) {
@@ -417,7 +403,7 @@ export const Board = (): ReactElement => {
         </Layer>
         <Layer ref={selectionRef} data-testid='canvas-board-layer-selection' name='selection'>
           {selectionRect && (
-              <Rect
+            <Rect
               data-testid='canvas-selection-rect'
               x={selectionRect.x}
               y={selectionRect.y}

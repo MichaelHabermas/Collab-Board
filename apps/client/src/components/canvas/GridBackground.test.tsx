@@ -1,10 +1,6 @@
 import { render, screen } from '@testing-library/react';
 import { describe, it, expect, vi } from 'vitest';
-import {
-  GridBackground,
-  computeGridPoints,
-  type IGridViewportProps,
-} from './GridBackground';
+import { GridBackground, computeGridPoints, type IGridViewportProps } from './GridBackground';
 
 vi.mock('react-konva', () => ({
   Group: ({
@@ -13,9 +9,7 @@ vi.mock('react-konva', () => ({
   }: {
     'data-testid'?: string;
     children?: React.ReactNode;
-  }) => (
-    <div data-testid={testId ?? 'canvas-grid-group-mock'}>{children}</div>
-  ),
+  }) => <div data-testid={testId ?? 'canvas-grid-group-mock'}>{children}</div>,
   Line: ({ 'data-testid': testId }: { 'data-testid'?: string }) =>
     testId != null ? <div data-testid={testId} /> : null,
 }));
@@ -37,8 +31,7 @@ describe('GridBackground', () => {
 
 describe('computeGridPoints', () => {
   it('returns segment format for uniform grid (regression: no polyline diagonals)', () => {
-    const { horizontalPoints, verticalPoints } =
-      computeGridPoints(defaultViewportProps);
+    const { horizontalPoints, verticalPoints } = computeGridPoints(defaultViewportProps);
 
     // Each horizontal segment is [xMin, y, xMax, y]: constant y (indices 1 and 3).
     for (let i = 0; i < horizontalPoints.length; i += 4) {
@@ -54,8 +47,7 @@ describe('computeGridPoints', () => {
   });
 
   it('returns points bounded by viewport (regression: no fixed 6000 extent)', () => {
-    const { horizontalPoints, verticalPoints } =
-      computeGridPoints(defaultViewportProps);
+    const { horizontalPoints, verticalPoints } = computeGridPoints(defaultViewportProps);
 
     const allCoords = [...horizontalPoints, ...verticalPoints];
     const maxAbs = Math.max(...allCoords.map((n) => Math.abs(n)));
@@ -70,12 +62,8 @@ describe('computeGridPoints', () => {
     const verticalLineCount = verticalPoints.length / 4;
     const visibleY = 600 + 2 * 48;
     const visibleX = 800 + 2 * 48;
-    expect(horizontalLineCount).toBeLessThanOrEqual(
-      Math.ceil(visibleY / 24) + 2
-    );
-    expect(verticalLineCount).toBeLessThanOrEqual(
-      Math.ceil(visibleX / 24) + 2
-    );
+    expect(horizontalLineCount).toBeLessThanOrEqual(Math.ceil(visibleY / 24) + 2);
+    expect(verticalLineCount).toBeLessThanOrEqual(Math.ceil(visibleX / 24) + 2);
   });
 
   it('extends grid into negative content coordinates when panned', () => {

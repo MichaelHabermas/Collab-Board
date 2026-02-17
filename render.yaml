@@ -1,0 +1,22 @@
+services:
+  - type: web
+    name: collab-board
+    runtime: node
+    plan: free
+    buildCommand: bun install && bun run build
+    startCommand: bun run --cwd apps/server start
+    envVars:
+      - key: NODE_ENV
+        value: production
+      - key: PORT
+        value: 3000
+      - key: MONGODB_URI
+        sync: false
+      - key: CLERK_SECRET_KEY
+        sync: false
+      - key: CLERK_PUBLISHABLE_KEY
+        sync: false
+      - key: GEMINI_API_KEY
+        sync: false
+      - key: CORS_ORIGIN
+        sync: false

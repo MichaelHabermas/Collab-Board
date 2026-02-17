@@ -6,7 +6,7 @@
   "workspaces": ["apps/*", "packages/*"],
   "scripts": {
     "dev": "concurrently \"bun run --cwd apps/client dev\" \"bun run --cwd apps/server dev\" --names client,server",
-    "build": "bun run --cwd apps/client build && bun run build:server",
+    "build": "bun run --cwd packages/shared-types build && bun run --cwd apps/client build && bun run build:server",
     "build:server": "bun build apps/server/src/server.ts --outdir apps/server/dist --target bun",
     "start": "bun run --cwd apps/server start",
     "typecheck": "tsc -b",

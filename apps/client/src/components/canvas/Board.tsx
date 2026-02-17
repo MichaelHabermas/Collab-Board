@@ -23,7 +23,8 @@ import { executeObjectCreation } from '@/lib/execute-object-creation';
 import type { StickyNote } from '@collab-board/shared-types';
 
 /**
- * Konva Stage with four layers: grid (bottom), objects, selection, cursor (top).
+ * Konva Stage with four layers: grid (bottom), selection, objects, cursor (top).
+ * Objects layer must stay above selection layer so object hit-test and drag receive events first.
  * Pan via drag; zoom via wheel toward cursor. Resizes when the window is resized.
  */
 const MIN_RESIZE = 20;
@@ -141,11 +142,33 @@ export const Board = (): ReactElement => {
       node.height(h);
       const children = (node as Konva.Group).getChildren?.() ?? [];
       const child = children[0];
+      const isCircle = obj.type === 'circle';
+      const newRadius = isCircle ? Math.max(MIN_RESIZE / 2, Math.min(w, h) / 2) : undefined;
+
       if (child && 'width' in child && typeof (child as Konva.Shape).width === 'function') {
         (child as Konva.Shape).width(w);
         (child as Konva.Shape).height(h);
       }
-      const delta = { width: w, height: h, x: node.x(), y: node.y(), rotation };
+      const childWithRadius = child as Konva.Shape & { radius?: (r: number) => number };
+      if (
+        isCircle &&
+        newRadius !== undefined &&
+        childWithRadius &&
+        typeof childWithRadius.radius === 'function'
+      ) {
+        childWithRadius.radius(newRadius);
+      }
+
+      const delta: Record<string, number> = {
+        width: w,
+        height: h,
+        x: node.x(),
+        y: node.y(),
+        rotation,
+      };
+      if (isCircle && newRadius !== undefined) {
+        delta.radius = newRadius;
+      }
       boardStore.getState().updateObject(id, delta);
       if (socket && boardId) {
         socket.emit('object:update', { boardId, objectId: id, delta });
@@ -350,10 +373,10 @@ export const Board = (): ReactElement => {
             />
           )}
           <Transformer
-          ref={transformerRef}
-          onTransformEnd={handleTransformEnd}
-          shouldOverdrawWholeArea={false}
-        />
+            ref={transformerRef}
+            onTransformEnd={handleTransformEnd}
+            shouldOverdrawWholeArea={false}
+          />
         </Layer>
         <BoardObjectsLayer
           onStickyDoubleClick={(id) => setEditingStickyId(id)}

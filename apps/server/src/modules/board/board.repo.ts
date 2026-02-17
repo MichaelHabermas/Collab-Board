@@ -99,11 +99,7 @@ export class BoardRepository implements StorageAdapter {
   }
 
   async updateObject(id: string, delta: Partial<BoardObject>): Promise<BoardObject | null> {
-    const doc = await BoardObjectModel.findOneAndUpdate(
-      { id },
-      { $set: delta },
-      { new: true }
-    );
+    const doc = await BoardObjectModel.findOneAndUpdate({ id }, { $set: delta }, { new: true });
     return doc ? toObjectEntity(doc) : null;
   }
 

@@ -3,7 +3,7 @@ import { act, fireEvent, render, screen } from '@testing-library/react';
 import { describe, it, expect, vi, beforeEach } from 'vitest';
 import { Board } from './Board';
 import { boardStore } from '@/store/boardStore';
-import { createStickyNote } from '@/lib/create-board-object';
+import { createCircle, createStickyNote } from '@/lib/create-board-object';
 
 const mockWidth = 800;
 const mockHeight = 600;
@@ -104,10 +104,68 @@ vi.mock('react-konva', () => {
     Group: ({
       'data-testid': testId,
       children,
+      onMouseDown,
+      onTouchStart,
+      onClick,
+      onTap,
+      onDragMove,
+      onDragEnd,
     }: {
       'data-testid'?: string;
       children?: ReactNode;
-    }) => <div data-testid={testId ?? 'canvas-group-mock'}>{children}</div>,
+      onMouseDown?: (e: unknown) => void;
+      onTouchStart?: (e: unknown) => void;
+      onClick?: (e: unknown) => void;
+      onTap?: (e: unknown) => void;
+      onDragMove?: (e: { target: { x: () => number; y: () => number } }) => void;
+      onDragEnd?: (e: { target: { x: () => number; y: () => number } }) => void;
+    }) => (
+      <div
+        data-testid={testId ?? 'canvas-group-mock'}
+        onMouseDown={(e: React.MouseEvent) => {
+          const konvaEvt = {
+            ...makeKonvaMouseEvent(e.nativeEvent),
+            evt: e.nativeEvent,
+          };
+          onMouseDown?.(konvaEvt);
+        }}
+        onTouchStart={(e: React.TouchEvent) => {
+          const konvaEvt = {
+            target: {
+              getStage: () => ({
+                getPointerPosition: () => ({ x: 0, y: 0 }),
+              }),
+              getType: () => 'Group',
+            },
+            evt: e.nativeEvent,
+          };
+          onTouchStart?.(konvaEvt);
+        }}
+        onClick={(e: React.MouseEvent) => {
+          const konvaEvt = { ...makeKonvaMouseEvent(e.nativeEvent), evt: e.nativeEvent };
+          onClick?.(konvaEvt);
+          onTap?.(konvaEvt);
+        }}
+      >
+        {children}
+        {onDragMove && testId && (
+          <button
+            type='button'
+            data-testid={`${testId}-simulate-dragmove`}
+            onClick={() => onDragMove({ target: { x: () => 100, y: () => 100 } })}
+            aria-label='Simulate drag move'
+          />
+        )}
+        {onDragEnd && testId && (
+          <button
+            type='button'
+            data-testid={`${testId}-simulate-dragend`}
+            onClick={() => onDragEnd({ target: { x: () => 150, y: () => 150 } })}
+            aria-label='Simulate drag end'
+          />
+        )}
+      </div>
+    ),
     Line: ({ 'data-testid': testId }: { 'data-testid'?: string }) =>
       testId ? <div data-testid={testId} /> : null,
     Circle: (): null => null,
@@ -224,6 +282,144 @@ describe('Board', () => {
       expect(objects).toHaveLength(1);
       expect(objects[0]).toMatchObject({ type: expectedType });
       expect(screen.getByTestId(`object-${expectedType}-${objects[0].id}`)).toBeInTheDocument();
+    });
+  });
+
+  describe('selector tool: selection and drag-move', () => {
+    it('selects object on single pointer down when select tool is active', () => {
+      const sticky = createStickyNote('test-board', 10, 20, 'test-user');
+      boardStore.getState().clearBoard();
+      boardStore.getState().setObjects([sticky]);
+      boardStore.getState().setBoardMetadata('test-board', 'Test');
+      boardStore.getState().setActiveTool('select');
+      boardStore.getState().deselectAll();
+      render(<Board />);
+      const objectEl = screen.getByTestId(`object-sticky-${sticky.id}`);
+      fireEvent.mouseDown(objectEl, { clientX: 10, clientY: 20, button: 0 });
+      expect(boardStore.getState().selectedObjectIds).toEqual([sticky.id]);
+    });
+
+    it('updates store on drag move so object position stays in sync during drag', async () => {
+      const sticky = createStickyNote('test-board', 10, 20, 'test-user');
+      boardStore.getState().clearBoard();
+      boardStore.getState().setObjects([sticky]);
+      boardStore.getState().setBoardMetadata('test-board', 'Test');
+      boardStore.getState().setActiveTool('select');
+      render(<Board />);
+      const simulateDragMove = screen.getByTestId(`object-sticky-${sticky.id}-simulate-dragmove`);
+      await act(async () => {
+        fireEvent.click(simulateDragMove);
+      });
+      const updated = boardStore.getState().objects.find((o) => o.id === sticky.id);
+      expect(updated).toBeDefined();
+      expect(updated?.x).toBe(100);
+      expect(updated?.y).toBe(100);
+    });
+
+    it('clears selection when pointer down and up on empty area with select tool', () => {
+      const sticky = createStickyNote('test-board', 10, 20, 'test-user');
+      boardStore.getState().clearBoard();
+      boardStore.getState().setObjects([sticky]);
+      boardStore.getState().setBoardMetadata('test-board', 'Test');
+      boardStore.getState().setActiveTool('select');
+      boardStore.getState().selectObject(sticky.id);
+      render(<Board />);
+      const stage = screen.getByTestId('canvas-board-stage');
+      fireEvent.mouseDown(stage, { clientX: 500, clientY: 500, button: 0 });
+      fireEvent.mouseUp(stage, { clientX: 500, clientY: 500, button: 0 });
+      expect(boardStore.getState().selectedObjectIds).toHaveLength(0);
+    });
+
+    it('toggles object in selection on shift+pointer down', () => {
+      const sticky1 = createStickyNote('board', 0, 0, 'user');
+      const sticky2 = createStickyNote('board', 100, 100, 'user');
+      boardStore.getState().clearBoard();
+      boardStore.getState().setObjects([sticky1, sticky2]);
+      boardStore.getState().setBoardMetadata('board', 'Test');
+      boardStore.getState().setActiveTool('select');
+      boardStore.getState().selectObject(sticky1.id);
+      render(<Board />);
+      const object2 = screen.getByTestId(`object-sticky-${sticky2.id}`);
+      fireEvent.mouseDown(object2, { clientX: 100, clientY: 100, button: 0, shiftKey: true });
+      expect(boardStore.getState().selectedObjectIds).toContain(sticky1.id);
+      expect(boardStore.getState().selectedObjectIds).toContain(sticky2.id);
+      fireEvent.mouseDown(object2, { clientX: 100, clientY: 100, button: 0, shiftKey: true });
+      expect(boardStore.getState().selectedObjectIds).toEqual([sticky1.id]);
+    });
+
+    it('updates store and emits object:move when drag ends on object with select tool', async () => {
+      const emit = vi.fn();
+      mockSocketValue = { emit };
+      const sticky = createStickyNote('test-board', 10, 20, 'test-user');
+      boardStore.getState().clearBoard();
+      boardStore.getState().setObjects([sticky]);
+      boardStore.getState().setBoardMetadata('test-board', 'Test');
+      boardStore.getState().setActiveTool('select');
+      render(<Board />);
+      const simulateDragEnd = screen.getByTestId(`object-sticky-${sticky.id}-simulate-dragend`);
+      await act(async () => {
+        fireEvent.click(simulateDragEnd);
+      });
+      const updated = boardStore.getState().objects.find((o) => o.id === sticky.id);
+      expect(updated).toBeDefined();
+      expect(updated?.x).toBe(150);
+      expect(updated?.y).toBe(150);
+      expect(emit).toHaveBeenCalledWith('object:move', {
+        boardId: 'test-board',
+        objectId: sticky.id,
+        x: 150,
+        y: 150,
+      });
+    });
+
+    it('updates store and emits object:move when drag ends on circle with select tool', async () => {
+      const emit = vi.fn();
+      mockSocketValue = { emit };
+      const circle = createCircle('test-board', 10, 20, 'test-user');
+      boardStore.getState().clearBoard();
+      boardStore.getState().setObjects([circle]);
+      boardStore.getState().setBoardMetadata('test-board', 'Test');
+      boardStore.getState().setActiveTool('select');
+      render(<Board />);
+      const simulateDragEnd = screen.getByTestId(`object-circle-${circle.id}-simulate-dragend`);
+      await act(async () => {
+        fireEvent.click(simulateDragEnd);
+      });
+      const updated = boardStore.getState().objects.find((o) => o.id === circle.id);
+      expect(updated).toBeDefined();
+      expect(updated?.x).toBe(150);
+      expect(updated?.y).toBe(150);
+      expect(emit).toHaveBeenCalledWith('object:move', {
+        boardId: 'test-board',
+        objectId: circle.id,
+        x: 150,
+        y: 150,
+      });
+    });
+
+    it('circle resize: store update with radius keeps circle in sync', () => {
+      const circle = createCircle('test-board', 0, 0, 'test-user');
+      boardStore.getState().clearBoard();
+      boardStore.getState().setObjects([circle]);
+      const w = 80;
+      const h = 80;
+      const newRadius = Math.min(w, h) / 2;
+      const delta = {
+        width: w,
+        height: h,
+        radius: newRadius,
+        x: circle.x,
+        y: circle.y,
+        rotation: circle.rotation,
+      };
+      boardStore.getState().updateObject(circle.id, delta);
+      const updated = boardStore.getState().objects.find((o) => o.id === circle.id);
+      expect(updated).toBeDefined();
+      expect(updated).toMatchObject({
+        width: 80,
+        height: 80,
+        radius: 40,
+      });
     });
   });
 });

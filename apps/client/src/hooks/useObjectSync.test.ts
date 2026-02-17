@@ -84,7 +84,7 @@ describe('useObjectSync', () => {
     expect(objects).toHaveLength(1);
     expect(objects[0]?.id).toBe('same-uuid');
     expect(objects[0]).toMatchObject(serverObject);
-    expect(objects[0]?.content).toBe('from-server');
+    expect((objects[0] as StickyNote | undefined)?.content).toBe('from-server');
     expect(objects[0]?.updatedAt).toBe('2025-01-01T12:00:00.000Z');
   });
 

@@ -25,6 +25,18 @@ export const StickyNoteShape = memo(function StickyNoteShape({
   const { socket } = useSocket();
   const draggable = activeToolType === 'select';
 
+  const handlePointerDown = (e: { evt: MouseEvent | TouchEvent }): void => {
+    if (activeToolType !== 'select') {
+      return;
+    }
+    const shiftKey = 'shiftKey' in e.evt ? e.evt.shiftKey : false;
+    if (shiftKey) {
+      boardStore.getState().toggleSelection(id);
+    } else {
+      boardStore.getState().selectObject(id);
+    }
+  };
+
   const handleClick = (e: { evt: MouseEvent | TouchEvent }): void => {
     const shiftKey = 'shiftKey' in e.evt ? e.evt.shiftKey : false;
     if (shiftKey) {
@@ -36,6 +48,10 @@ export const StickyNoteShape = memo(function StickyNoteShape({
 
   const handleDoubleClick = (): void => {
     onDoubleClick?.(id);
+  };
+
+  const handleDragMove = (e: { target: { x: () => number; y: () => number } }): void => {
+    boardStore.getState().updateObject(id, { x: e.target.x(), y: e.target.y() });
   };
 
   const handleDragEnd = (e: { target: { x: () => number; y: () => number } }): void => {
@@ -55,10 +71,13 @@ export const StickyNoteShape = memo(function StickyNoteShape({
       y={y}
       rotation={rotation}
       draggable={draggable}
+      onMouseDown={handlePointerDown}
+      onTouchStart={handlePointerDown}
       onClick={handleClick}
       onTap={handleClick}
       onDblClick={handleDoubleClick}
       onDblTap={handleDoubleClick}
+      onDragMove={handleDragMove}
       onDragEnd={handleDragEnd}
       listening
     >

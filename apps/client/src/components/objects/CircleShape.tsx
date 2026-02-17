@@ -17,11 +17,35 @@ export const CircleShapeComponent = memo(function CircleShapeComponent({
   isSelected,
   registerRef,
 }: ICircleShapeProps): ReactElement {
-  const { id, x, y, rotation, radius, color, strokeColor, strokeWidth, fillOpacity } = shape;
+  const {
+    id,
+    x,
+    y,
+    rotation,
+    radius,
+    width,
+    height,
+    color,
+    strokeColor,
+    strokeWidth,
+    fillOpacity,
+  } = shape;
   const activeToolType = useActiveToolType();
   const { boardId } = useBoardMetadata();
   const { socket } = useSocket();
   const draggable = activeToolType === 'select';
+
+  const handlePointerDown = (e: { evt: MouseEvent | TouchEvent }): void => {
+    if (activeToolType !== 'select') {
+      return;
+    }
+    const shiftKey = 'shiftKey' in e.evt ? e.evt.shiftKey : false;
+    if (shiftKey) {
+      boardStore.getState().toggleSelection(id);
+    } else {
+      boardStore.getState().selectObject(id);
+    }
+  };
 
   const handleClick = (e: { evt: MouseEvent | TouchEvent }): void => {
     const shiftKey = 'shiftKey' in e.evt ? e.evt.shiftKey : false;
@@ -30,6 +54,10 @@ export const CircleShapeComponent = memo(function CircleShapeComponent({
     } else {
       boardStore.getState().selectObject(id);
     }
+  };
+
+  const handleDragMove = (e: { target: { x: () => number; y: () => number } }): void => {
+    boardStore.getState().updateObject(id, { x: e.target.x(), y: e.target.y() });
   };
 
   const handleDragEnd = (e: { target: { x: () => number; y: () => number } }): void => {
@@ -47,10 +75,15 @@ export const CircleShapeComponent = memo(function CircleShapeComponent({
       data-testid={`object-circle-${id}`}
       x={x}
       y={y}
+      width={width}
+      height={height}
       rotation={rotation}
       draggable={draggable}
+      onMouseDown={handlePointerDown}
+      onTouchStart={handlePointerDown}
       onClick={handleClick}
       onTap={handleClick}
+      onDragMove={handleDragMove}
       onDragEnd={handleDragEnd}
       listening
     >

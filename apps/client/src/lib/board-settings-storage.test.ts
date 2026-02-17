@@ -1,8 +1,5 @@
 import { describe, it, expect, beforeEach } from 'vitest';
-import {
-  getPersistedSettings,
-  setPersistedSettings,
-} from './board-settings-storage';
+import { getPersistedSettings, setPersistedSettings } from './board-settings-storage';
 
 const STORAGE_KEY = 'collab-board-settings';
 
@@ -38,10 +35,7 @@ describe('board-settings-storage', () => {
   });
 
   it('ignores invalid activeToolType from storage', () => {
-    localStorage.setItem(
-      STORAGE_KEY,
-      JSON.stringify({ activeToolType: 'invalid_tool' })
-    );
+    localStorage.setItem(STORAGE_KEY, JSON.stringify({ activeToolType: 'invalid_tool' }));
     expect(getPersistedSettings()).toEqual({});
   });
 

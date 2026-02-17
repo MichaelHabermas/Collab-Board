@@ -102,6 +102,7 @@ export const objectUpdateSchema = z.object({
   fillOpacity: z.number().min(0).max(1).optional(),
   label: z.string().optional(),
   points: z.array(z.number()).optional(),
+  radius: z.number().positive().optional(),
 });
 
 export const objectUpdatePayloadSchema = z.object({

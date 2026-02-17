@@ -968,13 +968,25 @@ Everything below through Epic 8 must be functional at the 24-hour MVP gate.
 - [x] Selected object shows resize handles; drag handle resizes
 - [x] Minimum size enforced
 
+#### Selector tool behavior (canonical)
+
+When the **select** tool is active:
+
+- **Single pointer down on an object**: That object becomes the only selected object (selection is committed on pointer down when the target is an object, not only on click). Shift+pointer down toggles that object in the selection.
+- **Click and drag on an object**: The object moves (drag-move). Because object position is controlled (x, y from store), the client must update the store on each drag move (`onDragMove`) so that re-renders do not reset the node position during drag. Position is persisted and synced (e.g. `object:move`) on drag end.
+- **Single pointer down on empty area**: Start the selection rectangle if the user drags; on release without drag, clear selection.
+- **Shift+click**: Toggle the object in the current selection (unchanged).
+- **Resize (circle)**: When the user resizes a circle via the transformer, the circle’s radius (and width/height) are updated and persisted so the rendered circle matches the transformer box. Resizing a circle updates its radius and keeps the fill in sync with the selection bounds.
+
+Layer order must keep the objects layer above the selection layer so the object receives the hit and can be selected and dragged.
+
 #### Implementation Checklist
 
 - [x] Branch created from `development`
 
 **Commit 1:** `feat(objects): add object selection with visual indicator` — Subtasks: [x] useSelection.ts; [x] Click object → selectObject(id); empty → deselectAll(); [x] Selection outline on selected
 
-**Commit 2:** `feat(objects): add drag-to-move for all objects` — Subtasks: [x] Konva draggable on objects; [x] Drag only when Select tool active; [x] Update boardStore on dragend; [x] 60fps drag
+**Commit 2:** `feat(objects): add drag-to-move for all objects` — Subtasks: [x] Konva draggable on objects; [x] Drag only when Select tool active; [x] Update boardStore on dragMove (required for controlled position so drag is visible) and on dragEnd; [x] 60fps drag
 
 **Commit 3:** `feat(objects): add resize handles on selection` — Subtasks: [x] SelectionTransformer.tsx with Konva Transformer; [x] Update width/height on transform end; [x] Min size e.g. 20x20
 

@@ -49,29 +49,46 @@ export function usePanZoom(): {
     center: { x: number; y: number };
   } | null>(null);
 
-  const handleWheel = useCallback(
-    (e: React.WheelEvent<HTMLDivElement>) => {
-      e.preventDefault();
+  const handleWheelLogic = useCallback(
+    (clientX: number, clientY: number, deltaY: number) => {
       const container = containerRef.current;
       if (!container) return;
       const rect = container.getBoundingClientRect();
       const pointer = {
-        x: e.clientX - rect.left,
-        y: e.clientY - rect.top,
+        x: clientX - rect.left,
+        y: clientY - rect.top,
       };
-      const direction = e.deltaY > 0 ? 1 : -1;
+      const pos = lastPositionRef.current;
+      const scale = lastScaleRef.current;
+      const direction = deltaY > 0 ? 1 : -1;
       const scaleFactor = direction > 0 ? 1 / SCALE_BY : SCALE_BY;
-      const newScale = Math.min(MAX_SCALE, Math.max(MIN_SCALE, stageScale * scaleFactor));
-      const contentX = (pointer.x - stagePosition.x) / stageScale;
-      const contentY = (pointer.y - stagePosition.y) / stageScale;
+      const newScale = Math.min(MAX_SCALE, Math.max(MIN_SCALE, scale * scaleFactor));
+      const contentX = (pointer.x - pos.x) / scale;
+      const contentY = (pointer.y - pos.y) / scale;
       setStagePosition({
         x: pointer.x - contentX * newScale,
         y: pointer.y - contentY * newScale,
       });
       setStageScale(newScale);
     },
-    [stagePosition, stageScale]
+    []
   );
+
+  useEffect(() => {
+    const container = containerRef.current;
+    if (!container) return;
+    const onWheel = (e: WheelEvent) => {
+      e.preventDefault();
+      handleWheelLogic(e.clientX, e.clientY, e.deltaY);
+    };
+    container.addEventListener('wheel', onWheel, { passive: false });
+    return () => container.removeEventListener('wheel', onWheel);
+  }, [handleWheelLogic]);
+
+  const handleWheel = useCallback((_e: React.WheelEvent<HTMLDivElement>) => {
+    // Wheel is handled by a non-passive listener in useEffect so preventDefault can be used.
+    // This no-op keeps the onWheel API for consumers; actual zoom is in the effect.
+  }, []);
 
   const handleStageDragEnd = useCallback((e: { target: { x: () => number; y: () => number } }) => {
     setStagePosition({ x: e.target.x(), y: e.target.y() });

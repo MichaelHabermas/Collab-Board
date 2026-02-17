@@ -1,9 +1,6 @@
 import { useEffect } from 'react';
 import { boardStore } from '@/store/boardStore';
-import {
-  getPersistedSettings,
-  setPersistedSettings,
-} from '@/lib/board-settings-storage';
+import { getPersistedSettings, setPersistedSettings } from '@/lib/board-settings-storage';
 
 /**
  * Hydrates boardStore from localStorage on mount and persists activeToolType and boardId

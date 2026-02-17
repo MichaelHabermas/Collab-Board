@@ -4,6 +4,7 @@ import { createApp } from './app';
 import { socketAuthMiddleware } from './auth/socket-auth';
 import type { IAuthenticatedSocket } from './auth/socket-auth';
 import { registerRoomHandlers } from './collaboration/room.handler';
+import { registerCursorHandlers } from './collaboration/cursor.handler';
 import { connectDatabase, disconnectDatabase } from './modules/board/db';
 import { logger } from './shared/lib/logger';
 import type { ClientToServerEvents, ServerToClientEvents } from '@collab-board/shared-types';
@@ -27,6 +28,7 @@ io.on('connection', (socket: IAuthenticatedSocket) => {
   logger.info('Client connected', { socketId: socket.id, userId: user?.userId });
 
   registerRoomHandlers(socket);
+  registerCursorHandlers(socket);
 
   socket.on('disconnect', () => {
     logger.info('Client disconnected', { socketId: socket.id });

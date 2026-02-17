@@ -10,6 +10,15 @@ vi.mock('@/hooks/useViewportSize', () => ({
   useViewportSize: () => ({ width: mockWidth, height: mockHeight }),
 }));
 
+vi.mock('@/hooks/useCursorEmit', () => ({
+  useCursorEmit: () => vi.fn(),
+}));
+
+vi.mock('@/hooks/useRemoteCursors', () => ({
+  useRemoteCursors: () => new Map(),
+  useCurrentUserId: () => '',
+}));
+
 vi.mock('react-konva', () => ({
   Stage: ({
     width,
@@ -33,9 +42,9 @@ vi.mock('react-konva', () => ({
     'data-testid'?: string;
     children?: ReactNode;
   }) => <div data-testid={testId ?? 'canvas-layer-mock'}>{children}</div>,
-  Line: ({ 'data-testid': testId }: { 'data-testid'?: string }) => (
-    <div data-testid={testId ?? 'canvas-line-mock'} />
-  ),
+  Line: ({ 'data-testid': testId }: { 'data-testid'?: string }) =>
+    testId ? <div data-testid={testId} /> : null,
+  Circle: (): null => null,
   Transformer: (): null => null,
   Rect: (): null => null,
 }));

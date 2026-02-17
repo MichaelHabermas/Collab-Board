@@ -4,6 +4,8 @@ import type Konva from 'konva';
 import { Stage, Layer, Transformer, Rect } from 'react-konva';
 import { useViewportSize } from '@/hooks/useViewportSize';
 import { usePanZoom } from '@/hooks/usePanZoom';
+import { useCursorEmit } from '@/hooks/useCursorEmit';
+import { CursorOverlay } from './CursorOverlay';
 import { GridBackground } from './GridBackground';
 import { BoardObjectsLayer } from '@/components/objects/BoardObjectsLayer';
 import { StickyNoteTextEdit } from '@/components/objects/StickyNoteTextEdit';
@@ -51,6 +53,7 @@ export const Board = (): ReactElement => {
     width: number;
     height: number;
   } | null>(null);
+  const handleCursorMove = useCursorEmit();
 
   const registerNodeRef = useCallback((id: string, node: unknown) => {
     const group = node as Konva.Group | null;
@@ -145,13 +148,14 @@ export const Board = (): ReactElement => {
         getStage: () => { getPointerPosition: () => { x: number; y: number } | null } | null;
       };
     }) => {
-      if (selectionRect === null || !selectionStartRef.current) return;
       const stage = e.target.getStage();
       if (!stage) return;
       const pos = stage.getPointerPosition();
       if (!pos) return;
       const boardX = (pos.x - stagePosition.x) / stageScale;
       const boardY = (pos.y - stagePosition.y) / stageScale;
+      handleCursorMove(boardX, boardY);
+      if (selectionRect === null || !selectionStartRef.current) return;
       const start = selectionStartRef.current;
       const x = Math.min(start.x, boardX);
       const y = Math.min(start.y, boardY);
@@ -159,7 +163,7 @@ export const Board = (): ReactElement => {
       const height = Math.abs(boardY - start.y);
       setSelectionRect({ x, y, width, height });
     },
-    [selectionRect, stagePosition, stageScale]
+    [handleCursorMove, selectionRect, stagePosition, stageScale]
   );
 
   const handleStageMouseUp = useCallback(
@@ -285,7 +289,9 @@ export const Board = (): ReactElement => {
           )}
           <Transformer ref={transformerRef} onTransformEnd={handleTransformEnd} />
         </Layer>
-        <Layer ref={cursorRef} data-testid='canvas-board-layer-cursor' name='cursor' />
+        <Layer ref={cursorRef} data-testid='canvas-board-layer-cursor' name='cursor'>
+          <CursorOverlay />
+        </Layer>
       </Stage>
     </div>
   );

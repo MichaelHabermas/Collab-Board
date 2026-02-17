@@ -42,6 +42,11 @@ export const boardLeaveSchema = z.object({
   boardId: z.string().min(1),
 });
 
+export const cursorMoveSchema = z.object({
+  x: z.number(),
+  y: z.number(),
+});
+
 export const objectUpdateSchema = z.object({
   x: z.number().optional(),
   y: z.number().optional(),

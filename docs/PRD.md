@@ -1453,19 +1453,19 @@ Only begin post-MVP work after Epic 9 (MVP Hardening) is fully complete.
 #### Feature F9.2: Integration Tests — Socket.io Handlers
 
 - **Branch:** `feature/integration-tests-socket-handlers`
-- [ ] Feature F9.2 complete (merged to `development`)
+- [x] Feature F9.2 complete (merged to `development`)
 
 #### Acceptance Criteria
 
-- [ ] Two clients connect to test server; object create/move/delete tested; cursor and presence join/leave tested; socket.io-client + mongodb-memory-server
+- [x] Two clients connect to test server; object create/move/delete tested; cursor and presence join/leave tested; socket.io-client + mongodb-memory-server
 
 #### Implementation Checklist
 
-- [ ] Branch created from `development`
-- [ ] Commit 1: Test server setup with mongodb-memory-server and socket.io-client helpers
-- [ ] Commit 2: Object handler tests (object:create, object:move, object:delete, board:load)
-- [ ] Commit 3: Cursor and presence handler tests
-- [ ] Commit 4: Verify all integration tests pass, merge to development
+- [x] Branch created from `development`
+- [x] Commit 1: Test server setup with mongodb-memory-server and socket.io-client helpers
+- [x] Commit 2: Object handler tests (object:create, object:move, object:delete, board:load)
+- [x] Commit 3: Cursor and presence handler tests
+- [x] Commit 4: Verify all integration tests pass, merge to development
 
 ---
 

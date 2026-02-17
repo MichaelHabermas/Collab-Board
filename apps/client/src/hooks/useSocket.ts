@@ -6,6 +6,15 @@ import { useClerkToken } from './useClerkToken';
 
 const SOCKET_URL = import.meta.env.VITE_API_URL ?? 'http://localhost:3000';
 
+/** Explicit reconnection config: exponential backoff, replace local state with server on reconnect via board:join + board:load. */
+export const SOCKET_RECONNECT_OPTIONS = {
+  reconnection: true,
+  reconnectionAttempts: Infinity,
+  reconnectionDelay: 1000,
+  reconnectionDelayMax: 30000,
+  randomizationFactor: 0.5,
+} as const;
+
 export type CollabSocket = Socket<ServerToClientEvents, ClientToServerEvents>;
 
 export interface IUseSocketResult {
@@ -54,6 +63,7 @@ export const useSocket = (): IUseSocketResult => {
         const s = io(SOCKET_URL, {
           auth: { token },
           transports: ['websocket', 'polling'],
+          ...SOCKET_RECONNECT_OPTIONS,
         });
         socketRef.current = s;
         s.on('connect', () => {

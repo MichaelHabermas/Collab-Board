@@ -76,6 +76,16 @@ describe('useBoardRoom', () => {
     expect(mockEmit).toHaveBeenCalledWith('board:leave', { boardId: 'board-456' });
   });
 
+  it('re-emits board:join on connect (reconnect re-sync path)', () => {
+    renderHook(() => useBoardRoom('board-123'));
+    const onConnect = mockOn.mock.calls.find((c) => c[0] === 'connect')?.[1];
+    expect(typeof onConnect).toBe('function');
+    mockEmit.mockClear();
+    onConnect();
+    expect(mockEmit).toHaveBeenCalledWith('board:join', { boardId: 'board-123' });
+    expect(boardStore.getState().boardLoadStatus).toBe('loading');
+  });
+
   it('registers board:load listener and updates store when board:load is emitted', () => {
     renderHook(() => useBoardRoom('board-123'));
     const onBoardLoad = mockOn.mock.calls.find((c) => c[0] === 'board:load')?.[1];

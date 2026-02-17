@@ -9,7 +9,12 @@ import { BoardObjectsLayer } from '@/components/objects/BoardObjectsLayer';
 import { StickyNoteTextEdit } from '@/components/objects/StickyNoteTextEdit';
 import { boardStore, useObject } from '@/store/boardStore';
 import { authStore } from '@/store/authStore';
-import { createStickyNote } from '@/lib/create-board-object';
+import {
+  createStickyNote,
+  createRectangle,
+  createCircle,
+  createLine,
+} from '@/lib/create-board-object';
 import type { StickyNote } from '@collab-board/shared-types';
 
 /**
@@ -64,7 +69,6 @@ export const Board = (): ReactElement => {
         boardStore.getState().deselectAll();
         return;
       }
-      if (tool !== 'sticky_note') return;
       const pos = stage.getPointerPosition();
       const start = dragStartRef.current;
       dragStartRef.current = null;
@@ -77,8 +81,19 @@ export const Board = (): ReactElement => {
       const boardY = (pos.y - pointer.y) / scale;
       const boardId = boardStore.getState().boardId || 'default-board';
       const createdBy = authStore.getState().userId || 'anonymous';
-      const sticky = createStickyNote(boardId, boardX, boardY, createdBy);
-      boardStore.getState().addObject(sticky);
+      if (tool === 'sticky_note') {
+        const sticky = createStickyNote(boardId, boardX, boardY, createdBy);
+        boardStore.getState().addObject(sticky);
+      } else if (tool === 'rectangle') {
+        const rect = createRectangle(boardId, boardX, boardY, createdBy);
+        boardStore.getState().addObject(rect);
+      } else if (tool === 'circle') {
+        const circle = createCircle(boardId, boardX, boardY, createdBy);
+        boardStore.getState().addObject(circle);
+      } else if (tool === 'line') {
+        const line = createLine(boardId, boardX, boardY, createdBy);
+        boardStore.getState().addObject(line);
+      }
     },
     [stagePosition, stageScale]
   );

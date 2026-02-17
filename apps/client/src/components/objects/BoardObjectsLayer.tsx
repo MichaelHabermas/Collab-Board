@@ -2,7 +2,15 @@ import type { ReactElement } from 'react';
 import { Layer } from 'react-konva';
 import { useAllObjects, useSelectedObjectIds } from '@/store/boardStore';
 import { StickyNoteShape } from './StickyNoteShape';
-import type { StickyNote } from '@collab-board/shared-types';
+import { RectangleShapeComponent } from './RectangleShape';
+import { CircleShapeComponent } from './CircleShape';
+import { LineShapeComponent } from './LineShape';
+import type {
+  StickyNote,
+  RectangleShape,
+  CircleShape,
+  LineShape,
+} from '@collab-board/shared-types';
 
 interface IBoardObjectsLayerProps {
   onStickyDoubleClick?: (id: string) => void;
@@ -16,6 +24,9 @@ export const BoardObjectsLayer = ({
   const selectedSet = new Set(selectedIds);
 
   const stickies = objects.filter((obj): obj is StickyNote => obj.type === 'sticky_note');
+  const rectangles = objects.filter((obj): obj is RectangleShape => obj.type === 'rectangle');
+  const circles = objects.filter((obj): obj is CircleShape => obj.type === 'circle');
+  const lines = objects.filter((obj): obj is LineShape => obj.type === 'line');
 
   return (
     <Layer data-testid='canvas-board-layer-objects' name='objects'>
@@ -26,6 +37,19 @@ export const BoardObjectsLayer = ({
           isSelected={selectedSet.has(sticky.id)}
           onDoubleClick={onStickyDoubleClick}
         />
+      ))}
+      {rectangles.map((shape) => (
+        <RectangleShapeComponent
+          key={shape.id}
+          shape={shape}
+          isSelected={selectedSet.has(shape.id)}
+        />
+      ))}
+      {circles.map((shape) => (
+        <CircleShapeComponent key={shape.id} shape={shape} isSelected={selectedSet.has(shape.id)} />
+      ))}
+      {lines.map((shape) => (
+        <LineShapeComponent key={shape.id} shape={shape} isSelected={selectedSet.has(shape.id)} />
       ))}
     </Layer>
   );

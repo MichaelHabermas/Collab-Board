@@ -123,3 +123,9 @@ This runs format, typecheck, lint, and tests (as defined in root `package.json`)
 | **Gemini rate limits** | Free tier ~1,500 req/min; add backoff or queue if you hit limits. |
 
 For full architecture and tradeoffs, see [Design Document](../research/5-BASIC-DESIGN-DOCUMENT.md) and [Identify Tradeoffs](../research/3-IDENTIFY-TRADEOFFS.md).
+
+---
+
+## Production Verification
+
+For Epic 9 production deployment checks (Render URL, health endpoint, auth, socket, MongoDB, and two-user collaboration), see [Production Verification](../PRODUCTION-VERIFICATION.md).

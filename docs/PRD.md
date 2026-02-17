@@ -1506,17 +1506,17 @@ Only begin post-MVP work after Epic 9 (MVP Hardening) is fully complete.
 #### Feature F9.5: Production Deployment Verification
 
 - **Branch:** `feature/production-deploy-verify`
-- [ ] Feature F9.5 complete (merged to `development`)
+- [x] Feature F9.5 complete (merged to `development`)
 
 #### Acceptance Criteria
 
-- [ ] App accessible at Render URL; health 200; Clerk auth works; Socket.io wss works; MongoDB works; two users collaborate on live deploy
+- [x] App accessible at Render URL; health 200; Clerk auth works; Socket.io wss works; MongoDB works; two users collaborate on live deploy
 
 #### Implementation Checklist
 
-- [ ] Branch created from `development`
-- [ ] Commit 1: Merge dev to main, verify Render deploy, test auth and multiplayer on production
-- [ ] Commit 2: Fix production issues (CORS, env), re-deploy, merge to development
+- [x] Branch created from `development`
+- [x] Commit 1: Merge dev to main, verify Render deploy, test auth and multiplayer on production
+- [x] Commit 2: Fix production issues (CORS, env), re-deploy, merge to development
 
 ---
 

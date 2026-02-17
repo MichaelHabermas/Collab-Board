@@ -4,6 +4,7 @@ import type Konva from 'konva';
 import { Stage, Layer } from 'react-konva';
 import { useViewportSize } from '@/hooks/useViewportSize';
 import { usePanZoom } from '@/hooks/usePanZoom';
+import { GridBackground } from './GridBackground';
 
 /**
  * Konva Stage with four layers: grid (bottom), objects, selection, cursor (top).
@@ -46,7 +47,9 @@ export const Board = (): ReactElement => {
         onDragEnd={handleStageDragEnd}
         style={{ display: 'block' }}
       >
-        <Layer ref={gridRef} data-testid='canvas-board-layer-grid' name='grid' />
+        <Layer ref={gridRef} data-testid='canvas-board-layer-grid' name='grid' listening={false}>
+          <GridBackground />
+        </Layer>
         <Layer ref={objectsRef} data-testid='canvas-board-layer-objects' name='objects' />
         <Layer ref={selectionRef} data-testid='canvas-board-layer-selection' name='selection' />
         <Layer ref={cursorRef} data-testid='canvas-board-layer-cursor' name='cursor' />

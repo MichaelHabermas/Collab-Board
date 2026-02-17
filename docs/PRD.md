@@ -1027,24 +1027,24 @@ Everything below through Epic 8 must be functional at the 24-hour MVP gate.
 
 - **PR:** `Sync: Socket.io client connection and room join`
 - **Branch:** `feature/socketio-room-join`
-- [ ] Feature F6.1 complete (merged to `development`)
+- [x] Feature F6.1 complete (merged to `development`)
 
 #### Acceptance Criteria
 
-- [ ] Client connects to Socket.io after Clerk auth
-- [ ] Client joins board room (board:${boardId}) on connection
-- [ ] Server manages rooms and broadcasts within rooms
-- [ ] Disconnection removes user from room
+- [x] Client connects to Socket.io after Clerk auth
+- [x] Client joins board room (board:${boardId}) on connection
+- [x] Server manages rooms and broadcasts within rooms
+- [x] Disconnection removes user from room
 
 #### Implementation Checklist
 
-- [ ] Branch created from `development`
+- [x] Branch created from `development`
 
-**Commit 1:** `feat(sync): add socket.io client connection and room join` — Subtasks: [ ] useSocket.ts; [ ] Connect after Clerk auth, JWT in socket.auth.token; [ ] Emit board:join { boardId }; [ ] Handle disconnect/reconnect
+**Commit 1:** `feat(sync): add socket.io client connection and room join` — Subtasks: [x] useSocket.ts; [x] Connect after Clerk auth, JWT in socket.auth.token; [x] Emit board:join { boardId }; [x] Handle disconnect/reconnect
 
-**Commit 2:** `feat(sync): add server room management` — Subtasks: [ ] socket-manager.ts; [ ] board:join → join socket to board:${boardId}; [ ] disconnect → clean up; [ ] TransportAdapter implementation
+**Commit 2:** `feat(sync): add server room management` — Subtasks: [x] socket-manager.ts; [x] board:join → join socket to board:${boardId}; [x] disconnect → clean up; [x] TransportAdapter implementation
 
-**Commit 3:** `test(sync): verify room join and merge` — Subtasks: [ ] Verify client connects and joins room; [ ] typecheck; [ ] Merge to development
+**Commit 3:** `test(sync): verify room join and merge` — Subtasks: [x] Verify client connects and joins room; [x] typecheck; [x] Merge to development
 
 ---
 

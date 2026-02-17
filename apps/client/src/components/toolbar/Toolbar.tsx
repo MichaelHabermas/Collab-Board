@@ -2,7 +2,14 @@ import type { ReactElement } from 'react';
 import { memo, useEffect } from 'react';
 import { MousePointer, StickyNote, Square, Circle, Minus } from 'lucide-react';
 import { Button } from '@/components/ui/button';
-import { boardStore, useActiveToolType, type ActiveToolType } from '@/store/boardStore';
+import { ColorPicker } from '@/components/objects/ColorPicker';
+import {
+  boardStore,
+  useActiveToolType,
+  useSelectedObjectIds,
+  useObject,
+  type ActiveToolType,
+} from '@/store/boardStore';
 import { cn } from '@/lib/utils';
 
 const TOOLS: { tool: ActiveToolType; icon: ReactElement; label: string }[] = [
@@ -23,6 +30,10 @@ const CURSOR_BY_TOOL: Record<ActiveToolType, string> = {
 
 export const Toolbar = memo(function Toolbar(): ReactElement {
   const activeToolType = useActiveToolType();
+  const selectedIds = useSelectedObjectIds();
+  const singleId = selectedIds.length === 1 ? selectedIds[0] : null;
+  const singleObject = useObject(singleId ?? '');
+  const showColorPicker = singleObject?.type === 'sticky_note';
 
   useEffect(() => {
     document.body.style.cursor = CURSOR_BY_TOOL[activeToolType];
@@ -59,6 +70,11 @@ export const Toolbar = memo(function Toolbar(): ReactElement {
           </Button>
         );
       })}
+      {showColorPicker && singleId && (
+        <div className='mt-2 border-t border-border pt-2'>
+          <ColorPicker objectId={singleId} />
+        </div>
+      )}
     </aside>
   );
 });

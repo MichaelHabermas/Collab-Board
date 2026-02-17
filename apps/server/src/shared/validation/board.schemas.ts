@@ -34,6 +34,14 @@ export const updateBoardSchema = z.object({
   collaborators: z.array(z.string()).optional(),
 });
 
+export const boardJoinSchema = z.object({
+  boardId: z.string().min(1),
+});
+
+export const boardLeaveSchema = z.object({
+  boardId: z.string().min(1),
+});
+
 export const objectUpdateSchema = z.object({
   x: z.number().optional(),
   y: z.number().optional(),

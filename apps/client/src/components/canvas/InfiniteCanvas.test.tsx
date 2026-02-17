@@ -16,7 +16,9 @@ vi.mock('@/hooks/useCursorEmit', () => ({
 }));
 
 vi.mock('@/hooks/useSocket', () => ({
-  useSocket: () => ({ socket: { emit: vi.fn() } }),
+  useSocket: () => ({
+    socket: { emit: vi.fn(), on: vi.fn(), off: vi.fn() },
+  }),
 }));
 
 vi.mock('@/hooks/useObjectSync', () => ({

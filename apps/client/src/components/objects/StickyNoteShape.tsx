@@ -29,7 +29,7 @@ export const StickyNoteShape = memo(function StickyNoteShape({
     if (activeToolType !== 'select') {
       return;
     }
-    const shiftKey = 'shiftKey' in e.evt ? e.evt.shiftKey : false;
+    const shiftKey = !!e.evt?.shiftKey;
     if (shiftKey) {
       boardStore.getState().toggleSelection(id);
     } else {
@@ -38,7 +38,7 @@ export const StickyNoteShape = memo(function StickyNoteShape({
   };
 
   const handleClick = (e: { evt: MouseEvent | TouchEvent }): void => {
-    const shiftKey = 'shiftKey' in e.evt ? e.evt.shiftKey : false;
+    const shiftKey = !!e.evt?.shiftKey;
     if (shiftKey) {
       boardStore.getState().toggleSelection(id);
     } else {

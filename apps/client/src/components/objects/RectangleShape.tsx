@@ -27,7 +27,7 @@ export const RectangleShapeComponent = memo(function RectangleShapeComponent({
     if (activeToolType !== 'select') {
       return;
     }
-    const shiftKey = 'shiftKey' in e.evt ? e.evt.shiftKey : false;
+    const shiftKey = !!e.evt?.shiftKey;
     if (shiftKey) {
       boardStore.getState().toggleSelection(id);
     } else {
@@ -36,7 +36,7 @@ export const RectangleShapeComponent = memo(function RectangleShapeComponent({
   };
 
   const handleClick = (e: { evt: MouseEvent | TouchEvent }): void => {
-    const shiftKey = 'shiftKey' in e.evt ? e.evt.shiftKey : false;
+    const shiftKey = !!e.evt?.shiftKey;
     if (shiftKey) {
       boardStore.getState().toggleSelection(id);
     } else {

@@ -196,6 +196,7 @@ vi.mock('react-konva', () => {
       testId ? <div data-testid={testId} /> : null,
     Circle: (): null => null,
     Ellipse: (): null => null,
+    Shape: (): null => null,
     Transformer: (): null => null,
     Rect: (props: { 'data-testid'?: string }) =>
       props['data-testid'] ? <div data-testid={props['data-testid']} /> : null,

@@ -991,11 +991,12 @@ When the **select** tool is active:
 - **Selection rectangle (marquee) on release**: When the user releases the mouse button after dragging the selection rectangle, the marquee must always be cleared and intersecting objects must be selected (if any), regardless of whether the pointer is over empty area or over an object. The marquee must not remain visible or “stuck” after release.
 - **Shift+click**: Toggle the object in the current selection (unchanged).
 - **Resize (circle/ellipse)**: When the user resizes a circle via the transformer, the shape’s width and height are updated and persisted so the rendered shape matches the transformer box. The shape can be resized non-uniformly to become an ellipse/oval (width and height may differ). Radius (or derived radius) is kept in sync for compatibility. The fill stays in sync with the selection bounds.
-- **Circle/ellipse hit area**: Selection and hit detection for circle (and ellipse) must be only on the shape (the circle/ellipse path), not on a rectangular bounding box; the hit area must not be offset or larger than the shape (e.g. a click outside the shape but inside the bounding box must not select the object).
+- **Circle/ellipse hit area**: Selection and hit detection for circle (and ellipse) must be only on the shape (the circle/ellipse path), not on a rectangular bounding box; the hit area must not be offset or larger than the shape (e.g. a click outside the shape but inside the bounding box must not select the object). Implementation must use a custom Konva `hitFunc` on the Ellipse so the hit region is the elliptical path only (no rectangular bbox). The Group must be in the hit graph (`listening={true}`) so that when the Ellipse is hit, Konva can find the draggable Group; the Group (Container) does not draw a hit region, so the effective hit area remains only the Ellipse path.
 
 **Circle/ellipse behavior (verify when implemented):**
 
-- [ ] Circle/ellipse hit area is only on the shape (no rectangular hit box; click outside shape but inside bbox does not select).
+- [ ] Circle/ellipse hit area is only in the shape (no rectangular hit box; click outside shape but inside bbox does not select; Ellipse hitFunc defines path; Group in hit graph for drag).
+- [ ] Hit area implemented via Ellipse hitFunc (elliptical path only); click outside shape but inside bbox does not select.
 - [ ] Circle can be resized to an oval (ellipse) and dimensions are persisted (width, height, and optionally radius for compatibility).
 
 Layer order must keep the objects layer above the selection layer so the object receives the hit and can be selected and dragged. Draggable object Groups must participate in Konva’s hit graph (e.g. the main body shape—Rect, Circle, or Line—must have `listening` enabled) so the Group receives pointer events and drag can start; otherwise clicks fall through to the Layer and are treated as empty area.

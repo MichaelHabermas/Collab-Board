@@ -1,5 +1,5 @@
 import type { ReactElement } from 'react';
-import { memo } from 'react';
+import { memo, useCallback } from 'react';
 import type Konva from 'konva';
 import { Group, Ellipse } from 'react-konva';
 import type { CircleShape as ICircleShape } from '@collab-board/shared-types';
@@ -30,7 +30,7 @@ export const CircleShapeComponent = memo(function CircleShapeComponent({
     if (activeToolType !== 'select') {
       return;
     }
-    const shiftKey = 'shiftKey' in e.evt ? e.evt.shiftKey : false;
+    const shiftKey = !!e.evt?.shiftKey;
     if (shiftKey) {
       boardStore.getState().toggleSelection(id);
     } else {
@@ -39,7 +39,7 @@ export const CircleShapeComponent = memo(function CircleShapeComponent({
   };
 
   const handleClick = (e: { evt: MouseEvent | TouchEvent }): void => {
-    const shiftKey = 'shiftKey' in e.evt ? e.evt.shiftKey : false;
+    const shiftKey = !!e.evt?.shiftKey;
     if (shiftKey) {
       boardStore.getState().toggleSelection(id);
     } else {
@@ -59,6 +59,20 @@ export const CircleShapeComponent = memo(function CircleShapeComponent({
       socket.emit('object:move', { boardId, objectId: id, x: nx, y: ny });
     }
   };
+
+  // hitFunc restricts hit detection to the ellipse path only (no bbox, no stroke area).
+  // The Ellipse node centers at (0,0) in its local space, so we draw at (0,0) here.
+  const hitFunc = useCallback(
+    (context: Konva.Context, node: Konva.Shape) => {
+      const rx = node.width() / 2;
+      const ry = node.height() / 2;
+      context.beginPath();
+      context.ellipse(0, 0, rx, ry, 0, 0, Math.PI * 2);
+      context.closePath();
+      context.fillShape(node);
+    },
+    []
+  );
 
   return (
     <Group
@@ -83,6 +97,8 @@ export const CircleShapeComponent = memo(function CircleShapeComponent({
         opacity={fillOpacity}
         stroke={strokeColor}
         strokeWidth={strokeWidth}
+        hitFunc={hitFunc}
+        hitStrokeWidth={0}
         listening
       />
       {isSelected && (

@@ -10,6 +10,7 @@ describe('registerObjectHandlers', () => {
   let mockSocketEmit: ReturnType<typeof vi.fn>;
   const objectCreateHandlers: Array<(payload: unknown) => void> = [];
   const objectMoveHandlers: Array<(payload: unknown) => void> = [];
+  const objectUpdateHandlers: Array<(payload: unknown) => void> = [];
   let mockSocket: IAuthenticatedSocket;
   let mockBoardRepo: BoardRepository;
   let mockIo: Server;
@@ -36,6 +37,7 @@ describe('registerObjectHandlers', () => {
     mockSocketEmit = vi.fn();
     objectCreateHandlers.length = 0;
     objectMoveHandlers.length = 0;
+    objectUpdateHandlers.length = 0;
     mockIo = {
       to: vi.fn(() => ({ emit: mockEmitToRoom })),
     } as unknown as Server;
@@ -46,6 +48,7 @@ describe('registerObjectHandlers', () => {
       on: vi.fn((event: string, handler: (payload: unknown) => void) => {
         if (event === 'object:create') objectCreateHandlers.push(handler);
         if (event === 'object:move') objectMoveHandlers.push(handler);
+        if (event === 'object:update') objectUpdateHandlers.push(handler);
       }),
     } as unknown as IAuthenticatedSocket;
     mockBoardRepo = {
@@ -115,6 +118,42 @@ describe('registerObjectHandlers', () => {
     expect(mockEmitToRoom).toHaveBeenCalledWith('object:updated', {
       objectId: 'obj-1',
       delta: { x: 50, y: 60 },
+      updatedBy: 'user-1',
+    });
+  });
+
+  it('validates object:update, merges delta, and broadcasts object:updated', async () => {
+    vi.mocked(mockBoardRepo.updateObject).mockResolvedValue({
+      id: 'obj-1',
+      boardId: 'board-abc',
+      type: 'sticky_note',
+      x: 0,
+      y: 0,
+      width: 100,
+      height: 80,
+      rotation: 0,
+      zIndex: 0,
+      color: '#fecaca',
+      createdBy: 'user-1',
+      updatedAt: new Date().toISOString(),
+      content: 'Updated',
+      fontSize: 14,
+    });
+    registerObjectHandlers(mockIo, mockSocket, mockBoardRepo);
+    const updateHandler = objectUpdateHandlers[0];
+    expect(updateHandler).toBeDefined();
+    await updateHandler!({
+      boardId: 'board-abc',
+      objectId: 'obj-1',
+      delta: { content: 'Updated', color: '#fecaca' },
+    });
+    expect(mockBoardRepo.updateObject).toHaveBeenCalledWith('obj-1', {
+      content: 'Updated',
+      color: '#fecaca',
+    });
+    expect(mockEmitToRoom).toHaveBeenCalledWith('object:updated', {
+      objectId: 'obj-1',
+      delta: { content: 'Updated', color: '#fecaca' },
       updatedBy: 'user-1',
     });
   });

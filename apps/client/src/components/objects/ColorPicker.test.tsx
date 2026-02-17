@@ -1,8 +1,12 @@
 import { render, screen, fireEvent } from '@testing-library/react';
-import { describe, it, expect, beforeEach } from 'vitest';
+import { describe, it, expect, beforeEach, vi } from 'vitest';
 import { ColorPicker } from './ColorPicker';
 import { boardStore } from '@/store/boardStore';
 import type { StickyNote } from '@collab-board/shared-types';
+
+vi.mock('@/hooks/useSocket', () => ({
+  useSocket: () => ({ socket: { emit: vi.fn() } }),
+}));
 
 const createSticky = (overrides: Partial<StickyNote> = {}): StickyNote => ({
   id: 'sticky-1',
@@ -25,6 +29,7 @@ const createSticky = (overrides: Partial<StickyNote> = {}): StickyNote => ({
 describe('ColorPicker', () => {
   beforeEach(() => {
     boardStore.setState({
+      boardId: 'board-1',
       objects: [createSticky({ id: 's1', color: '#fef08a' })],
       selectedObjectIds: [],
     });

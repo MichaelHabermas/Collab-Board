@@ -102,3 +102,9 @@ export const objectUpdateSchema = z.object({
   label: z.string().optional(),
   points: z.array(z.number()).optional(),
 });
+
+export const objectUpdatePayloadSchema = z.object({
+  boardId: z.string().min(1),
+  objectId: z.string().min(1),
+  delta: objectUpdateSchema,
+});

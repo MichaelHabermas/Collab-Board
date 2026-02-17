@@ -1,6 +1,7 @@
 import type { ReactElement } from 'react';
 import { memo } from 'react';
 import { boardStore, useObject } from '@/store/boardStore';
+import { useSocket } from '@/hooks/useSocket';
 import { cn } from '@/lib/utils';
 
 const STICKY_COLORS = [
@@ -24,12 +25,17 @@ export const ColorPicker = memo(function ColorPicker({
   className,
 }: IColorPickerProps): ReactElement {
   const obj = useObject(objectId);
+  const { socket } = useSocket();
   if (!obj || obj.type !== 'sticky_note') return <></>;
 
   const currentColor = obj.color;
 
   const handleColorClick = (color: string): void => {
     boardStore.getState().updateObject(objectId, { color });
+    const boardId = boardStore.getState().boardId;
+    if (socket && boardId) {
+      socket.emit('object:update', { boardId, objectId, delta: { color } });
+    }
   };
 
   return (

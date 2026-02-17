@@ -2,6 +2,7 @@ import type { ReactElement } from 'react';
 import { useEffect, useRef, useCallback } from 'react';
 import type { StickyNote } from '@collab-board/shared-types';
 import { boardStore } from '@/store/boardStore';
+import { useSocket } from '@/hooks/useSocket';
 
 interface IStickyNoteTextEditProps {
   sticky: StickyNote;
@@ -19,6 +20,7 @@ export const StickyNoteTextEdit = ({
   onClose,
 }: IStickyNoteTextEditProps): ReactElement => {
   const textareaRef = useRef<HTMLTextAreaElement>(null);
+  const { socket } = useSocket();
 
   useEffect(() => {
     const el = textareaRef.current;
@@ -30,10 +32,15 @@ export const StickyNoteTextEdit = ({
   const handleBlur = useCallback(() => {
     const el = textareaRef.current;
     if (el) {
-      boardStore.getState().updateObject(sticky.id, { content: el.value });
+      const content = el.value;
+      boardStore.getState().updateObject(sticky.id, { content });
+      const boardId = boardStore.getState().boardId;
+      if (socket && boardId) {
+        socket.emit('object:update', { boardId, objectId: sticky.id, delta: { content } });
+      }
     }
     onClose();
-  }, [sticky.id, onClose]);
+  }, [sticky.id, onClose, socket]);
 
   const handleKeyDown = useCallback(
     (e: React.KeyboardEvent) => {

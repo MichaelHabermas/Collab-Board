@@ -98,6 +98,7 @@ export const Board = (): ReactElement => {
   }, []);
 
   const handleTransformEnd = useCallback(() => {
+    const boardId = boardStore.getState().boardId;
     const nodes = selectedIds
       .map((id) => nodeRefsMapRef.current.get(id))
       .filter(Boolean) as Konva.Node[];
@@ -118,9 +119,13 @@ export const Board = (): ReactElement => {
         (child as Konva.Shape).width(w);
         (child as Konva.Shape).height(h);
       }
-      boardStore.getState().updateObject(id, { width: w, height: h, x: node.x(), y: node.y() });
+      const delta = { width: w, height: h, x: node.x(), y: node.y() };
+      boardStore.getState().updateObject(id, delta);
+      if (socket && boardId) {
+        socket.emit('object:update', { boardId, objectId: id, delta });
+      }
     }
-  }, [selectedIds]);
+  }, [selectedIds, socket]);
 
   const handleStageMouseDown = useCallback(
     (e: {

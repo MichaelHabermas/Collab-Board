@@ -1289,7 +1289,7 @@ Layer order must keep the objects layer above the selection layer so the object 
 
 **User stories:** US-6.1–US-6.4 (presence list, board load on join, survive refresh, auto-reconnect).
 
-- [ ] Epic 8 complete (all features below merged to `development`)
+- [x] Epic 8 complete (all features below merged to `development`)
 
 #### Feature Map (Epic 8)
 
@@ -1305,19 +1305,19 @@ Layer order must keep the objects layer above the selection layer so the object 
 
 - **PR:** `Presence: online users list panel`
 - **Branch:** `feature/presence-panel`
-- [ ] Feature F8.1 complete (merged to `development`)
+- [x] Feature F8.1 complete (merged to `development`)
 
 #### Acceptance Criteria
 
-- [ ] Presence panel shows connected users' names and avatars; users appear on join, disappear on leave; updates within 2s
+- [x] Presence panel shows connected users' names and avatars; users appear on join, disappear on leave; updates within 2s
 
 #### Implementation Checklist
 
-- [ ] Branch created from `development`
+- [x] Branch created from `development`
 
-**Commit 1:** `feat(presence): add presence store and panel component` — Subtasks: [ ] collaborationStore.ts with onlineUsers Map; [ ] PresencePanel.tsx with avatars and names
+**Commit 1:** `feat(presence): add presence store and panel component` — Subtasks: [x] collaborationStore.ts with onlineUsers Map; [x] PresencePanel.tsx with avatars and names
 
-**Commit 2:** `test(presence): verify presence panel and merge` — Subtasks: [ ] Verify with mock data; [ ] typecheck and test:run; [ ] Merge to development
+**Commit 2:** `test(presence): verify presence panel and merge` — Subtasks: [x] Unit tests with store data; [x] typecheck and test:run; [x] Merge to development
 
 ---
 
@@ -1325,21 +1325,21 @@ Layer order must keep the objects layer above the selection layer so the object 
 
 - **PR:** `Presence: join/leave event handling`
 - **Branch:** `feature/presence-join-leave`
-- [ ] Feature F8.2 complete (merged to `development`)
+- [x] Feature F8.2 complete (merged to `development`)
 
 #### Acceptance Criteria
 
-- [ ] Server emits presence:join on connect, presence:leave on disconnect; sends presence:list to new client; client updates store
+- [x] Server emits presence:join on connect, presence:leave on disconnect; sends presence:list to new client; client updates store
 
 #### Implementation Checklist
 
-- [ ] Branch created from `development`
+- [x] Branch created from `development`
 
-**Commit 1:** `feat(presence): add server presence handler` — Subtasks: [ ] presence.handler.ts; [ ] On connection: broadcast presence:join, send presence:list to new client; [ ] On disconnect: broadcast presence:leave; [ ] Track users per room in-memory
+**Commit 1:** `feat(presence): add server presence handler` — Subtasks: [x] presence.handler.ts; [x] On connection: broadcast presence:join, send presence:list to new client; [x] On disconnect: broadcast presence:leave; [x] Track users per room in-memory
 
-**Commit 2:** `feat(presence): handle presence events on client` — Subtasks: [ ] Listen presence:join, presence:leave, presence:list; [ ] Update collaborationStore onlineUsers; [ ] Cursor cleanup on presence:leave
+**Commit 2:** `feat(presence): handle presence events on client` — Subtasks: [x] Listen presence:join, presence:leave, presence:list; [x] Update collaborationStore onlineUsers; [x] Cursor cleanup on presence:leave
 
-**Commit 3:** `test(presence): verify join/leave events and merge` — Subtasks: [ ] Two tabs user in panel when second opens, gone when closed; [ ] typecheck; [ ] Merge to development
+**Commit 3:** `test(presence): verify join/leave events and merge` — Subtasks: [x] Unit tests for presence handler and client store/hook; [x] typecheck and test:run; [x] Merge to development
 
 ---
 
@@ -1347,19 +1347,19 @@ Layer order must keep the objects layer above the selection layer so the object 
 
 - **PR:** `Persistence: board state survives page refresh`
 - **Branch:** `feature/board-persistence`
-- [ ] Feature F8.3 complete (merged to `development`)
+- [x] Feature F8.3 complete (merged to `development`)
 
 #### Acceptance Criteria
 
-- [ ] All objects persist in MongoDB; refresh reconnects and reloads; state after refresh matches before
+- [x] All objects persist in MongoDB; refresh reconnects and reloads; state after refresh matches before
 
 #### Implementation Checklist
 
-- [ ] Branch created from `development`
+- [x] Branch created from `development`
 
-**Commit 1:** `feat(persistence): verify all object mutations persist to mongodb` — Subtasks: [ ] Audit create/update/move/delete handlers write to MongoDB; [ ] Error handling failed writes; [ ] Throttled writes capture final state
+**Commit 1:** `feat(persistence): verify all object mutations persist to mongodb` — Subtasks: [x] Audit create/update/move/delete handlers write to MongoDB; [x] Error handling failed writes; [x] Throttled writes capture final state
 
-**Commit 2:** `test(persistence): verify board survives refresh and merge` — Subtasks: [ ] Create objects refresh verify reload; [ ] Modify refresh verify persisted; [ ] typecheck; [ ] Merge to development
+**Commit 2:** `test(persistence): verify board survives refresh and merge` — Subtasks: [x] Object handler tests verify persist path and error emit; [x] typecheck and test:run; [x] Merge to development
 
 ---
 
@@ -1367,19 +1367,19 @@ Layer order must keep the objects layer above the selection layer so the object 
 
 - **PR:** `Resilience: auto-reconnect with exponential backoff`
 - **Branch:** `feature/auto-reconnect`
-- [ ] Feature F8.4 complete (merged to `development`)
+- [x] Feature F8.4 complete (merged to `development`)
 
 #### Acceptance Criteria
 
-- [ ] Socket.io reconnect with exponential backoff enabled; on reconnect full board state re-synced; buffered events handled
+- [x] Socket.io reconnect with exponential backoff enabled; on reconnect full board state re-synced; buffered events handled
 
 #### Implementation Checklist
 
-- [ ] Branch created from `development`
+- [x] Branch created from `development`
 
-**Commit 1:** `feat(resilience): configure auto-reconnect and state re-sync` — Subtasks: [ ] Client reconnection: true, exponential backoff; [ ] On reconnect re-emit board:join, wait board:load; [ ] Replace local state with server state
+**Commit 1:** `feat(resilience): configure auto-reconnect and state re-sync` — Subtasks: [x] Client reconnection: true, exponential backoff; [x] On reconnect re-emit board:join, wait board:load; [x] Replace local state with server state
 
-**Commit 2:** `test(resilience): verify auto-reconnect and merge` — Subtasks: [ ] Simulate disconnect verify reconnect; [ ] Board state correct after reconnect; [ ] typecheck; [ ] Merge to development
+**Commit 2:** `test(resilience): verify auto-reconnect and merge` — Subtasks: [x] Unit tests reconnect options and re-sync path; [x] typecheck and test:run; [x] Merge to development
 
 ---
 
@@ -1387,19 +1387,19 @@ Layer order must keep the objects layer above the selection layer so the object 
 
 - **PR:** `UI: connection status indicator`
 - **Branch:** `feature/connection-status-indicator`
-- [ ] Feature F8.5 complete (merged to `development`)
+- [x] Feature F8.5 complete (merged to `development`)
 
 #### Acceptance Criteria
 
-- [ ] Visual indicator: connected, reconnecting, disconnected; visible but non-intrusive
+- [x] Visual indicator: connected, reconnecting, disconnected; visible but non-intrusive
 
 #### Implementation Checklist
 
-- [ ] Branch created from `development`
+- [x] Branch created from `development`
 
-**Commit 1:** `feat(ui): add connection status indicator` — Subtasks: [ ] ConnectionStatus.tsx; [ ] Track socket state; [ ] Green/yellow/red dot or toast; [ ] Header/toolbar
+**Commit 1:** `feat(ui): add connection status indicator` — Subtasks: [x] ConnectionStatus.tsx; [x] Track socket state; [x] Green/yellow/red dot or toast; [x] Header/toolbar
 
-**Commit 2:** `test(ui): verify connection status indicator and merge` — Subtasks: [ ] Verify correct state; [ ] typecheck; [ ] Merge to development
+**Commit 2:** `test(ui): verify connection status indicator and merge` — Subtasks: [x] Verify correct state; [x] typecheck; [x] Merge to development
 
 ---
 

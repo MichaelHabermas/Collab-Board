@@ -4,6 +4,7 @@ import {
   objectCreateSchema,
   objectMoveSchema,
   objectUpdatePayloadSchema,
+  objectDeleteSchema,
 } from '../shared/validation/board.schemas';
 import { logger } from '../shared/lib/logger';
 import type { BoardRepository } from '../modules/board/board.repo';
@@ -108,6 +109,31 @@ export function registerObjectHandlers(
       const message = err instanceof Error ? err.message : String(err);
       logger.error('object:update failed', { socketId: socket.id, error: message });
       socket.emit('error', { message: 'Failed to update object' });
+    }
+  });
+
+  socket.on('object:delete', async (payload: unknown) => {
+    const parsed = objectDeleteSchema.safeParse(payload);
+    if (!parsed.success) {
+      logger.warn('Invalid object:delete payload', {
+        socketId: socket.id,
+        error: parsed.error.flatten(),
+      });
+      return;
+    }
+    const { boardId, objectId } = parsed.data;
+    const userId = socket.data.user?.userId;
+    if (!userId) {
+      return;
+    }
+    const room = getRoomName(boardId);
+    try {
+      await boardRepo.deleteObject(objectId);
+      io.to(room).emit('object:deleted', { objectId, deletedBy: userId });
+    } catch (err) {
+      const message = err instanceof Error ? err.message : String(err);
+      logger.error('object:delete failed', { socketId: socket.id, error: message });
+      socket.emit('error', { message: 'Failed to delete object' });
     }
   });
 }

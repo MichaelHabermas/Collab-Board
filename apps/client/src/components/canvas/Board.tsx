@@ -88,14 +88,18 @@ export const Board = (): ReactElement => {
       const ids = boardStore.getState().selectedObjectIds;
       if (ids.length === 0) return;
       e.preventDefault();
+      const boardId = boardStore.getState().boardId;
       for (const id of ids) {
         boardStore.getState().removeObject(id);
+        if (socket && boardId) {
+          socket.emit('object:delete', { boardId, objectId: id });
+        }
       }
       boardStore.getState().deselectAll();
     };
     window.addEventListener('keydown', handleKeyDown);
     return () => window.removeEventListener('keydown', handleKeyDown);
-  }, []);
+  }, [socket]);
 
   const handleTransformEnd = useCallback(() => {
     const boardId = boardStore.getState().boardId;

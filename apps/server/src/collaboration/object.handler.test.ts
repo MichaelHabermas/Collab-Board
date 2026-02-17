@@ -11,6 +11,7 @@ describe('registerObjectHandlers', () => {
   const objectCreateHandlers: Array<(payload: unknown) => void> = [];
   const objectMoveHandlers: Array<(payload: unknown) => void> = [];
   const objectUpdateHandlers: Array<(payload: unknown) => void> = [];
+  const objectDeleteHandlers: Array<(payload: unknown) => void> = [];
   let mockSocket: IAuthenticatedSocket;
   let mockBoardRepo: BoardRepository;
   let mockIo: Server;
@@ -38,6 +39,7 @@ describe('registerObjectHandlers', () => {
     objectCreateHandlers.length = 0;
     objectMoveHandlers.length = 0;
     objectUpdateHandlers.length = 0;
+    objectDeleteHandlers.length = 0;
     mockIo = {
       to: vi.fn(() => ({ emit: mockEmitToRoom })),
     } as unknown as Server;
@@ -49,11 +51,13 @@ describe('registerObjectHandlers', () => {
         if (event === 'object:create') objectCreateHandlers.push(handler);
         if (event === 'object:move') objectMoveHandlers.push(handler);
         if (event === 'object:update') objectUpdateHandlers.push(handler);
+        if (event === 'object:delete') objectDeleteHandlers.push(handler);
       }),
     } as unknown as IAuthenticatedSocket;
     mockBoardRepo = {
       createObject: vi.fn().mockResolvedValue(createdSticky),
       updateObject: vi.fn().mockResolvedValue(null),
+      deleteObject: vi.fn().mockResolvedValue(undefined),
     } as unknown as BoardRepository;
   });
 
@@ -155,6 +159,18 @@ describe('registerObjectHandlers', () => {
       objectId: 'obj-1',
       delta: { content: 'Updated', color: '#fecaca' },
       updatedBy: 'user-1',
+    });
+  });
+
+  it('validates object:delete, removes from DB, and broadcasts object:deleted', async () => {
+    registerObjectHandlers(mockIo, mockSocket, mockBoardRepo);
+    const deleteHandler = objectDeleteHandlers[0];
+    expect(deleteHandler).toBeDefined();
+    await deleteHandler!({ boardId: 'board-abc', objectId: 'obj-1' });
+    expect(mockBoardRepo.deleteObject).toHaveBeenCalledWith('obj-1');
+    expect(mockEmitToRoom).toHaveBeenCalledWith('object:deleted', {
+      objectId: 'obj-1',
+      deletedBy: 'user-1',
     });
   });
 });

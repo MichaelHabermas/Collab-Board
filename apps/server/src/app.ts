@@ -1,6 +1,7 @@
 import path from 'path';
 import express from 'express';
 import cors from 'cors';
+import { authMiddleware } from './auth/auth.middleware';
 import { healthRouter } from './routes/health.routes';
 
 export const createApp = (): express.Express => {
@@ -14,7 +15,14 @@ export const createApp = (): express.Express => {
   );
   app.use(express.json());
 
-  // API routes
+  // API routes: auth required except /api/health
+  app.use('/api', (req, res, next) => {
+    if (req.path === '/health') {
+      next();
+      return;
+    }
+    authMiddleware(req, res, next);
+  });
   app.use('/api', healthRouter);
 
   // In production, serve the client build

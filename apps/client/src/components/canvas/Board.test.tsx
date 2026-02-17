@@ -14,6 +14,14 @@ vi.mock('@/hooks/useCursorEmit', () => ({
   useCursorEmit: () => vi.fn(),
 }));
 
+vi.mock('@/hooks/useSocket', () => ({
+  useSocket: () => ({ socket: { emit: vi.fn() } }),
+}));
+
+vi.mock('@/hooks/useObjectSync', () => ({
+  useObjectSync: () => {},
+}));
+
 vi.mock('@/hooks/useRemoteCursors', () => ({
   useRemoteCursors: () => new Map(),
   useCurrentUserId: () => '',

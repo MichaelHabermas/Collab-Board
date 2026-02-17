@@ -5,6 +5,7 @@ import { socketAuthMiddleware } from './auth/socket-auth';
 import type { IAuthenticatedSocket } from './auth/socket-auth';
 import { registerRoomHandlers } from './collaboration/room.handler';
 import { registerCursorHandlers } from './collaboration/cursor.handler';
+import { registerObjectHandlers } from './collaboration/object.handler';
 import { connectDatabase, disconnectDatabase } from './modules/board/db';
 import { BoardRepository } from './modules/board/board.repo';
 import { logger } from './shared/lib/logger';
@@ -32,6 +33,7 @@ io.on('connection', (socket: IAuthenticatedSocket) => {
 
   registerRoomHandlers(socket, boardRepo);
   registerCursorHandlers(socket);
+  registerObjectHandlers(io, socket, boardRepo);
 
   socket.on('disconnect', () => {
     const userId = socket.data.user?.userId;

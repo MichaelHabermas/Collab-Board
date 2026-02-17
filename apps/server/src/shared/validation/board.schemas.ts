@@ -49,6 +49,43 @@ export const cursorMoveSchema = z.object({
   color: z.string().optional(),
 });
 
+const boardObjectCreateFieldsSchema = z.object({
+  content: z.string().optional(),
+  fontSize: z.number().positive().optional(),
+  fontWeight: z.enum(['normal', 'bold']).optional(),
+  textAlign: z.enum(['left', 'center', 'right']).optional(),
+  strokeColor: z.string().optional(),
+  strokeWidth: z.number().nonnegative().optional(),
+  fillOpacity: z.number().min(0).max(1).optional(),
+  radius: z.number().positive().optional(),
+  points: z.array(z.number()).optional(),
+  label: z.string().optional(),
+  childIds: z.array(z.string()).optional(),
+  sourceId: z.string().optional(),
+  targetId: z.string().optional(),
+});
+
+export const boardObjectCreateSchema = boardObjectBaseSchema.merge(
+  boardObjectCreateFieldsSchema.partial()
+);
+
+export const objectCreateSchema = z.object({
+  boardId: z.string().min(1),
+  object: boardObjectCreateSchema,
+});
+
+export const objectMoveSchema = z.object({
+  boardId: z.string().min(1),
+  objectId: z.string().min(1),
+  x: z.number(),
+  y: z.number(),
+});
+
+export const objectDeleteSchema = z.object({
+  boardId: z.string().min(1),
+  objectId: z.string().min(1),
+});
+
 export const objectUpdateSchema = z.object({
   x: z.number().optional(),
   y: z.number().optional(),

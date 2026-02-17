@@ -5,6 +5,8 @@ import { Stage, Layer, Transformer, Rect } from 'react-konva';
 import { useViewportSize } from '@/hooks/useViewportSize';
 import { usePanZoom } from '@/hooks/usePanZoom';
 import { useCursorEmit } from '@/hooks/useCursorEmit';
+import { useSocket } from '@/hooks/useSocket';
+import { useObjectSync } from '@/hooks/useObjectSync';
 import { CursorOverlay } from './CursorOverlay';
 import { GridBackground } from './GridBackground';
 import { BoardObjectsLayer } from '@/components/objects/BoardObjectsLayer';
@@ -54,6 +56,8 @@ export const Board = (): ReactElement => {
     height: number;
   } | null>(null);
   const handleCursorMove = useCursorEmit();
+  const { socket } = useSocket();
+  useObjectSync();
 
   const registerNodeRef = useCallback((id: string, node: unknown) => {
     const group = node as Konva.Group | null;
@@ -213,21 +217,34 @@ export const Board = (): ReactElement => {
       const boardY = (pos.y - pointer.y) / scale;
       const boardId = boardStore.getState().boardId || 'default-board';
       const createdBy = authStore.getState().userId || 'anonymous';
+      if (!socket) return;
+      const emitCreate = (
+        obj:
+          | StickyNote
+          | ReturnType<typeof createRectangle>
+          | ReturnType<typeof createCircle>
+          | ReturnType<typeof createLine>
+      ): void => {
+        const object = Object.fromEntries(
+          Object.entries(obj).filter(([k]) => k !== 'id' && k !== 'updatedAt')
+        ) as Omit<typeof obj, 'id' | 'updatedAt'>;
+        socket.emit('object:create', { boardId, object });
+      };
       if (tool === 'sticky_note') {
         const sticky = createStickyNote(boardId, boardX, boardY, createdBy);
-        boardStore.getState().addObject(sticky);
+        emitCreate(sticky);
       } else if (tool === 'rectangle') {
         const rect = createRectangle(boardId, boardX, boardY, createdBy);
-        boardStore.getState().addObject(rect);
+        emitCreate(rect);
       } else if (tool === 'circle') {
         const circle = createCircle(boardId, boardX, boardY, createdBy);
-        boardStore.getState().addObject(circle);
+        emitCreate(circle);
       } else if (tool === 'line') {
         const line = createLine(boardId, boardX, boardY, createdBy);
-        boardStore.getState().addObject(line);
+        emitCreate(line);
       }
     },
-    [stagePosition, stageScale, selectionRect]
+    [stagePosition, stageScale, selectionRect, socket]
   );
 
   return (

@@ -6,6 +6,7 @@ import type { IAuthenticatedSocket } from './auth/socket-auth';
 import { registerRoomHandlers } from './collaboration/room.handler';
 import { registerCursorHandlers } from './collaboration/cursor.handler';
 import { registerObjectHandlers } from './collaboration/object.handler';
+import { notifyPresenceLeave } from './collaboration/presence.handler';
 import { connectDatabase, disconnectDatabase } from './modules/board/db';
 import { BoardRepository } from './modules/board/board.repo';
 import { logger } from './shared/lib/logger';
@@ -31,19 +32,12 @@ io.on('connection', (socket: IAuthenticatedSocket) => {
   const user = socket.data.user;
   logger.info('Client connected', { socketId: socket.id, userId: user?.userId });
 
-  registerRoomHandlers(socket, boardRepo);
+  registerRoomHandlers(io, socket, boardRepo);
   registerCursorHandlers(socket);
   registerObjectHandlers(io, socket, boardRepo);
 
   socket.on('disconnect', () => {
-    const userId = socket.data.user?.userId;
-    if (userId) {
-      for (const room of socket.rooms) {
-        if (room.startsWith('board:')) {
-          io.to(room).emit('presence:leave', { userId });
-        }
-      }
-    }
+    notifyPresenceLeave(io, socket);
     logger.info('Client disconnected', { socketId: socket.id });
   });
 });

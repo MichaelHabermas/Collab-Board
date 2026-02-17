@@ -54,6 +54,10 @@ export interface PresenceLeavePayload {
   userId: string;
 }
 
+export interface PresenceListPayload {
+  users: UserPresence[];
+}
+
 export interface CursorUpdatePayload {
   userId: string;
   x: number;
@@ -104,6 +108,7 @@ export interface ServerToClientEvents {
   'board:load': (payload: BoardLoadPayload) => void;
   'presence:join': (payload: PresenceJoinPayload) => void;
   'presence:leave': (payload: PresenceLeavePayload) => void;
+  'presence:list': (payload: PresenceListPayload) => void;
   'cursor:update': (payload: CursorUpdatePayload) => void;
   'object:created': (payload: ObjectCreatedPayload) => void;
   'object:updated': (payload: ObjectUpdatedPayload) => void;

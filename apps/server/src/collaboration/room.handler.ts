@@ -1,8 +1,9 @@
-import type { Socket } from 'socket.io';
+import type { Server, Socket } from 'socket.io';
 import { boardJoinSchema, boardLeaveSchema } from '../shared/validation/board.schemas';
 import type { IAuthenticatedSocket } from '../auth/socket-auth';
 import { logger } from '../shared/lib/logger';
 import type { BoardRepository } from '../modules/board/board.repo';
+import { notifyPresenceJoin } from './presence.handler';
 
 const ROOM_PREFIX = 'board:';
 
@@ -21,8 +22,10 @@ function isValidObjectId(id: string): boolean {
 /**
  * Registers board:join and board:leave handlers. Joins socket to room board:${boardId};
  * on join, loads board and objects from DB and emits board:load to the joining socket.
+ * Also notifies presence (join/list) for the room.
  */
 export function registerRoomHandlers(
+  io: Server,
   socket: IAuthenticatedSocket,
   boardRepo: BoardRepository
 ): void {
@@ -39,6 +42,7 @@ export function registerRoomHandlers(
     const room = getRoomName(boardId);
     socket.join(room);
     (socket.data as Socket['data'] & { boardId?: string }).boardId = boardId;
+    notifyPresenceJoin(io, socket, room);
     logger.info('Socket joined room', {
       socketId: socket.id,
       room,

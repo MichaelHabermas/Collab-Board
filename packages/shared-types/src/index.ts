@@ -23,6 +23,7 @@ export type {
   BoardLoadPayload,
   PresenceJoinPayload,
   PresenceLeavePayload,
+  PresenceListPayload,
   CursorUpdatePayload,
   ObjectCreatedPayload,
   ObjectUpdatedPayload,

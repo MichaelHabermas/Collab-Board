@@ -1,7 +1,9 @@
 import { describe, it, expect, vi, beforeEach } from 'vitest';
+import type { Server } from 'socket.io';
 import { registerRoomHandlers } from './room.handler';
 import type { IAuthenticatedSocket } from '../auth/socket-auth';
 import type { BoardRepository } from '../modules/board/board.repo';
+import { clearPresenceStore } from './presence.handler';
 
 const VALID_OBJECT_ID = '507f1f77bcf86cd799439011';
 
@@ -9,15 +11,20 @@ describe('registerRoomHandlers', () => {
   let mockJoin: ReturnType<typeof vi.fn>;
   let mockLeave: ReturnType<typeof vi.fn>;
   let mockEmit: ReturnType<typeof vi.fn>;
+  let mockToEmit: ReturnType<typeof vi.fn>;
   const boardJoinHandlers: Array<(payload: unknown) => void> = [];
   const boardLeaveHandlers: Array<(payload: unknown) => void> = [];
   let mockSocket: IAuthenticatedSocket;
   let mockBoardRepo: BoardRepository;
+  let mockIo: Server;
 
   beforeEach(() => {
+    clearPresenceStore();
     mockJoin = vi.fn();
     mockLeave = vi.fn();
     mockEmit = vi.fn();
+    mockToEmit = vi.fn();
+    mockIo = { to: vi.fn(() => ({ emit: mockToEmit })) } as unknown as Server;
     boardJoinHandlers.length = 0;
     boardLeaveHandlers.length = 0;
     mockSocket = {
@@ -45,7 +52,7 @@ describe('registerRoomHandlers', () => {
   });
 
   it('joins socket to board room on valid board:join payload', async () => {
-    registerRoomHandlers(mockSocket, mockBoardRepo);
+    registerRoomHandlers(mockIo, mockSocket, mockBoardRepo);
     expect(boardJoinHandlers).toHaveLength(1);
     await boardJoinHandlers[0]!({ boardId: VALID_OBJECT_ID });
     expect(mockJoin).toHaveBeenCalledWith(`board:${VALID_OBJECT_ID}`);
@@ -71,7 +78,7 @@ describe('registerRoomHandlers', () => {
       },
     ];
     vi.mocked(mockBoardRepo.findObjectsByBoard).mockResolvedValue(objects);
-    registerRoomHandlers(mockSocket, mockBoardRepo);
+    registerRoomHandlers(mockIo, mockSocket, mockBoardRepo);
     await boardJoinHandlers[0]!({ boardId: VALID_OBJECT_ID });
 
     expect(mockEmit).toHaveBeenCalledWith('board:load', {
@@ -82,14 +89,14 @@ describe('registerRoomHandlers', () => {
   });
 
   it('does not join on invalid board:join payload', async () => {
-    registerRoomHandlers(mockSocket, mockBoardRepo);
+    registerRoomHandlers(mockIo, mockSocket, mockBoardRepo);
     await boardJoinHandlers[0]!({});
     await boardJoinHandlers[0]!({ boardId: '' });
     expect(mockJoin).not.toHaveBeenCalled();
   });
 
   it('leaves socket from board room on board:leave payload', () => {
-    registerRoomHandlers(mockSocket, mockBoardRepo);
+    registerRoomHandlers(mockIo, mockSocket, mockBoardRepo);
     expect(boardLeaveHandlers).toHaveLength(1);
     boardLeaveHandlers[0]!({ boardId: 'board-xyz' });
     expect(mockLeave).toHaveBeenCalledWith('board:board-xyz');
@@ -115,7 +122,7 @@ describe('registerRoomHandlers', () => {
       },
     ];
     vi.mocked(mockBoardRepo.findObjectsByBoard).mockResolvedValue(objects);
-    registerRoomHandlers(mockSocket, mockBoardRepo);
+    registerRoomHandlers(mockIo, mockSocket, mockBoardRepo);
     await boardJoinHandlers[0]!({ boardId: 'default-board' });
 
     expect(mockBoardRepo.findBoardById).not.toHaveBeenCalled();
@@ -134,10 +141,9 @@ describe('registerRoomHandlers', () => {
 
   it('emits board:load with fallback board and empty objects when findBoardById rejects', async () => {
     vi.mocked(mockBoardRepo.findBoardById).mockRejectedValue(new Error('DB error'));
-    registerRoomHandlers(mockSocket, mockBoardRepo);
+    registerRoomHandlers(mockIo, mockSocket, mockBoardRepo);
     await boardJoinHandlers[0]!({ boardId: VALID_OBJECT_ID });
 
-    expect(mockEmit).toHaveBeenCalledTimes(1);
     expect(mockEmit).toHaveBeenCalledWith('board:load', {
       board: expect.objectContaining({
         id: VALID_OBJECT_ID,
@@ -152,10 +158,9 @@ describe('registerRoomHandlers', () => {
 
   it('emits board:load with fallback when findObjectsByBoard rejects', async () => {
     vi.mocked(mockBoardRepo.findObjectsByBoard).mockRejectedValue(new Error('DB error'));
-    registerRoomHandlers(mockSocket, mockBoardRepo);
+    registerRoomHandlers(mockIo, mockSocket, mockBoardRepo);
     await boardJoinHandlers[0]!({ boardId: VALID_OBJECT_ID });
 
-    expect(mockEmit).toHaveBeenCalledTimes(1);
     expect(mockEmit).toHaveBeenCalledWith('board:load', {
       board: expect.objectContaining({ id: VALID_OBJECT_ID, title: 'Untitled Board' }),
       objects: [],

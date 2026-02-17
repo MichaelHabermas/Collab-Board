@@ -901,29 +901,29 @@ Everything below through Epic 8 must be functional at the 24-hour MVP gate.
 - **PR:** `Objects: sticky note creation, text editing, and color`
 - **Branch:** `feature/sticky-note-crud`
 - **SOLID:** OCP — sticky note implements BoardObject; SRP — rendering separate from editing
-- [ ] Feature F5.3 complete (merged to `development`)
+- [x] Feature F5.3 complete (merged to `development`)
 
 #### Acceptance Criteria
 
-- [ ] Clicking canvas with Sticky Note tool creates sticky at click position
-- [ ] Sticky renders as colored rectangle with text
-- [ ] Double-click opens inline text editor; outside click saves and closes
-- [ ] Color picker with at least 6 options; color updates fill
-- [ ] Sticky added to boardStore
+- [x] Clicking canvas with Sticky Note tool creates sticky at click position
+- [x] Sticky renders as colored rectangle with text
+- [x] Double-click opens inline text editor; outside click saves and closes
+- [x] Color picker with at least 6 options; color updates fill
+- [x] Sticky added to boardStore
 
 #### Implementation Checklist
 
-- [ ] Branch created from `development`
+- [x] Branch created from `development`
 
-**Commit 1:** `feat(objects): add sticky note konva component` — Subtasks: [ ] Create StickyNote.tsx (Rect + Text); [ ] Click for selection; [ ] Basic drag (refined in F5.5)
+**Commit 1:** `feat(objects): add sticky note konva component` — Subtasks: [x] Create StickyNote.tsx (Rect + Text); [x] Click for selection; [x] Basic drag (refined in F5.5)
 
-**Commit 2:** `feat(objects): add sticky note creation on canvas click` — Subtasks: [ ] Handle canvas click when tool is sticky_note; [ ] Create BoardObject sticky_note, addObject; [ ] Position for pan/zoom
+**Commit 2:** `feat(objects): add sticky note creation on canvas click` — Subtasks: [x] Handle canvas click when tool is sticky_note; [x] Create BoardObject sticky_note, addObject; [x] Position for pan/zoom
 
-**Commit 3:** `feat(objects): add inline text editing for sticky notes` — Subtasks: [ ] Double-click → HTML textarea overlay; [ ] Sync to boardStore on blur/Escape; [ ] Position with zoom/pan offset
+**Commit 3:** `feat(objects): add inline text editing for sticky notes` — Subtasks: [x] Double-click → HTML textarea overlay; [x] Sync to boardStore on blur/Escape; [x] Position with zoom/pan offset
 
-**Commit 4:** `feat(objects): add color picker for sticky notes` — Subtasks: [ ] Create ColorPicker.tsx; [ ] 6+ colors when sticky selected; [ ] Update boardStore object color
+**Commit 4:** `feat(objects): add color picker for sticky notes` — Subtasks: [x] Create ColorPicker.tsx; [x] 6+ colors when sticky selected; [x] Update boardStore object color
 
-**Commit 5:** `test(objects): verify sticky note crud and merge` — Subtasks: [ ] Unit tests creation and color; [ ] typecheck and test:run; [ ] Merge to development
+**Commit 5:** `test(objects): verify sticky note crud and merge` — Subtasks: [x] Unit tests creation and color; [x] typecheck and test:run; [x] Merge to development
 
 ---
 

@@ -1105,7 +1105,7 @@ Everything below through Epic 8 must be functional at the 24-hour MVP gate.
 
 **User stories:** US-5.1–US-5.4 (objects on all clients, move/update/delete sync).
 
-- [ ] Epic 7 complete (all features below merged to `development`)
+- [x] Epic 7 complete (all features below merged to `development`)
 
 #### Feature Map (Epic 7)
 
@@ -1146,21 +1146,21 @@ Everything below through Epic 8 must be functional at the 24-hour MVP gate.
 
 - **PR:** `Sync: object:move with optimistic UI`
 - **Branch:** `feature/object-move-sync`
-- [ ] Feature F7.2 complete (merged to `development`)
+- [x] Feature F7.2 complete (merged to `development`)
 
 #### Acceptance Criteria
 
-- [ ] Dragging emits object:move; remote clients see move; local instant (optimistic); positions consistent
+- [x] Dragging emits object:move; remote clients see move; local instant (optimistic); positions consistent
 
 #### Implementation Checklist
 
-- [ ] Branch created from `development`
+- [x] Branch created from `development`
 
-**Commit 1:** `feat(sync): emit object:move on drag` — Subtasks: [ ] Emit object:move { objectId, x, y } on drag end or throttled; [ ] Optimistic local via Konva drag
+**Commit 1:** `feat(sync): emit object:move on drag` — Subtasks: [x] Emit object:move { objectId, x, y } on drag end or throttled; [x] Optimistic local via Konva drag
 
-**Commit 2:** `feat(sync): handle object:move on server and client` — Subtasks: [ ] Server: validate, update MongoDB position (100ms batch), broadcast; [ ] Client: listen object:move, update boardStore; [ ] Ignore own events
+**Commit 2:** `feat(sync): handle object:move on server and client` — Subtasks: [x] Server: validate, update MongoDB position (100ms batch), broadcast; [x] Client: listen object:move, update boardStore; [x] Ignore own events
 
-**Commit 3:** `test(sync): verify object move sync and merge` — Subtasks: [ ] Two tabs drag in one updates other; [ ] typecheck; [ ] Merge to development
+**Commit 3:** `test(sync): verify object move sync and merge` — Subtasks: [x] Two tabs drag in one updates other; [x] typecheck; [x] Merge to development
 
 ---
 
@@ -1168,21 +1168,21 @@ Everything below through Epic 8 must be functional at the 24-hour MVP gate.
 
 - **PR:** `Sync: object:update broadcast (text, color, resize)`
 - **Branch:** `feature/object-update-sync`
-- [ ] Feature F7.3 complete (merged to `development`)
+- [x] Feature F7.3 complete (merged to `development`)
 
 #### Acceptance Criteria
 
-- [ ] object:update broadcasts property changes; remote apply <100ms; last-write-wins
+- [x] object:update broadcasts property changes; remote apply <100ms; last-write-wins
 
 #### Implementation Checklist
 
-- [ ] Branch created from `development`
+- [x] Branch created from `development`
 
-**Commit 1:** `feat(sync): emit object:update for text, color, resize` — Subtasks: [ ] Emit object:update { objectId, delta } on text edit, color, resize; [ ] Delta only changed props
+**Commit 1:** `feat(sync): emit object:update for text, color, resize` — Subtasks: [x] Emit object:update { objectId, delta } on text edit, color, resize; [x] Delta only changed props
 
-**Commit 2:** `feat(sync): handle object:update on server and client` — Subtasks: [ ] Server: validate, merge delta in MongoDB, broadcast; [ ] Client: listen, merge delta in boardStore; [ ] Last-write-wins
+**Commit 2:** `feat(sync): handle object:update on server and client` — Subtasks: [x] Server: validate, merge delta in MongoDB, broadcast; [x] Client: listen, merge delta in boardStore; [x] Last-write-wins
 
-**Commit 3:** `test(sync): verify object update sync and merge` — Subtasks: [ ] Two tabs edit text/color; [ ] typecheck; [ ] Merge to development
+**Commit 3:** `test(sync): verify object update sync and merge` — Subtasks: [x] Two tabs edit text/color; [x] typecheck; [x] Merge to development
 
 ---
 
@@ -1190,19 +1190,19 @@ Everything below through Epic 8 must be functional at the 24-hour MVP gate.
 
 - **PR:** `Sync: object:delete broadcast`
 - **Branch:** `feature/object-delete-sync`
-- [ ] Feature F7.4 complete (merged to `development`)
+- [x] Feature F7.4 complete (merged to `development`)
 
 #### Acceptance Criteria
 
-- [ ] object:delete removes object on all clients; removed from MongoDB
+- [x] object:delete removes object on all clients; removed from MongoDB
 
 #### Implementation Checklist
 
-- [ ] Branch created from `development`
+- [x] Branch created from `development`
 
-**Commit 1:** `feat(sync): emit and handle object:delete` — Subtasks: [ ] Emit object:delete { objectId } on delete; [ ] Server: remove from MongoDB, broadcast; [ ] Client: listen, remove from boardStore
+**Commit 1:** `feat(sync): emit and handle object:delete` — Subtasks: [x] Emit object:delete { objectId } on delete; [x] Server: remove from MongoDB, broadcast; [x] Client: listen, remove from boardStore
 
-**Commit 2:** `test(sync): verify object delete sync and merge` — Subtasks: [ ] Two tabs delete in one disappears in other; [ ] typecheck; [ ] Merge to development
+**Commit 2:** `test(sync): verify object delete sync and merge` — Subtasks: [x] Two tabs delete in one disappears in other; [x] typecheck; [x] Merge to development
 
 ---
 

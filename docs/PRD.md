@@ -1472,17 +1472,17 @@ Only begin post-MVP work after Epic 9 (MVP Hardening) is fully complete.
 #### Feature F9.3: E2E Test — Multiplayer Sync
 
 - **Branch:** `feature/e2e-multiplayer-sync`
-- [ ] Feature F9.3 complete (merged to `development`)
+- [x] Feature F9.3 complete (merged to `development`)
 
 #### Acceptance Criteria
 
-- [ ] Playwright test with two browser contexts; one creates object other asserts; cursor sync and presence panel verified
+- [x] Playwright test with two browser contexts; one creates object other asserts; cursor sync and presence panel verified
 
 #### Implementation Checklist
 
-- [ ] Branch created from `development`
-- [ ] Commit 1: E2E multiplayer sync spec (two contexts, create sticky in A assert in B, move assert)
-- [ ] Commit 2: Run test:e2e green, merge to development
+- [x] Branch created from `development`
+- [x] Commit 1: E2E multiplayer sync spec (two contexts, create sticky in A assert in B, move assert)
+- [x] Commit 2: Run test:e2e green, merge to development
 
 ---
 

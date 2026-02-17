@@ -17,8 +17,14 @@ vi.mock('@clerk/clerk-react', () => ({
   UserButton: (): ReactElement => <div data-testid='user-button-mock'>UserButton</div>,
 }));
 
+vi.mock('@/components/canvas', () => ({
+  InfiniteCanvas: (): ReactElement => (
+    <div data-testid='canvas-infinite-canvas'>InfiniteCanvas mock</div>
+  ),
+}));
+
 describe('App', () => {
-  it('renders app root and example button when signed in', () => {
+  it('renders app root and infinite canvas when signed in', () => {
     mockAuthState = {
       ...mockAuthState,
       isLoaded: true,
@@ -27,7 +33,7 @@ describe('App', () => {
     };
     render(<App />);
     expect(screen.getByTestId('app-root')).toBeInTheDocument();
-    expect(screen.getByTestId('shadcn-button-example')).toHaveTextContent('Click me');
+    expect(screen.getByTestId('canvas-infinite-canvas')).toBeInTheDocument();
     expect(screen.getByTestId('app-layout')).toBeInTheDocument();
   });
 

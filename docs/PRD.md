@@ -875,24 +875,24 @@ Everything below through Epic 8 must be functional at the 24-hour MVP gate.
 
 - **PR:** `UI: Toolbar with tool selection`
 - **Branch:** `feature/toolbar-component`
-- [ ] Feature F5.2 complete (merged to `development`)
+- [x] Feature F5.2 complete (merged to `development`)
 
 #### Acceptance Criteria
 
-- [ ] Toolbar at fixed position (left or top)
-- [ ] Tools: Select (pointer), Sticky Note, Rectangle, Circle, Line
-- [ ] Active tool visually highlighted
-- [ ] Tool selection updates activeToolType in boardStore
+- [x] Toolbar at fixed position (left or top)
+- [x] Tools: Select (pointer), Sticky Note, Rectangle, Circle, Line
+- [x] Active tool visually highlighted
+- [x] Tool selection updates activeToolType in boardStore
 
 #### Implementation Checklist
 
-- [ ] Branch created from `development`
+- [x] Branch created from `development`
 
-**Commit 1:** `feat(toolbar): add toolbar component with tool buttons` — Subtasks: [ ] Create Toolbar.tsx; [ ] Lucide icons (MousePointer, StickyNote, Square, Circle, Minus); [ ] Tailwind + shadcn; [ ] Wire to boardStore setActiveTool
+**Commit 1:** `feat(toolbar): add toolbar component with tool buttons` — Subtasks: [x] Create Toolbar.tsx; [x] Lucide icons (MousePointer, StickyNote, Square, Circle, Minus); [x] Tailwind + shadcn; [x] Wire to boardStore setActiveTool
 
-**Commit 2:** `feat(toolbar): add active tool indicator` — Subtasks: [ ] Highlight active button; [ ] Cursor style by tool; [ ] Barrel export toolbar/index.ts
+**Commit 2:** `feat(toolbar): add active tool indicator` — Subtasks: [x] Highlight active button; [x] Cursor style by tool; [x] Barrel export toolbar/index.ts
 
-**Commit 3:** `test(toolbar): verify toolbar renders and merge` — Subtasks: [ ] Unit test Toolbar; [ ] test:run green; [ ] Merge to development
+**Commit 3:** `test(toolbar): verify toolbar renders and merge` — Subtasks: [x] Unit test Toolbar; [x] test:run green; [x] Merge to development
 
 ---
 

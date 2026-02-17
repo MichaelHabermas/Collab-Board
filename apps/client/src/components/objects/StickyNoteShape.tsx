@@ -22,8 +22,13 @@ export const StickyNoteShape = memo(function StickyNoteShape({
   const activeToolType = useActiveToolType();
   const draggable = activeToolType === 'select';
 
-  const handleClick = (): void => {
-    boardStore.getState().selectObject(id);
+  const handleClick = (e: { evt: MouseEvent | TouchEvent }): void => {
+    const shiftKey = 'shiftKey' in e.evt ? e.evt.shiftKey : false;
+    if (shiftKey) {
+      boardStore.getState().toggleSelection(id);
+    } else {
+      boardStore.getState().selectObject(id);
+    }
   };
 
   const handleDoubleClick = (): void => {

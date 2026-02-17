@@ -20,6 +20,7 @@ interface IBoardState {
   selectObject: (id: string) => void;
   deselectAll: () => void;
   toggleSelection: (id: string) => void;
+  setSelectedObjectIds: (ids: string[]) => void;
   setBoardMetadata: (boardId: string, title: string) => void;
 }
 
@@ -79,6 +80,10 @@ export const boardStore = create<IBoardState>((set) => ({
         : [...state.selectedObjectIds, id];
       return { selectedObjectIds: next };
     });
+  },
+
+  setSelectedObjectIds: (ids: string[]) => {
+    set({ selectedObjectIds: ids });
   },
 
   setBoardMetadata: (boardId: string, title: string) => {

@@ -115,5 +115,12 @@ describe('boardStore', () => {
       boardStore.getState().toggleSelection('a');
       expect(boardStore.getState().selectedObjectIds).toEqual(['b']);
     });
+
+    it('setSelectedObjectIds replaces selection', () => {
+      boardStore.getState().setSelectedObjectIds(['a', 'b', 'c']);
+      expect(boardStore.getState().selectedObjectIds).toEqual(['a', 'b', 'c']);
+      boardStore.getState().setSelectedObjectIds(['x']);
+      expect(boardStore.getState().selectedObjectIds).toEqual(['x']);
+    });
   });
 });

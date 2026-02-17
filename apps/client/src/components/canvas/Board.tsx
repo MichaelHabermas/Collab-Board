@@ -1,7 +1,7 @@
 import type { ReactElement } from 'react';
 import { useRef, useCallback, useState, useEffect } from 'react';
 import type Konva from 'konva';
-import { Stage, Layer, Transformer } from 'react-konva';
+import { Stage, Layer, Transformer, Rect } from 'react-konva';
 import { useViewportSize } from '@/hooks/useViewportSize';
 import { usePanZoom } from '@/hooks/usePanZoom';
 import { GridBackground } from './GridBackground';
@@ -44,6 +44,13 @@ export const Board = (): ReactElement => {
   const cursorRef = useRef<Konva.Layer>(null);
   const selectionRef = useRef<Konva.Layer>(null);
   const dragStartRef = useRef<{ x: number; y: number } | null>(null);
+  const selectionStartRef = useRef<{ x: number; y: number } | null>(null);
+  const [selectionRect, setSelectionRect] = useState<{
+    x: number;
+    y: number;
+    width: number;
+    height: number;
+  } | null>(null);
 
   const registerNodeRef = useCallback((id: string, node: unknown) => {
     const group = node as Konva.Group | null;
@@ -64,6 +71,24 @@ export const Board = (): ReactElement => {
       .filter(Boolean) as Konva.Node[];
     tr.nodes(nodes);
   }, [selectedIds, refsVersion]);
+
+  useEffect(() => {
+    const handleKeyDown = (e: KeyboardEvent): void => {
+      if (e.key !== 'Delete' && e.key !== 'Backspace') return;
+      const target = e.target as HTMLElement;
+      if (target.tagName === 'INPUT' || target.tagName === 'TEXTAREA' || target.isContentEditable)
+        return;
+      const ids = boardStore.getState().selectedObjectIds;
+      if (ids.length === 0) return;
+      e.preventDefault();
+      for (const id of ids) {
+        boardStore.getState().removeObject(id);
+      }
+      boardStore.getState().deselectAll();
+    };
+    window.addEventListener('keydown', handleKeyDown);
+    return () => window.removeEventListener('keydown', handleKeyDown);
+  }, []);
 
   const handleTransformEnd = useCallback(() => {
     const nodes = selectedIds
@@ -94,14 +119,47 @@ export const Board = (): ReactElement => {
     (e: {
       target: {
         getStage: () => { getPointerPosition: () => { x: number; y: number } | null } | null;
+        getType?: () => string;
       };
     }) => {
       const stage = e.target.getStage();
       if (!stage) return;
       const pos = stage.getPointerPosition();
-      if (pos) dragStartRef.current = { x: pos.x, y: pos.y };
+      if (!pos) return;
+      dragStartRef.current = { x: pos.x, y: pos.y };
+      const isEmptyArea = (e.target as unknown) === stage || e.target.getType?.() === 'Layer';
+      const tool = boardStore.getState().activeToolType;
+      if (isEmptyArea && tool === 'select') {
+        const boardX = (pos.x - stagePosition.x) / stageScale;
+        const boardY = (pos.y - stagePosition.y) / stageScale;
+        selectionStartRef.current = { x: boardX, y: boardY };
+        setSelectionRect({ x: boardX, y: boardY, width: 0, height: 0 });
+      }
     },
-    []
+    [stagePosition, stageScale]
+  );
+
+  const handleStageMouseMove = useCallback(
+    (e: {
+      target: {
+        getStage: () => { getPointerPosition: () => { x: number; y: number } | null } | null;
+      };
+    }) => {
+      if (selectionRect === null || !selectionStartRef.current) return;
+      const stage = e.target.getStage();
+      if (!stage) return;
+      const pos = stage.getPointerPosition();
+      if (!pos) return;
+      const boardX = (pos.x - stagePosition.x) / stageScale;
+      const boardY = (pos.y - stagePosition.y) / stageScale;
+      const start = selectionStartRef.current;
+      const x = Math.min(start.x, boardX);
+      const y = Math.min(start.y, boardY);
+      const width = Math.abs(boardX - start.x);
+      const height = Math.abs(boardY - start.y);
+      setSelectionRect({ x, y, width, height });
+    },
+    [selectionRect, stagePosition, stageScale]
   );
 
   const handleStageMouseUp = useCallback(
@@ -116,6 +174,25 @@ export const Board = (): ReactElement => {
       const isEmptyArea = (e.target as unknown) === stage || e.target.getType?.() === 'Layer';
       if (!isEmptyArea) return;
       const tool = boardStore.getState().activeToolType;
+      if (selectionRect !== null) {
+        const objects = boardStore.getState().objects;
+        const ids = objects
+          .filter((obj) => {
+            const r = selectionRect;
+            const right = r.x + r.width;
+            const bottom = r.y + r.height;
+            const objW = Math.max(obj.width, 1);
+            const objH = Math.max(obj.height, 1);
+            const objRight = obj.x + objW;
+            const objBottom = obj.y + objH;
+            return !(obj.x > right || objRight < r.x || obj.y > bottom || objBottom < r.y);
+          })
+          .map((o) => o.id);
+        boardStore.getState().setSelectedObjectIds(ids);
+        setSelectionRect(null);
+        selectionStartRef.current = null;
+        return;
+      }
       if (tool === 'select') {
         boardStore.getState().deselectAll();
         return;
@@ -146,7 +223,7 @@ export const Board = (): ReactElement => {
         boardStore.getState().addObject(line);
       }
     },
-    [stagePosition, stageScale]
+    [stagePosition, stageScale, selectionRect]
   );
 
   return (
@@ -182,6 +259,7 @@ export const Board = (): ReactElement => {
         draggable
         onDragEnd={handleStageDragEnd}
         onMouseDown={handleStageMouseDown}
+        onMouseMove={handleStageMouseMove}
         onMouseUp={handleStageMouseUp}
         style={{ display: 'block' }}
       >
@@ -193,6 +271,18 @@ export const Board = (): ReactElement => {
           registerNodeRef={registerNodeRef}
         />
         <Layer ref={selectionRef} data-testid='canvas-board-layer-selection' name='selection'>
+          {selectionRect && (
+            <Rect
+              x={selectionRect.x}
+              y={selectionRect.y}
+              width={selectionRect.width}
+              height={selectionRect.height}
+              stroke='#2563eb'
+              strokeWidth={2}
+              fill='rgba(37, 99, 235, 0.1)'
+              listening={false}
+            />
+          )}
           <Transformer ref={transformerRef} onTransformEnd={handleTransformEnd} />
         </Layer>
         <Layer ref={cursorRef} data-testid='canvas-board-layer-cursor' name='cursor' />

@@ -37,6 +37,7 @@ vi.mock('react-konva', () => ({
     <div data-testid={testId ?? 'canvas-line-mock'} />
   ),
   Transformer: (): null => null,
+  Rect: (): null => null,
 }));
 
 describe('Board', () => {

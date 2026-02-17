@@ -26,8 +26,15 @@ vi.mock('react-konva', () => ({
       {children}
     </div>
   ),
-  Layer: ({ 'data-testid': testId }: { 'data-testid'?: string }) => (
-    <div data-testid={testId ?? 'canvas-layer-mock'} />
+  Layer: ({
+    'data-testid': testId,
+    children,
+  }: {
+    'data-testid'?: string;
+    children?: ReactNode;
+  }) => <div data-testid={testId ?? 'canvas-layer-mock'}>{children}</div>,
+  Line: ({ 'data-testid': testId }: { 'data-testid'?: string }) => (
+    <div data-testid={testId ?? 'canvas-line-mock'} />
   ),
 }));
 
@@ -50,5 +57,11 @@ describe('Board', () => {
     expect(screen.getByTestId('canvas-board-layer-objects')).toBeInTheDocument();
     expect(screen.getByTestId('canvas-board-layer-selection')).toBeInTheDocument();
     expect(screen.getByTestId('canvas-board-layer-cursor')).toBeInTheDocument();
+  });
+
+  it('renders grid background on grid layer', () => {
+    render(<Board />);
+    expect(screen.getByTestId('canvas-grid-horizontal')).toBeInTheDocument();
+    expect(screen.getByTestId('canvas-grid-vertical')).toBeInTheDocument();
   });
 });

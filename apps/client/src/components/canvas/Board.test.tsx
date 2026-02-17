@@ -6,8 +6,8 @@ import { Board } from './Board';
 const mockWidth = 800;
 const mockHeight = 600;
 
-vi.mock('@/hooks/useViewportSize', () => ({
-  useViewportSize: () => ({ width: mockWidth, height: mockHeight }),
+vi.mock('@/hooks/useContainerSize', () => ({
+  useContainerSize: () => ({ width: mockWidth, height: mockHeight }),
 }));
 
 vi.mock('@/hooks/useCursorEmit', () => ({
@@ -62,7 +62,7 @@ describe('Board', () => {
     vi.clearAllMocks();
   });
 
-  it('renders Stage with viewport dimensions', () => {
+  it('renders Stage with container dimensions', () => {
     render(<Board />);
     const stage = screen.getByTestId('canvas-board-stage');
     expect(stage).toBeInTheDocument();

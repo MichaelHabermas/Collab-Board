@@ -2,7 +2,7 @@ import type { ReactElement } from 'react';
 import { useRef, useCallback, useState, useEffect } from 'react';
 import type Konva from 'konva';
 import { Stage, Layer, Transformer, Rect } from 'react-konva';
-import { useViewportSize } from '@/hooks/useViewportSize';
+import { useContainerSize } from '@/hooks/useContainerSize';
 import { usePanZoom } from '@/hooks/usePanZoom';
 import { useCursorEmit } from '@/hooks/useCursorEmit';
 import { useSocket } from '@/hooks/useSocket';
@@ -28,13 +28,6 @@ import type { StickyNote } from '@collab-board/shared-types';
 const MIN_RESIZE = 20;
 
 export const Board = (): ReactElement => {
-  const { width, height } = useViewportSize();
-  const [editingStickyId, setEditingStickyId] = useState<string | null>(null);
-  const editingSticky = useObject(editingStickyId ?? '') as StickyNote | undefined;
-  const selectedIds = useSelectedObjectIds();
-  const nodeRefsMapRef = useRef<Map<string, Konva.Group>>(new Map());
-  const [refsVersion, setRefsVersion] = useState(0);
-  const transformerRef = useRef<Konva.Transformer>(null);
   const {
     stagePosition,
     stageScale,
@@ -44,6 +37,13 @@ export const Board = (): ReactElement => {
     handleTouchMove,
     containerRef,
   } = usePanZoom();
+  const { width, height } = useContainerSize(containerRef);
+  const [editingStickyId, setEditingStickyId] = useState<string | null>(null);
+  const editingSticky = useObject(editingStickyId ?? '') as StickyNote | undefined;
+  const selectedIds = useSelectedObjectIds();
+  const nodeRefsMapRef = useRef<Map<string, Konva.Group>>(new Map());
+  const [refsVersion, setRefsVersion] = useState(0);
+  const transformerRef = useRef<Konva.Transformer>(null);
   const gridRef = useRef<Konva.Layer>(null);
   const cursorRef = useRef<Konva.Layer>(null);
   const selectionRef = useRef<Konva.Layer>(null);
@@ -262,7 +262,7 @@ export const Board = (): ReactElement => {
       onWheel={handleWheel}
       onTouchStart={handleTouchStart}
       onTouchMove={handleTouchMove}
-      style={{ width, height, overflow: 'hidden', position: 'relative' }}
+      style={{ width: '100%', height: '100%', overflow: 'hidden', position: 'relative' }}
       data-testid='canvas-board-container'
     >
       {editingSticky && (
@@ -280,8 +280,8 @@ export const Board = (): ReactElement => {
       )}
       <Stage
         data-testid='canvas-board-stage'
-        width={width}
-        height={height}
+        width={width || 1}
+        height={height || 1}
         x={stagePosition.x}
         y={stagePosition.y}
         scaleX={stageScale}

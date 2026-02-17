@@ -7,7 +7,7 @@ interface IAppLayoutProps {
 
 export const AppLayout = ({ children }: IAppLayoutProps): ReactElement => {
   return (
-    <div data-testid='app-layout' className='flex min-h-svh flex-col'>
+    <div data-testid='app-layout' className='flex h-svh flex-col overflow-hidden'>
       <header className='flex shrink-0 items-center justify-end border-b border-border p-2'>
         <UserButton
           afterSignOutUrl='/'
@@ -18,7 +18,7 @@ export const AppLayout = ({ children }: IAppLayoutProps): ReactElement => {
           }}
         />
       </header>
-      <main className='flex-1'>{children}</main>
+      <main className='min-h-0 flex-1'>{children}</main>
     </div>
   );
 };

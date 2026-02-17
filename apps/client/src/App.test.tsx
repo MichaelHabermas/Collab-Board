@@ -59,4 +59,18 @@ describe('App', () => {
     render(<App />);
     expect(screen.getByTestId('auth-guard-loading')).toBeInTheDocument();
   });
+
+  it('app-root and canvas column wrapper have h-full for correct layout', () => {
+    mockAuthState = {
+      ...mockAuthState,
+      isLoaded: true,
+      isSignedIn: true,
+      userId: 'user_123',
+    };
+    render(<App />);
+    const appRoot = screen.getByTestId('app-root');
+    const canvasWrapper = screen.getByTestId('canvas-column-wrapper');
+    expect(appRoot).toHaveClass('h-full');
+    expect(canvasWrapper).toHaveClass('h-full');
+  });
 });

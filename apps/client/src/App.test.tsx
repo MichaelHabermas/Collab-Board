@@ -51,6 +51,6 @@ describe('App', () => {
       userId: '',
     };
     render(<App />);
-    expect(screen.getByTestId('app-loading')).toBeInTheDocument();
+    expect(screen.getByTestId('auth-guard-loading')).toBeInTheDocument();
   });
 });

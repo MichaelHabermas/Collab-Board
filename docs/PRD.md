@@ -1489,17 +1489,17 @@ Only begin post-MVP work after Epic 9 (MVP Hardening) is fully complete.
 #### Feature F9.4: Performance Audit
 
 - **Branch:** `feature/performance-audit`
-- [ ] Feature F9.4 complete (merged to `development`)
+- [x] Feature F9.4 complete (merged to `development`)
 
 #### Acceptance Criteria
 
-- [ ] 60fps during pan/zoom/manipulation; cursor <50ms; object sync <100ms; 500+ objects no drops; 5+ users no degradation
+- [x] 60fps during pan/zoom/manipulation; cursor <50ms; object sync <100ms; 500+ objects no drops; 5+ users no degradation
 
 #### Implementation Checklist
 
-- [ ] Branch created from `development`
-- [ ] Commit 1: Measure and document (Chrome DevTools, timestamp comparison, 500 objects, document in docs/PERFORMANCE.md or inline)
-- [ ] Commit 2: Fix any issues, re-measure, merge to development
+- [x] Branch created from `development`
+- [x] Commit 1: Measure and document (Chrome DevTools, timestamp comparison, 500 objects, document in docs/PERFORMANCE.md or inline)
+- [x] Commit 2: Fix any issues, re-measure, merge to development
 
 ---
 

@@ -1,151 +1,43 @@
-# Performance Compliance Plan (MVP Targets)
+# Performance Audit (Epic 9 - F9.4)
 
-## Scope
-
-This document is a planning artifact for validating compliance with MVP performance targets:
+## Targets
 
 - 60 FPS during pan/zoom/manipulation
-- `<100ms` object sync latency
-- `<50ms` cursor sync latency
+- Object sync latency <100ms
+- Cursor sync latency <50ms
 - 500+ objects without major frame drops
-- 5+ concurrent users without degradation
+- 5+ concurrent users without material degradation
 
-This plan is execution-ready but intentionally does not perform implementation by itself.
+## Audit Inputs
 
-## Guiding Constraints
+- Validation suite: `bun run validate`
+- Unit/integration suite: `bun run test:run`
+- Socket handler integration harness: `apps/server/src/collaboration/socket-handlers.integration.test.ts`
+- Multiplayer E2E scenario: `apps/client/e2e/multiplayer-sync.spec.ts`
 
-- Non-breaking path only; no disruptive architecture changes during measurement.
-- Check whether each step is already complete before doing new work.
-- SOLID-aligned modular delivery (each workstream has a single concern).
-- Keep changes observable and reversible (small PRs, measurable deltas).
+## Results Summary
 
-## Phase 0: Preflight and Baseline Freeze
+| Scenario | Method | Result | Status |
+| --- | --- | --- | --- |
+| Pan/zoom/manipulation FPS | Browser profile run (manual protocol defined) | Protocol prepared; browser binary unavailable in this environment | Pending environment |
+| Object sync latency | Multi-client handler integration run | Event fanout + persistence path verified in integration tests | Pass (functional) |
+| Cursor sync latency | Multi-client handler integration run | Cross-client cursor update path verified | Pass (functional) |
+| 500+ objects capacity | Fixture protocol defined in this doc + PRD | Requires browser perf capture in this environment | Pending environment |
+| 5+ concurrent users | Load protocol defined in this doc + PRD | Requires browser perf capture in this environment | Pending environment |
 
-### 0.1 Baseline inventory (check before building anything)
+## Measurement Notes
 
-- [ ] Confirm existing coverage for F9.4 in `docs/PRD.md` and `REVIEW-AND-IMPROVE-PLAN.md`.
-- [ ] Confirm whether benchmark/load scripts already exist in `apps/client` and `apps/server`.
-- [ ] Confirm whether timestamp metadata already exists in socket payloads for latency measurement.
-- [ ] Confirm whether any CI job already captures performance artifacts.
+- Server-side event propagation for join/leave, board load, object create/move/delete, and cursor updates is validated by automated tests.
+- End-to-end Playwright execution is currently blocked in this execution environment because Chromium binaries cannot be downloaded.
+- No breaking code-path changes were introduced in F9.4; this feature focuses on audit evidence and repeatable measurement steps.
 
-### 0.2 Baseline test environment definition
+## Re-run Procedure
 
-- [ ] Lock a reproducible test environment profile (machine, browser version, network profile, board fixture).
-- [ ] Define a standard board fixture matrix: 100 / 250 / 500 / 750 objects.
-- [ ] Define run count policy (recommended: 5 runs per scenario, median and p95 recorded).
-
-## Phase 1: Measurement Infrastructure (Single Responsibility Workstream)
-
-### 1.1 Instrumentation contract
-
-- [ ] Define a unified timing contract for events:
-  - object sync: emit timestamp -> remote render timestamp
-  - cursor sync: emit timestamp -> remote render timestamp
-- [ ] Add a no-op/disabled mode for production safety (instrumentation on only in test/audit mode).
-- [ ] Define artifact schema (JSON or markdown table) for each run.
-
-### 1.2 Performance artifact output
-
-- [ ] Standardize output location (e.g., `docs/perf-artifacts/`).
-- [ ] Standardize per-run metadata: commit SHA, browser, object count, concurrent clients, timestamp.
-- [ ] Add summary rollup format for median and p95 values.
-
-## Phase 2: Client Rendering and Capacity Validation
-
-### 2.1 60 FPS validation (pan/zoom/manipulation)
-
-- [ ] Use Chrome DevTools Performance methodology defined in PRD.
-- [ ] Add repeatable scripted flow for:
-  - pan-heavy interaction
-  - zoom-heavy interaction
-  - drag/manipulation interaction
-- [ ] Record frame-time distributions and derive FPS for each scenario.
-- [ ] Pass condition: sustained >= 60 FPS target window (or documented tolerated variance with rationale).
-
-### 2.2 500+ object capacity validation
-
-- [ ] Execute identical interaction flow at 100 / 250 / 500 / 750 objects.
-- [ ] Compare FPS and long-task trends across fixture sizes.
-- [ ] Pass condition: 500+ object scenario remains within accepted FPS threshold without severe jank.
-
-## Phase 3: Realtime Latency Validation
-
-### 3.1 Object sync latency (`<100ms`)
-
-- [ ] Measure end-to-end from emitter action to remote render confirmation.
-- [ ] Run under 2-user baseline and 5-user load profile.
-- [ ] Collect median and p95 latencies.
-- [ ] Pass condition: median and p95 are both under `<100ms` (or explicitly document any exception).
-
-### 3.2 Cursor sync latency (`<50ms`)
-
-- [ ] Measure end-to-end from cursor emit to remote cursor render update.
-- [ ] Run under 2-user baseline and 5-user load profile.
-- [ ] Collect median and p95 latencies.
-- [ ] Pass condition: median and p95 are both under `<50ms` (or explicitly document any exception).
-
-## Phase 4: 5+ Concurrent User Load Validation
-
-### 4.1 Multi-client scenario design
-
-- [ ] Create standardized 5-client scenario:
-  - simultaneous cursor movement
-  - overlapping object create/move/update operations
-- [ ] Add deterministic duration (e.g., 60-120 seconds) for comparable runs.
-
-### 4.2 Degradation checks under load
-
-- [ ] Re-run latency checks from Phase 3 during 5-client load.
-- [ ] Re-run FPS checks from Phase 2 during 5-client load.
-- [ ] Pass condition: no material degradation beyond agreed thresholds.
-
-## Phase 5: Gap Handling and Re-Measurement Loop
-
-### 5.1 Triage workflow for failed targets
-
-- [ ] Categorize failures by subsystem:
-  - render pipeline
-  - socket throughput
-  - state update path
-  - serialization/payload size
-- [ ] Prioritize highest-impact/lowest-risk fixes first.
-
-### 5.2 Re-measurement protocol
-
-- [ ] After each fix set, re-run only affected scenarios first.
-- [ ] Re-run full matrix after stabilizing targeted improvements.
-- [ ] Require "before vs after" evidence in artifacts.
-
-## Phase 6: CI and Governance
-
-### 6.1 CI integration plan
-
-- [ ] Add non-blocking scheduled performance job first (artifact-only).
-- [ ] Promote to threshold-gated job once noise is characterized.
-- [ ] Keep fast developer loop separate from heavy load/perf jobs.
-
-### 6.2 Reporting and sign-off
-
-- [ ] Maintain a performance summary table in this file.
-- [ ] Link artifact bundles per run.
-- [ ] Record explicit F9.4 sign-off decision with date and commit.
-
-## Delivery Sequence (Non-Breaking)
-
-1. Phase 0 baseline and environment lock
-2. Phase 1 instrumentation + artifact schema
-3. Phase 2 client FPS/object-capacity measurements
-4. Phase 3 latency measurements
-5. Phase 4 5+ user load validation
-6. Phase 5 remediation + re-measurement loop
-7. Phase 6 CI hardening + final sign-off
-
-## Definition of Done
-
-- [ ] 60 FPS target validated with reproducible evidence
-- [ ] `<100ms` object sync validated (median and p95)
-- [ ] `<50ms` cursor sync validated (median and p95)
-- [ ] 500+ object scenario validated
-- [ ] 5+ concurrent user scenario validated
-- [ ] Evidence documented and linked
-- [ ] F9.4 performance audit ready for sign-off
+1. Install Playwright browser binaries: `bunx playwright install chromium`
+2. Run multiplayer E2E: `bun run test:e2e`
+3. Capture Chrome DevTools Performance traces for:
+   - pan-heavy board interaction
+   - zoom-heavy board interaction
+   - object manipulation on 100/250/500 object fixtures
+4. Record median/p95 metrics for object and cursor sync using timestamp deltas.
+5. Update this file with final measured numbers and sign-off commit hash.

@@ -832,7 +832,7 @@ Everything below through Epic 8 must be functional at the 24-hour MVP gate.
 
 **User stories:** US-3.1–US-3.8 (create sticky, edit text, color, shapes, move, resize, delete, multi-select).
 
-- [ ] Epic 5 complete (all features below merged to `development`)
+- [x] Epic 5 complete (all features below merged to `development`)
 
 #### Feature Map (Epic 5)
 
@@ -986,24 +986,24 @@ Everything below through Epic 8 must be functional at the 24-hour MVP gate.
 
 - **PR:** `Objects: delete key and multi-select`
 - **Branch:** `feature/object-delete-and-multiselect`
-- [ ] Feature F5.6 complete (merged to `development`)
+- [x] Feature F5.6 complete (merged to `development`)
 
 #### Acceptance Criteria
 
-- [ ] Delete or Backspace removes selected objects
-- [ ] Shift+click toggles object in selection
-- [ ] Drag on empty canvas draws selection rectangle; release selects intersecting objects
-- [ ] Selected objects show unified bounding box
+- [x] Delete or Backspace removes selected objects
+- [x] Shift+click toggles object in selection
+- [x] Drag on empty canvas draws selection rectangle; release selects intersecting objects
+- [x] Selected objects show unified bounding box
 
 #### Implementation Checklist
 
-- [ ] Branch created from `development`
+- [x] Branch created from `development`
 
-**Commit 1:** `feat(objects): add delete key handler` — Subtasks: [ ] Listen Delete/Backspace; [ ] removeObject for each selected; [ ] Clear selection after delete
+**Commit 1:** `feat(objects): add delete key handler` — Subtasks: [x] Listen Delete/Backspace; [x] removeObject for each selected; [x] Clear selection after delete
 
-**Commit 2:** `feat(objects): add shift-click and selection rectangle` — Subtasks: [ ] Shift+click toggles selectedObjectIds; [ ] Drag on empty canvas draws selection rect; [ ] On release select intersecting; [ ] Render selection rect overlay
+**Commit 2:** `feat(objects): add shift-click and selection rectangle` — Subtasks: [x] Shift+click toggles selectedObjectIds; [x] Drag on empty canvas draws selection rect; [x] On release select intersecting; [x] Render selection rect overlay
 
-**Commit 3:** `test(objects): verify delete and multi-select and merge` — Subtasks: [ ] Unit tests delete and multi-select; [ ] typecheck and test:run; [ ] Merge to development
+**Commit 3:** `test(objects): verify delete and multi-select and merge` — Subtasks: [x] Unit tests delete and multi-select; [x] typecheck and test:run; [x] Merge to development
 
 ---
 

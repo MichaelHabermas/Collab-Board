@@ -228,9 +228,7 @@ export const Board = (): ReactElement => {
       const boardY = (pos.y - stagePosition.y) / stageScale;
       handleCursorMove(boardX, boardY);
       if (creationPreview !== null) {
-        setCreationPreview((prev) =>
-          prev ? { ...prev, endX: boardX, endY: boardY } : null
-        );
+        setCreationPreview((prev) => (prev ? { ...prev, endX: boardX, endY: boardY } : null));
         return;
       }
       if (!selectionStartRef.current) return;
@@ -248,14 +246,7 @@ export const Board = (): ReactElement => {
       const y = Math.min(start.y, boardY);
       setSelectionRect({ x, y, width, height });
     },
-    [
-      handleCursorMove,
-      creationPreview,
-      selectionRect,
-      stagePosition,
-      stageScale,
-      setStagePosition,
-    ]
+    [handleCursorMove, creationPreview, selectionRect, stagePosition, stageScale, setStagePosition]
   );
 
   const handleStageMouseUp = useCallback(

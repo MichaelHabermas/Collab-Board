@@ -1,7 +1,7 @@
 import type { ReactElement } from 'react';
 import { memo } from 'react';
 import type Konva from 'konva';
-import { Group, Circle } from 'react-konva';
+import { Group, Ellipse } from 'react-konva';
 import type { CircleShape as ICircleShape } from '@collab-board/shared-types';
 import { boardStore, useActiveToolType, useBoardMetadata } from '@/store/boardStore';
 import { useSocket } from '@/hooks/useSocket';
@@ -17,19 +17,10 @@ export const CircleShapeComponent = memo(function CircleShapeComponent({
   isSelected,
   registerRef,
 }: ICircleShapeProps): ReactElement {
-  const {
-    id,
-    x,
-    y,
-    rotation,
-    radius,
-    width,
-    height,
-    color,
-    strokeColor,
-    strokeWidth,
-    fillOpacity,
-  } = shape;
+  const { id, x, y, rotation, width, height, color, strokeColor, strokeWidth, fillOpacity } =
+    shape;
+  const radiusX = width / 2;
+  const radiusY = height / 2;
   const activeToolType = useActiveToolType();
   const { boardId } = useBoardMetadata();
   const { socket } = useSocket();
@@ -75,8 +66,6 @@ export const CircleShapeComponent = memo(function CircleShapeComponent({
       data-testid={`object-circle-${id}`}
       x={x}
       y={y}
-      width={width}
-      height={height}
       rotation={rotation}
       draggable={draggable}
       onMouseDown={handlePointerDown}
@@ -87,15 +76,24 @@ export const CircleShapeComponent = memo(function CircleShapeComponent({
       onDragEnd={handleDragEnd}
       listening
     >
-      <Circle
-        radius={radius}
+      <Ellipse
+        radiusX={radiusX}
+        radiusY={radiusY}
         fill={color}
         opacity={fillOpacity}
         stroke={strokeColor}
         strokeWidth={strokeWidth}
         listening
       />
-      {isSelected && <Circle radius={radius} stroke='#2563eb' strokeWidth={2} listening={false} />}
+      {isSelected && (
+        <Ellipse
+          radiusX={radiusX}
+          radiusY={radiusY}
+          stroke='#2563eb'
+          strokeWidth={2}
+          listening={false}
+        />
+      )}
     </Group>
   );
 });

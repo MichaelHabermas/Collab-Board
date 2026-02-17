@@ -145,20 +145,23 @@ export const Board = (): ReactElement => {
       const children = (node as Konva.Group).getChildren?.() ?? [];
       const child = children[0];
       const isCircle = obj.type === 'circle';
-      const newRadius = isCircle ? Math.max(MIN_RESIZE / 2, Math.min(w, h) / 2) : undefined;
 
       if (child && 'width' in child && typeof (child as Konva.Shape).width === 'function') {
         (child as Konva.Shape).width(w);
         (child as Konva.Shape).height(h);
       }
-      const childWithRadius = child as Konva.Shape & { radius?: (r: number) => number };
+      const childEllipse = child as Konva.Shape & {
+        radiusX?: (r: number) => number;
+        radiusY?: (r: number) => number;
+      };
       if (
         isCircle &&
-        newRadius !== undefined &&
-        childWithRadius &&
-        typeof childWithRadius.radius === 'function'
+        childEllipse &&
+        typeof childEllipse.radiusX === 'function' &&
+        typeof childEllipse.radiusY === 'function'
       ) {
-        childWithRadius.radius(newRadius);
+        childEllipse.radiusX(w / 2);
+        childEllipse.radiusY(h / 2);
       }
 
       const delta: Record<string, number> = {
@@ -168,8 +171,8 @@ export const Board = (): ReactElement => {
         y: node.y(),
         rotation,
       };
-      if (isCircle && newRadius !== undefined) {
-        delta.radius = newRadius;
+      if (isCircle) {
+        delta.radius = Math.max(MIN_RESIZE / 2, Math.min(w, h) / 2);
       }
       boardStore.getState().updateObject(id, delta);
       if (socket && boardId) {

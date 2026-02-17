@@ -190,6 +190,7 @@ vi.mock('react-konva', () => {
     Line: ({ 'data-testid': testId }: { 'data-testid'?: string }) =>
       testId ? <div data-testid={testId} /> : null,
     Circle: (): null => null,
+    Ellipse: (): null => null,
     Transformer: (): null => null,
     Rect: (): null => null,
     Text: (): null => null,
@@ -494,6 +495,31 @@ describe('Board', () => {
         height: 80,
         radius: 40,
       });
+    });
+
+    it('circle oval resize: store update with different width and height persists ellipse dimensions', () => {
+      const circle = createCircle('test-board', 0, 0, 'test-user');
+      boardStore.getState().clearBoard();
+      boardStore.getState().setObjects([circle]);
+      const w = 100;
+      const h = 60;
+      const delta = {
+        width: w,
+        height: h,
+        radius: Math.min(w, h) / 2,
+        x: circle.x,
+        y: circle.y,
+        rotation: circle.rotation,
+      };
+      boardStore.getState().updateObject(circle.id, delta);
+      const updated = boardStore.getState().objects.find((o) => o.id === circle.id);
+      expect(updated).toBeDefined();
+      expect(updated?.type).toBe('circle');
+      expect(updated?.width).toBe(100);
+      expect(updated?.height).toBe(60);
+      if (updated?.type === 'circle') {
+        expect(updated.radius).toBe(30);
+      }
     });
   });
 });

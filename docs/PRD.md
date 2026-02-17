@@ -989,7 +989,13 @@ When the **select** tool is active:
 - **Click and drag on an object**: The object moves (drag-move). Because object position is controlled (x, y from store), the client must update the store on each drag move (`onDragMove`) so that re-renders do not reset the node position during drag. Position is persisted and synced (e.g. `object:move`) on drag end.
 - **Single pointer down on empty area**: Start the selection rectangle if the user drags; on release without drag, clear selection.
 - **Shift+click**: Toggle the object in the current selection (unchanged).
-- **Resize (circle)**: When the user resizes a circle via the transformer, the circle’s radius (and width/height) are updated and persisted so the rendered circle matches the transformer box. Resizing a circle updates its radius and keeps the fill in sync with the selection bounds.
+- **Resize (circle/ellipse)**: When the user resizes a circle via the transformer, the shape’s width and height are updated and persisted so the rendered shape matches the transformer box. The shape can be resized non-uniformly to become an ellipse/oval (width and height may differ). Radius (or derived radius) is kept in sync for compatibility. The fill stays in sync with the selection bounds.
+- **Circle/ellipse hit area**: Selection and hit detection for circle (and ellipse) must be only on the shape (the circle/ellipse path), not on a rectangular bounding box; the hit area must not be offset or larger than the shape (e.g. a click outside the shape but inside the bounding box must not select the object).
+
+**Circle/ellipse behavior (verify when implemented):**
+
+- [ ] Circle/ellipse hit area is only on the shape (no rectangular hit box; click outside shape but inside bbox does not select).
+- [ ] Circle can be resized to an oval (ellipse) and dimensions are persisted (width, height, and optionally radius for compatibility).
 
 Layer order must keep the objects layer above the selection layer so the object receives the hit and can be selected and dragged. Draggable object Groups must participate in Konva’s hit graph (e.g. the main body shape—Rect, Circle, or Line—must have `listening` enabled) so the Group receives pointer events and drag can start; otherwise clicks fall through to the Layer and are treated as empty area.
 

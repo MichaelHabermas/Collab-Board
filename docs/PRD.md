@@ -1432,21 +1432,21 @@ Only begin post-MVP work after Epic 9 (MVP Hardening) is fully complete.
 #### Feature F9.1: Unit Tests — Core Utilities
 
 - **Branch:** `feature/unit-tests-core-utils`
-- [ ] Feature F9.1 complete (merged to `development`)
+- [x] Feature F9.1 complete (merged to `development`)
 
 #### Acceptance Criteria
 
-- [ ] Vitest tests for coordinate math (pan/zoom)
-- [ ] Vitest tests for Zod validation schemas
-- [ ] Vitest tests for boardStore actions and selectors
-- [ ] All tests pass with `bun run test:run`
+- [x] Vitest tests for coordinate math (pan/zoom)
+- [x] Vitest tests for Zod validation schemas
+- [x] Vitest tests for boardStore actions and selectors
+- [x] All tests pass with `bun run test:run`
 
 #### Implementation Checklist
 
-- [ ] Branch created from `development`
-- [ ] Commit 1: Unit tests coordinate math and boardStore (zoom-toward-cursor, pan offset, add/update/remove/select)
-- [ ] Commit 2: Unit tests Zod schemas (BoardObject, socket payloads, edge cases)
-- [ ] Commit 3: Verify all unit tests pass, coverage 60% for utils, merge to development
+- [x] Branch created from `development`
+- [x] Commit 1: Unit tests coordinate math and boardStore (zoom-toward-cursor, pan offset, add/update/remove/select)
+- [x] Commit 2: Unit tests Zod schemas (BoardObject, socket payloads, edge cases)
+- [x] Commit 3: Verify all unit tests pass, coverage 60% for utils, merge to development
 
 ---
 

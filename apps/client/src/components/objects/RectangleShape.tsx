@@ -80,7 +80,7 @@ export const RectangleShapeComponent = memo(function RectangleShapeComponent({
         opacity={fillOpacity}
         stroke={strokeColor}
         strokeWidth={strokeWidth}
-        listening={false}
+        listening
       />
       {isSelected && (
         <Rect width={width} height={height} stroke='#2563eb' strokeWidth={2} listening={false} />

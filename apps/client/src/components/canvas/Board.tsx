@@ -28,6 +28,8 @@ import type { StickyNote } from '@collab-board/shared-types';
  * Pan via drag; zoom via wheel toward cursor. Resizes when the window is resized.
  */
 const MIN_RESIZE = 20;
+const EDGE_PAN_MARGIN = 50;
+const EDGE_PAN_SPEED = 12;
 
 export const Board = (): ReactElement => {
   const {
@@ -316,6 +318,49 @@ export const Board = (): ReactElement => {
     middlePanStartRef.current = null;
   }, []);
 
+  const handleStageDragEndOnlyWhenStage = useCallback(
+    (e: { target: { getStage: () => { x: () => number; y: () => number } | null; x: () => number; y: () => number } }) => {
+      const stage = e.target.getStage();
+      if (stage && e.target === stage) {
+        handleStageDragEnd(e);
+      }
+    },
+    [handleStageDragEnd]
+  );
+
+  const handleStageDragMove = useCallback(
+    (e: {
+      target: { getStage: () => { getPointerPosition: () => { x: number; y: number } | null } | null };
+    }) => {
+      const stage = e.target.getStage();
+      if (!stage || (e.target as unknown) === stage) {
+        return;
+      }
+      const pos = stage.getPointerPosition();
+      if (!pos || !width || !height) {
+        return;
+      }
+      const w = width;
+      const h = height;
+      let dx = 0;
+      let dy = 0;
+      if (pos.x < EDGE_PAN_MARGIN) {
+        dx = EDGE_PAN_SPEED * (1 - pos.x / EDGE_PAN_MARGIN);
+      } else if (pos.x > w - EDGE_PAN_MARGIN) {
+        dx = -EDGE_PAN_SPEED * (1 - (w - pos.x) / EDGE_PAN_MARGIN);
+      }
+      if (pos.y < EDGE_PAN_MARGIN) {
+        dy = EDGE_PAN_SPEED * (1 - pos.y / EDGE_PAN_MARGIN);
+      } else if (pos.y > h - EDGE_PAN_MARGIN) {
+        dy = -EDGE_PAN_SPEED * (1 - (h - pos.y) / EDGE_PAN_MARGIN);
+      }
+      if (dx !== 0 || dy !== 0) {
+        setStagePosition((prev) => ({ x: prev.x + dx, y: prev.y + dy }));
+      }
+    },
+    [width, height, setStagePosition]
+  );
+
   return (
     <div
       ref={containerRef}
@@ -348,7 +393,8 @@ export const Board = (): ReactElement => {
         scaleX={stageScale}
         scaleY={stageScale}
         draggable={activeToolType === 'pan'}
-        onDragEnd={handleStageDragEnd}
+        onDragEnd={handleStageDragEndOnlyWhenStage}
+        onDragMove={handleStageDragMove}
         onMouseDown={handleStageMouseDown}
         onMouseMove={handleStageMouseMove}
         onMouseUp={handleStageMouseUp}
@@ -357,7 +403,12 @@ export const Board = (): ReactElement => {
         style={{ display: 'block' }}
       >
         <Layer ref={gridRef} data-testid='canvas-board-layer-grid' name='grid' listening={false}>
-          <GridBackground />
+          <GridBackground
+            viewportWidth={width || 1}
+            viewportHeight={height || 1}
+            stagePosition={stagePosition}
+            stageScale={stageScale}
+          />
         </Layer>
         <Layer ref={selectionRef} data-testid='canvas-board-layer-selection' name='selection'>
           {selectionRect && (

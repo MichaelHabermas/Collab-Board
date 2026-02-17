@@ -93,7 +93,7 @@ export const CircleShapeComponent = memo(function CircleShapeComponent({
         opacity={fillOpacity}
         stroke={strokeColor}
         strokeWidth={strokeWidth}
-        listening={false}
+        listening
       />
       {isSelected && <Circle radius={radius} stroke='#2563eb' strokeWidth={2} listening={false} />}
     </Group>

@@ -73,7 +73,7 @@ export const LineShapeComponent = memo(function LineShapeComponent({
       onDragEnd={handleDragEnd}
       listening
     >
-      <Line points={points} stroke={strokeColor} strokeWidth={strokeWidth} listening={false} />
+      <Line points={points} stroke={strokeColor} strokeWidth={strokeWidth} listening />
       {isSelected && <Line points={points} stroke='#2563eb' strokeWidth={2} listening={false} />}
     </Group>
   );

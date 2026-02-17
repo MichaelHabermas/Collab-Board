@@ -790,6 +790,8 @@ Everything below through Epic 8 must be functional at the 24-hour MVP gate.
 - [x] Zoom range 10% to 500%
 - [x] Zoom smooth, no flickering
 - [x] Objects scale correctly with zoom
+- [x] Releasing the mouse after dragging an object does **not** change the view (no jump). Only pan-by-dragging-the-stage updates the view on drag end.
+- [x] While dragging an object, dragging the pointer toward the viewport edge pans the view so the user can continue moving the object.
 
 #### Implementation Checklist
 
@@ -815,6 +817,8 @@ Everything below through Epic 8 must be functional at the 24-hour MVP gate.
 - [x] Pattern scales with zoom
 - [x] Pattern does not interfere with object interaction
 - [x] Grid renders without dropping below 60fps
+- [ ] Grid is viewport-based: only lines intersecting the visible area (plus a small overflow) are drawn; the board is effectively infinite (no fixed grid boundary).
+- [ ] Grid lines are uniform: horizontal lines are straight and evenly spaced; vertical lines are straight and evenly spaced (no diagonal connectors or warping).
 
 #### Implementation Checklist
 
@@ -823,6 +827,15 @@ Everything below through Epic 8 must be functional at the 24-hour MVP gate.
 **Commit 1:** `feat(canvas): add grid background pattern` — Subtasks: [x] Create GridBackground.tsx; [x] Dots or lines on grid layer; [x] Scale pattern with zoom; [x] listening=false on grid layer
 
 **Commit 2:** `test(canvas): verify grid background and merge` — Subtasks: [x] Verify grid renders and scales; [x] Verify no interference with pan/zoom/clicks; [x] typecheck; [x] Merge to development
+
+**Viewport-based infinite grid:**
+- [ ] GridBackground accepts viewport and pan/zoom props and computes visible content bounds
+- [ ] Only grid lines in the visible bounds (plus overflow) are rendered
+- [ ] Unit tests assert viewport-based grid behavior and regression (no fixed 6000×6000 extent)
+
+**Uniform grid spacing:**
+- [ ] Each grid line is rendered as a separate segment (one Konva Line per row/column) so no polyline diagonals connect rows or columns
+- [ ] Unit tests assert horizontal segments have constant y and vertical segments have constant x (regression for uniform spacing)
 
 ---
 
@@ -978,7 +991,7 @@ When the **select** tool is active:
 - **Shift+click**: Toggle the object in the current selection (unchanged).
 - **Resize (circle)**: When the user resizes a circle via the transformer, the circle’s radius (and width/height) are updated and persisted so the rendered circle matches the transformer box. Resizing a circle updates its radius and keeps the fill in sync with the selection bounds.
 
-Layer order must keep the objects layer above the selection layer so the object receives the hit and can be selected and dragged.
+Layer order must keep the objects layer above the selection layer so the object receives the hit and can be selected and dragged. Draggable object Groups must participate in Konva’s hit graph (e.g. the main body shape—Rect, Circle, or Line—must have `listening` enabled) so the Group receives pointer events and drag can start; otherwise clicks fall through to the Layer and are treated as empty area.
 
 #### Implementation Checklist
 

@@ -88,7 +88,7 @@ export const StickyNoteShape = memo(function StickyNoteShape({
         stroke={isSelected ? '#2563eb' : 'transparent'}
         strokeWidth={isSelected ? 2 : 0}
         cornerRadius={4}
-        listening={false}
+        listening
       />
       <Text
         text={content || ' '}

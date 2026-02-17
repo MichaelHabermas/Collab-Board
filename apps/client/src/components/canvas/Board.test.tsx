@@ -9,6 +9,7 @@ const mockWidth = 800;
 const mockHeight = 600;
 
 const mockSetStagePosition = vi.fn();
+const mockHandleStageDragEnd = vi.fn();
 
 vi.mock('@/hooks/useContainerSize', () => ({
   useContainerSize: () => ({ width: mockWidth, height: mockHeight }),
@@ -20,7 +21,7 @@ vi.mock('@/hooks/usePanZoom', () => ({
     stageScale: 1,
     setStagePosition: mockSetStagePosition,
     handleWheel: vi.fn(),
-    handleStageDragEnd: vi.fn(),
+    handleStageDragEnd: mockHandleStageDragEnd,
     handleTouchStart: vi.fn(),
     handleTouchMove: vi.fn(),
     containerRef: { current: null },
@@ -73,6 +74,8 @@ vi.mock('react-konva', () => {
       draggable,
       onMouseDown,
       onMouseUp,
+      onDragEnd,
+      onDragMove: _onDragMove,
       children,
     }: {
       width: number;
@@ -81,19 +84,37 @@ vi.mock('react-konva', () => {
       draggable?: boolean;
       onMouseDown?: (e: unknown) => void;
       onMouseUp?: (e: unknown) => void;
+      onDragEnd?: (e: { target: { getStage: () => unknown; x: () => number; y: () => number } }) => void;
+      onDragMove?: (e: unknown) => void;
       children: ReactNode;
-    }) => (
-      <div
-        data-testid={testId ?? 'canvas-stage-mock'}
-        data-width={width}
-        data-height={height}
-        data-draggable={String(draggable ?? false)}
-        onMouseDown={(e: React.MouseEvent) => onMouseDown?.(makeKonvaMouseEvent(e.nativeEvent))}
-        onMouseUp={(e: React.MouseEvent) => onMouseUp?.(makeKonvaMouseEvent(e.nativeEvent))}
-      >
-        {children}
-      </div>
-    ),
+    }) => {
+      const stageStub = { x: () => 0, y: () => 0 };
+      const groupTargetForBubble = {
+        getStage: () => stageStub,
+        x: () => 150,
+        y: () => 150,
+      };
+      return (
+        <div
+          data-testid={testId ?? 'canvas-stage-mock'}
+          data-width={width}
+          data-height={height}
+          data-draggable={String(draggable ?? false)}
+          onMouseDown={(e: React.MouseEvent) => onMouseDown?.(makeKonvaMouseEvent(e.nativeEvent))}
+          onMouseUp={(e: React.MouseEvent) => onMouseUp?.(makeKonvaMouseEvent(e.nativeEvent))}
+        >
+          {children}
+          {onDragEnd && (
+            <button
+              type='button'
+              data-testid='canvas-stage-simulate-bubbled-object-dragend'
+              onClick={() => onDragEnd({ target: groupTargetForBubble })}
+              aria-label='Simulate bubbled object drag end'
+            />
+          )}
+        </div>
+      );
+    },
     Layer: ({
       'data-testid': testId,
       children,
@@ -178,6 +199,7 @@ vi.mock('react-konva', () => {
 describe('Board', () => {
   beforeEach(() => {
     vi.clearAllMocks();
+    mockHandleStageDragEnd.mockClear();
     mockSocketValue = { emit: vi.fn() };
   });
 
@@ -316,6 +338,42 @@ describe('Board', () => {
       expect(updated?.y).toBe(100);
     });
 
+    it('select then drag sequence updates store and emits object:move (hit detection allows object to receive events)', async () => {
+      const emit = vi.fn();
+      mockSocketValue = { emit };
+      const sticky = createStickyNote('test-board', 10, 20, 'test-user');
+      boardStore.getState().clearBoard();
+      boardStore.getState().setObjects([sticky]);
+      boardStore.getState().setBoardMetadata('test-board', 'Test');
+      boardStore.getState().setActiveTool('select');
+      boardStore.getState().deselectAll();
+      render(<Board />);
+      const objectEl = screen.getByTestId(`object-sticky-${sticky.id}`);
+      const simulateDragMove = screen.getByTestId(`object-sticky-${sticky.id}-simulate-dragmove`);
+      const simulateDragEnd = screen.getByTestId(`object-sticky-${sticky.id}-simulate-dragend`);
+      fireEvent.mouseDown(objectEl, { clientX: 10, clientY: 20, button: 0 });
+      expect(boardStore.getState().selectedObjectIds).toEqual([sticky.id]);
+      await act(async () => {
+        fireEvent.click(simulateDragMove);
+      });
+      let updated = boardStore.getState().objects.find((o) => o.id === sticky.id);
+      expect(updated?.x).toBe(100);
+      expect(updated?.y).toBe(100);
+      await act(async () => {
+        fireEvent.click(simulateDragEnd);
+      });
+      updated = boardStore.getState().objects.find((o) => o.id === sticky.id);
+      expect(updated).toBeDefined();
+      expect(updated?.x).toBe(150);
+      expect(updated?.y).toBe(150);
+      expect(emit).toHaveBeenCalledWith('object:move', {
+        boardId: 'test-board',
+        objectId: sticky.id,
+        x: 150,
+        y: 150,
+      });
+    });
+
     it('clears selection when pointer down and up on empty area with select tool', () => {
       const sticky = createStickyNote('test-board', 10, 20, 'test-user');
       boardStore.getState().clearBoard();
@@ -345,6 +403,22 @@ describe('Board', () => {
       expect(boardStore.getState().selectedObjectIds).toContain(sticky2.id);
       fireEvent.mouseDown(object2, { clientX: 100, clientY: 100, button: 0, shiftKey: true });
       expect(boardStore.getState().selectedObjectIds).toEqual([sticky1.id]);
+    });
+
+    it('does not update stage position when object drag end bubbles to Stage (no view jump)', async () => {
+      const sticky = createStickyNote('test-board', 10, 20, 'test-user');
+      boardStore.getState().clearBoard();
+      boardStore.getState().setObjects([sticky]);
+      boardStore.getState().setBoardMetadata('test-board', 'Test');
+      boardStore.getState().setActiveTool('select');
+      render(<Board />);
+      const simulateBubbledObjectDragEnd = screen.getByTestId(
+        'canvas-stage-simulate-bubbled-object-dragend'
+      );
+      await act(async () => {
+        fireEvent.click(simulateBubbledObjectDragEnd);
+      });
+      expect(mockHandleStageDragEnd).not.toHaveBeenCalled();
     });
 
     it('updates store and emits object:move when drag ends on object with select tool', async () => {

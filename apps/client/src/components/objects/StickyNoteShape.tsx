@@ -3,7 +3,8 @@ import { memo } from 'react';
 import type Konva from 'konva';
 import { Group, Rect, Text } from 'react-konva';
 import type { StickyNote as IStickyNote } from '@collab-board/shared-types';
-import { boardStore, useActiveToolType } from '@/store/boardStore';
+import { boardStore, useActiveToolType, useBoardMetadata } from '@/store/boardStore';
+import { useSocket } from '@/hooks/useSocket';
 
 interface IStickyNoteShapeProps {
   sticky: IStickyNote;
@@ -20,6 +21,8 @@ export const StickyNoteShape = memo(function StickyNoteShape({
 }: IStickyNoteShapeProps): ReactElement {
   const { id, x, y, width, height, color, content, fontSize } = sticky;
   const activeToolType = useActiveToolType();
+  const { boardId } = useBoardMetadata();
+  const { socket } = useSocket();
   const draggable = activeToolType === 'select';
 
   const handleClick = (e: { evt: MouseEvent | TouchEvent }): void => {
@@ -36,10 +39,12 @@ export const StickyNoteShape = memo(function StickyNoteShape({
   };
 
   const handleDragEnd = (e: { target: { x: () => number; y: () => number } }): void => {
-    boardStore.getState().updateObject(id, {
-      x: e.target.x(),
-      y: e.target.y(),
-    });
+    const nx = e.target.x();
+    const ny = e.target.y();
+    boardStore.getState().updateObject(id, { x: nx, y: ny });
+    if (socket && boardId) {
+      socket.emit('object:move', { boardId, objectId: id, x: nx, y: ny });
+    }
   };
 
   return (

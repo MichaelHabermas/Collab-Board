@@ -3,7 +3,8 @@ import { memo } from 'react';
 import type Konva from 'konva';
 import { Group, Line } from 'react-konva';
 import type { LineShape as ILineShape } from '@collab-board/shared-types';
-import { boardStore, useActiveToolType } from '@/store/boardStore';
+import { boardStore, useActiveToolType, useBoardMetadata } from '@/store/boardStore';
+import { useSocket } from '@/hooks/useSocket';
 
 interface ILineShapeProps {
   shape: ILineShape;
@@ -18,6 +19,8 @@ export const LineShapeComponent = memo(function LineShapeComponent({
 }: ILineShapeProps): ReactElement {
   const { id, x, y, points, strokeColor, strokeWidth } = shape;
   const activeToolType = useActiveToolType();
+  const { boardId } = useBoardMetadata();
+  const { socket } = useSocket();
   const draggable = activeToolType === 'select';
 
   const handleClick = (e: { evt: MouseEvent | TouchEvent }): void => {
@@ -30,10 +33,12 @@ export const LineShapeComponent = memo(function LineShapeComponent({
   };
 
   const handleDragEnd = (e: { target: { x: () => number; y: () => number } }): void => {
-    boardStore.getState().updateObject(id, {
-      x: e.target.x(),
-      y: e.target.y(),
-    });
+    const nx = e.target.x();
+    const ny = e.target.y();
+    boardStore.getState().updateObject(id, { x: nx, y: ny });
+    if (socket && boardId) {
+      socket.emit('object:move', { boardId, objectId: id, x: nx, y: ny });
+    }
   };
 
   return (

@@ -9,6 +9,7 @@ describe('registerObjectHandlers', () => {
   let mockEmitToRoom: ReturnType<typeof vi.fn>;
   let mockSocketEmit: ReturnType<typeof vi.fn>;
   const objectCreateHandlers: Array<(payload: unknown) => void> = [];
+  const objectMoveHandlers: Array<(payload: unknown) => void> = [];
   let mockSocket: IAuthenticatedSocket;
   let mockBoardRepo: BoardRepository;
   let mockIo: Server;
@@ -34,6 +35,7 @@ describe('registerObjectHandlers', () => {
     mockEmitToRoom = vi.fn();
     mockSocketEmit = vi.fn();
     objectCreateHandlers.length = 0;
+    objectMoveHandlers.length = 0;
     mockIo = {
       to: vi.fn(() => ({ emit: mockEmitToRoom })),
     } as unknown as Server;
@@ -43,10 +45,12 @@ describe('registerObjectHandlers', () => {
       emit: mockSocketEmit,
       on: vi.fn((event: string, handler: (payload: unknown) => void) => {
         if (event === 'object:create') objectCreateHandlers.push(handler);
+        if (event === 'object:move') objectMoveHandlers.push(handler);
       }),
     } as unknown as IAuthenticatedSocket;
     mockBoardRepo = {
       createObject: vi.fn().mockResolvedValue(createdSticky),
+      updateObject: vi.fn().mockResolvedValue(null),
     } as unknown as BoardRepository;
   });
 
@@ -84,5 +88,34 @@ describe('registerObjectHandlers', () => {
     await objectCreateHandlers[0]!({ boardId: 'b', object: null });
     expect(mockBoardRepo.createObject).not.toHaveBeenCalled();
     expect(mockEmitToRoom).not.toHaveBeenCalled();
+  });
+
+  it('validates object:move, updates position, and broadcasts object:updated', async () => {
+    vi.mocked(mockBoardRepo.updateObject).mockResolvedValue({
+      id: 'obj-1',
+      boardId: 'board-abc',
+      type: 'sticky_note',
+      x: 50,
+      y: 60,
+      width: 100,
+      height: 80,
+      rotation: 0,
+      zIndex: 0,
+      color: '#fff',
+      createdBy: 'user-1',
+      updatedAt: new Date().toISOString(),
+      content: '',
+      fontSize: 14,
+    });
+    registerObjectHandlers(mockIo, mockSocket, mockBoardRepo);
+    const moveHandler = objectMoveHandlers[0];
+    expect(moveHandler).toBeDefined();
+    await moveHandler!({ boardId: 'board-abc', objectId: 'obj-1', x: 50, y: 60 });
+    expect(mockBoardRepo.updateObject).toHaveBeenCalledWith('obj-1', { x: 50, y: 60 });
+    expect(mockEmitToRoom).toHaveBeenCalledWith('object:updated', {
+      objectId: 'obj-1',
+      delta: { x: 50, y: 60 },
+      updatedBy: 'user-1',
+    });
   });
 });

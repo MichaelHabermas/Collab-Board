@@ -1,11 +1,14 @@
 import { useEffect } from 'react';
 import { useSocket } from './useSocket';
 import { boardStore } from '@/store/boardStore';
-import type { ObjectCreatedPayload } from '@collab-board/shared-types';
+import type {
+  ObjectCreatedPayload,
+  ObjectUpdatedPayload,
+  ObjectDeletedPayload,
+} from '@collab-board/shared-types';
 
 /**
- * Subscribes to object:created from server and adds the object to boardStore.
- * Used for real-time object create sync (creator and other clients receive object:created).
+ * Subscribes to object:created, object:updated, object:deleted from server and updates boardStore.
  */
 export function useObjectSync(): void {
   const { socket } = useSocket();
@@ -22,9 +25,20 @@ export function useObjectSync(): void {
         state.addObject(object);
       }
     };
+    const onObjectUpdated = (payload: ObjectUpdatedPayload): void => {
+      const { objectId, delta } = payload;
+      boardStore.getState().updateObject(objectId, delta);
+    };
+    const onObjectDeleted = (payload: ObjectDeletedPayload): void => {
+      boardStore.getState().removeObject(payload.objectId);
+    };
     socket.on('object:created', onObjectCreated);
+    socket.on('object:updated', onObjectUpdated);
+    socket.on('object:deleted', onObjectDeleted);
     return () => {
       socket.off('object:created', onObjectCreated);
+      socket.off('object:updated', onObjectUpdated);
+      socket.off('object:deleted', onObjectDeleted);
     };
   }, [socket]);
 }

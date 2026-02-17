@@ -22,6 +22,13 @@ export interface ObjectCreatePayload {
   object: Omit<BoardObject, 'id' | 'updatedAt'>;
 }
 
+export interface ObjectMovePayload {
+  boardId: string;
+  objectId: string;
+  x: number;
+  y: number;
+}
+
 export interface ObjectUpdatePayload {
   boardId: string;
   objectId: string;
@@ -88,6 +95,7 @@ export interface ClientToServerEvents {
   'board:join': (payload: BoardJoinPayload) => void;
   'board:leave': (payload: BoardLeavePayload) => void;
   'object:create': (payload: ObjectCreatePayload) => void;
+  'object:move': (payload: ObjectMovePayload) => void;
   'object:update': (payload: ObjectUpdatePayload) => void;
   'object:delete': (payload: ObjectDeletePayload) => void;
 }

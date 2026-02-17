@@ -1121,24 +1121,24 @@ Everything below through Epic 8 must be functional at the 24-hour MVP gate.
 
 - **PR:** `Sync: object:create broadcast and handling`
 - **Branch:** `feature/object-create-sync`
-- [ ] Feature F7.1 complete (merged to `development`)
+- [x] Feature F7.1 complete (merged to `development`)
 
 #### Acceptance Criteria
 
-- [ ] Creating sticky/shape emits object:create; all in room receive and render
-- [ ] Object appears <100ms on remote clients; persisted to MongoDB
+- [x] Creating sticky/shape emits object:create; all in room receive and render
+- [x] Object appears <100ms on remote clients; persisted to MongoDB
 
 #### Implementation Checklist
 
-- [ ] Branch created from `development`
+- [x] Branch created from `development`
 
-**Commit 1:** `feat(sync): emit object:create on object creation` — Subtasks: [ ] Hook boardStore addObject to emit object:create; [ ] Full BoardObject in payload
+**Commit 1:** `feat(sync): emit object:create on object creation` — Subtasks: [x] Hook boardStore addObject to emit object:create; [x] Full BoardObject in payload
 
-**Commit 2:** `feat(sync): add server object handler for create` — Subtasks: [ ] object.handler.ts; [ ] object:create: validate Zod, persist MongoDB, broadcast; [ ] Return created with _id
+**Commit 2:** `feat(sync): add server object handler for create` — Subtasks: [x] object.handler.ts; [x] object:create: validate Zod, persist MongoDB, broadcast; [x] Return created with _id
 
-**Commit 3:** `feat(sync): handle incoming object:create on client` — Subtasks: [ ] Listen object:create; [ ] Add to boardStore; [ ] Render
+**Commit 3:** `feat(sync): handle incoming object:create on client` — Subtasks: [x] Listen object:create; [x] Add to boardStore; [x] Render
 
-**Commit 4:** `test(sync): verify object create sync and merge` — Subtasks: [ ] Two tabs create in one see in other; [ ] typecheck; [ ] Merge to development
+**Commit 4:** `test(sync): verify object create sync and merge` — Subtasks: [x] Two tabs create in one see in other; [x] typecheck; [x] Merge to development
 
 ---
 
@@ -1210,21 +1210,21 @@ Everything below through Epic 8 must be functional at the 24-hour MVP gate.
 
 - **PR:** `Sync: board state load on connection`
 - **Branch:** `feature/board-state-load`
-- [ ] Feature F7.5 complete (merged to `development`)
+- [x] Feature F7.5 complete (merged to `development`)
 
 #### Acceptance Criteria
 
-- [ ] On connection server sends all objects via board:load; client renders; <500ms for 500 objects; refresh reloads state
+- [x] On connection server sends all objects via board:load; client renders; <500ms for 500 objects; refresh reloads state
 
 #### Implementation Checklist
 
-- [ ] Branch created from `development`
+- [x] Branch created from `development`
 
-**Commit 1:** `feat(sync): add board:load server handler` — Subtasks: [ ] On room join query MongoDB by boardId; [ ] Emit board:load { objects, board }; [ ] Include board metadata
+**Commit 1:** `feat(sync): add board:load server handler` — Subtasks: [x] On room join query MongoDB by boardId; [x] Emit board:load { objects, board }; [x] Include board metadata
 
-**Commit 2:** `feat(sync): handle board:load on client` — Subtasks: [ ] Listen board:load; [ ] boardStore.setObjects(objects); [ ] Loading indicator while waiting
+**Commit 2:** `feat(sync): handle board:load on client` — Subtasks: [x] Listen board:load; [x] boardStore.setObjects(objects); [x] Loading indicator while waiting
 
-**Commit 3:** `test(sync): verify board load on connection and merge` — Subtasks: [ ] Create objects, refresh, verify reload; [ ] typecheck; [ ] Merge to development
+**Commit 3:** `test(sync): verify board load on connection and merge` — Subtasks: [x] Create objects, refresh, verify reload; [x] typecheck; [x] Merge to development
 
 ---
 

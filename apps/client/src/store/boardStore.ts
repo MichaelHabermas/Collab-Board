@@ -39,7 +39,7 @@ export const boardStore = create<IBoardState>((set) => ({
   updateObject: (id: string, patch: Partial<BoardObject>) => {
     set((state) => ({
       objects: state.objects.map((obj) =>
-        obj.id === id ? { ...obj, ...patch, updatedAt: now() } : obj
+        obj.id === id ? ({ ...obj, ...patch, updatedAt: now() } as BoardObject) : obj
       ),
     }));
   },

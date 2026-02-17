@@ -155,6 +155,33 @@ describe('registerObjectHandlers', () => {
     });
   });
 
+  it('emits error and does not broadcast when createObject rejects', async () => {
+    vi.mocked(mockBoardRepo.createObject).mockRejectedValue(new Error('DB write failed'));
+    registerObjectHandlers(mockIo, mockSocket, mockBoardRepo);
+    await objectCreateHandlers[0]!({
+      boardId: 'board-abc',
+      object: {
+        boardId: 'board-abc',
+        type: 'sticky_note',
+        x: 10,
+        y: 20,
+        width: 120,
+        height: 80,
+        rotation: 0,
+        zIndex: 0,
+        color: '#fef08a',
+        createdBy: 'user-1',
+        content: '',
+        fontSize: 14,
+      },
+    });
+    expect(mockBoardRepo.createObject).toHaveBeenCalled();
+    expect(mockSocketEmit).toHaveBeenCalledWith('error', {
+      message: 'Failed to create object',
+    });
+    expect(mockEmitToRoom).not.toHaveBeenCalled();
+  });
+
   it('accepts object:create for line when height is positive', async () => {
     const createdLine = {
       id: 'server-line-1',

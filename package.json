@@ -8,7 +8,7 @@
     "dev": "concurrently \"bun run --cwd apps/client dev\" \"bun run --cwd apps/server dev\" --names client,server",
     "build": "bun run --cwd apps/client build && bun run build:server",
     "build:server": "bun build apps/server/src/server.ts --outdir apps/server/dist --target bun",
-    "start": "bun apps/server/src/server.ts",
+    "start": "bun run --cwd apps/server start",
     "typecheck": "tsc -b",
     "lint": "eslint apps/*/src packages/*/src",
     "lint:fix": "eslint apps/*/src packages/*/src --fix",

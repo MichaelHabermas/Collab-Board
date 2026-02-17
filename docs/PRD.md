@@ -618,7 +618,7 @@ Everything below through Epic 8 must be functional at the 24-hour MVP gate.
 
 **User stories:** US-1.3 (Sign in with Google OAuth or magic link), US-1.4 (Socket.io connections authenticated via Clerk JWT).
 
-- [ ] Epic 3 complete (all features below merged to `development`)
+- [x] Epic 3 complete (all features below merged to `development`)
 
 #### Feature Map (Epic 3)
 
@@ -633,27 +633,27 @@ Everything below through Epic 8 must be functional at the 24-hour MVP gate.
 
 - **PR:** `Auth: Clerk React SDK with SignIn and UserButton`
 - **Branch:** `feature/clerk-react-integration`
-- [ ] Feature F3.1 complete (merged to `development`)
+- [x] Feature F3.1 complete (merged to `development`)
 
 #### Acceptance Criteria
 
-- [ ] Clerk `<ClerkProvider>` wraps the app
-- [ ] Clerk `<SignIn />` renders on unauthenticated visit
-- [ ] Google OAuth flow completes and redirects to the board
-- [ ] Magic link email sends and completes authentication
-- [ ] `<UserButton />` shows authenticated user's avatar and name
+- [x] Clerk `<ClerkProvider>` wraps the app
+- [x] Clerk `<SignIn />` renders on unauthenticated visit
+- [x] Google OAuth flow completes and redirects to the board
+- [x] Magic link email sends and completes authentication
+- [x] `<UserButton />` shows authenticated user's avatar and name
 
 #### Implementation Checklist
 
-- [ ] Branch created from `development`
+- [x] Branch created from `development`
 
-**Commit 1:** `feat(auth): install clerk react sdk and add provider` — Subtasks: [ ] `bun add @clerk/clerk-react` in client; [ ] Add ClerkProvider in main.tsx; [ ] Add VITE_CLERK_PUBLISHABLE_KEY to .env.example
+**Commit 1:** `feat(auth): install clerk react sdk and add provider` — Subtasks: [x] `bun add @clerk/clerk-react` in client; [x] Add ClerkProvider in main.tsx; [x] Add VITE_CLERK_PUBLISHABLE_KEY to .env.example
 
-**Commit 2:** `feat(auth): add sign-in page and user button` — Subtasks: [ ] Create SignInPage.tsx; [ ] Add UserButton to header; [ ] Configure Clerk for Google OAuth + magic link
+**Commit 2:** `feat(auth): add sign-in page and user button` — Subtasks: [x] Create SignInPage.tsx; [x] Add UserButton to header; [x] Configure Clerk for Google OAuth + magic link
 
-**Commit 3:** `feat(auth): add auth hooks and zustand auth store` — Subtasks: [ ] Create useAuth.ts, useClerkToken.ts; [ ] Create barrel export modules/auth/index.ts
+**Commit 3:** `feat(auth): add auth hooks and zustand auth store` — Subtasks: [x] Create useAuth.ts, useClerkToken.ts; [x] Create barrel export modules/auth/index.ts
 
-**Commit 4:** `test(auth): verify clerk auth flow and merge` — Subtasks: [ ] Verify sign-in and UserButton; [ ] Run typecheck; [ ] Merge to development
+**Commit 4:** `test(auth): verify clerk auth flow and merge` — Subtasks: [x] Verify sign-in and UserButton; [x] Run typecheck; [x] Merge to development
 
 ---
 
@@ -662,24 +662,24 @@ Everything below through Epic 8 must be functional at the 24-hour MVP gate.
 - **PR:** `Auth: Clerk Node SDK JWT verification middleware`
 - **Branch:** `feature/clerk-server-jwt-middleware`
 - **SOLID:** SRP — auth middleware separate from route logic
-- [ ] Feature F3.2 complete (merged to `development`)
+- [x] Feature F3.2 complete (merged to `development`)
 
 #### Acceptance Criteria
 
-- [ ] Clerk Node SDK installed in server workspace
-- [ ] JWT verification middleware protects `/api/*` routes
-- [ ] Invalid or missing tokens return 401
-- [ ] Valid tokens attach user info to request
+- [x] Clerk Node SDK installed in server workspace
+- [x] JWT verification middleware protects `/api/*` routes
+- [x] Invalid or missing tokens return 401
+- [x] Valid tokens attach user info to request
 
 #### Implementation Checklist
 
-- [ ] Branch created from `development`
+- [x] Branch created from `development`
 
-**Commit 1:** `feat(auth): add clerk node sdk jwt verification` — Subtasks: [ ] bun add @clerk/clerk-sdk-node; [ ] Create clerk-verify.ts; [ ] Add CLERK_SECRET_KEY to .env.example
+**Commit 1:** `feat(auth): add clerk node sdk jwt verification` — Subtasks: [x] bun add @clerk/backend; [x] Create clerk-verify.ts; [x] Add CLERK_SECRET_KEY to .env.example
 
-**Commit 2:** `feat(auth): add express auth middleware` — Subtasks: [ ] Create auth.middleware.ts; [ ] Apply to /api/* except /api/health; [ ] Attach user to req.auth
+**Commit 2:** `feat(auth): add express auth middleware` — Subtasks: [x] Create auth.middleware.ts; [x] Apply to /api/* except /api/health; [x] Attach user to req.auth
 
-**Commit 3:** `test(auth): verify jwt middleware and merge` — Subtasks: [ ] Verify /api/health without auth, protected 401 without token; [ ] typecheck; [ ] Merge to development
+**Commit 3:** `test(auth): verify jwt middleware and merge` — Subtasks: [x] Verify /api/health without auth, protected 401 without token; [x] typecheck; [x] Merge to development
 
 ---
 
@@ -687,24 +687,24 @@ Everything below through Epic 8 must be functional at the 24-hour MVP gate.
 
 - **PR:** `Auth: Socket.io handshake JWT authentication`
 - **Branch:** `feature/socketio-jwt-handshake`
-- [ ] Feature F3.3 complete (merged to `development`)
+- [x] Feature F3.3 complete (merged to `development`)
 
 #### Acceptance Criteria
 
-- [ ] Socket.io client sends socket.auth.token from Clerk session
-- [ ] Server verifies JWT on connection using Clerk Node SDK
-- [ ] Invalid or missing tokens result in connection rejection
-- [ ] Valid connections proceed to room join with user context
+- [x] Socket.io client sends socket.auth.token from Clerk session
+- [x] Server verifies JWT on connection using Clerk Node SDK
+- [x] Invalid or missing tokens result in connection rejection
+- [x] Valid connections proceed to room join with user context
 
 #### Implementation Checklist
 
-- [ ] Branch created from `development`
+- [x] Branch created from `development`
 
-**Commit 1:** `feat(auth): add clerk token to socket.io client auth` — Subtasks: [ ] Create useSocket.ts; [ ] Attach JWT to socket.auth.token; [ ] Handle auth errors and reconnection
+**Commit 1:** `feat(auth): add clerk token to socket.io client auth` — Subtasks: [x] Create useSocket.ts; [x] Attach JWT to socket.auth.token; [x] Handle auth errors and reconnection
 
-**Commit 2:** `feat(auth): add socket.io handshake jwt verification` — Subtasks: [ ] Create socket-auth.ts; [ ] Verify JWT in connection middleware; [ ] Reject unauthorized; [ ] Attach user to socket.data.user
+**Commit 2:** `feat(auth): add socket.io handshake jwt verification` — Subtasks: [x] Create socket-auth.ts; [x] Verify JWT in connection middleware; [x] Reject unauthorized; [x] Attach user to socket.data.user
 
-**Commit 3:** `test(auth): verify socket auth handshake and merge` — Subtasks: [ ] Verify authenticated connects, unauthenticated rejected; [ ] typecheck; [ ] Merge to development
+**Commit 3:** `test(auth): verify socket auth handshake and merge` — Subtasks: [x] Verify authenticated connects, unauthenticated rejected; [x] typecheck; [x] Merge to development
 
 ---
 
@@ -712,24 +712,24 @@ Everything below through Epic 8 must be functional at the 24-hour MVP gate.
 
 - **PR:** `Auth: route protection and AuthGuard component`
 - **Branch:** `feature/protected-routes-auth-guard`
-- [ ] Feature F3.4 complete (merged to `development`)
+- [x] Feature F3.4 complete (merged to `development`)
 
 #### Acceptance Criteria
 
-- [ ] Unauthenticated users cannot access board routes
-- [ ] AuthGuard redirects unauthenticated users to sign-in
-- [ ] Board-level access checks collaborators array
-- [ ] Auth state exposed via Zustand authStore
+- [x] Unauthenticated users cannot access board routes
+- [x] AuthGuard redirects unauthenticated users to sign-in
+- [x] Board-level access checks collaborators array
+- [x] Auth state exposed via Zustand authStore
 
 #### Implementation Checklist
 
-- [ ] Branch created from `development`
+- [x] Branch created from `development`
 
-**Commit 1:** `feat(auth): add auth guard component` — Subtasks: [ ] Create AuthGuard.tsx; [ ] Redirect to sign-in if not authenticated; [ ] Show loading while auth initializing
+**Commit 1:** `feat(auth): add auth guard component` — Subtasks: [x] Create AuthGuard.tsx; [x] Redirect to sign-in if not authenticated; [x] Show loading while auth initializing
 
-**Commit 2:** `feat(auth): add auth store and board-level access check` — Subtasks: [ ] Create authStore with user info and token; [ ] Board access utility; [ ] Wire AuthGuard into routing
+**Commit 2:** `feat(auth): add auth store and board-level access check` — Subtasks: [x] Create authStore with user info and token; [x] Board access utility; [x] Wire AuthGuard into routing
 
-**Commit 3:** `test(auth): verify route protection and merge` — Subtasks: [ ] Verify unauthenticated redirects, authenticated proceeds; [ ] typecheck and test:run; [ ] Merge to development
+**Commit 3:** `test(auth): verify route protection and merge` — Subtasks: [x] Verify unauthenticated redirects, authenticated proceeds; [x] typecheck and test:run; [x] Merge to development
 
 ---
 

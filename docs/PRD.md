@@ -850,24 +850,24 @@ Everything below through Epic 8 must be functional at the 24-hour MVP gate.
 - **PR:** `State: Zustand boardStore for object management`
 - **Branch:** `feature/zustand-board-store`
 - **SOLID:** SRP — store manages object state only; ISP — granular selectors
-- [ ] Feature F5.1 complete (merged to `development`)
+- [x] Feature F5.1 complete (merged to `development`)
 
 #### Acceptance Criteria
 
-- [ ] Zustand boardStore manages array of BoardObject
-- [ ] Actions: addObject, updateObject, removeObject, setObjects
-- [ ] Granular selectors for individual objects and filtered lists
-- [ ] Board metadata (title, id) stored separately from objects
+- [x] Zustand boardStore manages array of BoardObject
+- [x] Actions: addObject, updateObject, removeObject, setObjects
+- [x] Granular selectors for individual objects and filtered lists
+- [x] Board metadata (title, id) stored separately from objects
 
 #### Implementation Checklist
 
-- [ ] Branch created from `development`
+- [x] Branch created from `development`
 
-**Commit 1:** `feat(state): add zustand board store with object actions` — Subtasks: [ ] bun add zustand; [ ] Create boardStore.ts with addObject, updateObject, removeObject, setObjects, clearBoard; [ ] Selectors useObject(id), useObjectsByType(type), useAllObjects()
+**Commit 1:** `feat(state): add zustand board store with object actions` — Subtasks: [x] bun add zustand; [x] Create boardStore.ts with addObject, updateObject, removeObject, setObjects, clearBoard; [x] Selectors useObject(id), useObjectsByType(type), useAllObjects()
 
-**Commit 2:** `feat(state): add board metadata and active tool to store` — Subtasks: [ ] Add boardId, title, activeToolType; [ ] Add selectedObjectIds, setActiveTool, selectObject, deselectAll, toggleSelection
+**Commit 2:** `feat(state): add board metadata and active tool to store` — Subtasks: [x] Add boardId, title, activeToolType; [x] Add selectedObjectIds, setActiveTool, selectObject, deselectAll, toggleSelection
 
-**Commit 3:** `test(state): add board store unit tests and merge` — Subtasks: [ ] Vitest tests for store actions; [ ] test:run green; [ ] Merge to development
+**Commit 3:** `test(state): add board store unit tests and merge` — Subtasks: [x] Vitest tests for store actions; [x] test:run green; [x] Merge to development
 
 ---
 

@@ -1,7 +1,7 @@
 import type { ReactElement } from 'react';
 import { useRef, useCallback, useState, useEffect } from 'react';
 import type Konva from 'konva';
-import { Stage, Layer, Transformer, Rect } from 'react-konva';
+import { Stage, Layer, Transformer, Rect, Line } from 'react-konva';
 import { useContainerSize } from '@/hooks/useContainerSize';
 import { usePanZoom } from '@/hooks/usePanZoom';
 import { useCursorEmit } from '@/hooks/useCursorEmit';
@@ -20,8 +20,17 @@ import {
 } from '@/store/boardStore';
 import { authStore } from '@/store/authStore';
 import { commitNodeTransform, MIN_RESIZE } from '@/lib/commit-node-transform';
+import {
+  computeBoxCreationGeometry,
+  computeLineCreationGeometry,
+} from '@/lib/drag-creation-geometry';
 import { executeObjectCreation } from '@/lib/execute-object-creation';
 import type { StickyNote } from '@collab-board/shared-types';
+
+const CREATION_TOOLS = ['sticky_note', 'rectangle', 'circle', 'line'] as const;
+function isCreationTool(tool: string): tool is 'sticky_note' | 'rectangle' | 'circle' | 'line' {
+  return CREATION_TOOLS.includes(tool as (typeof CREATION_TOOLS)[number]);
+}
 
 /**
  * Konva Stage with four layers: grid (bottom), selection, objects, cursor (top).
@@ -56,6 +65,12 @@ export const Board = (): ReactElement => {
   const cursorRef = useRef<Konva.Layer>(null);
   const selectionRef = useRef<Konva.Layer>(null);
   const dragStartRef = useRef<{ x: number; y: number } | null>(null);
+  const [creationPreview, setCreationPreview] = useState<{
+    startX: number;
+    startY: number;
+    endX: number;
+    endY: number;
+  } | null>(null);
   const selectionStartRef = useRef<{ x: number; y: number } | null>(null);
   const middlePanStartRef = useRef<{
     pointer: { x: number; y: number };
@@ -175,10 +190,13 @@ export const Board = (): ReactElement => {
       if (button !== 0) return;
 
       dragStartRef.current = { x: pos.x, y: pos.y };
+      const boardX = (pos.x - stagePosition.x) / stageScale;
+      const boardY = (pos.y - stagePosition.y) / stageScale;
       if (isEmptyArea && tool === 'select') {
-        const boardX = (pos.x - stagePosition.x) / stageScale;
-        const boardY = (pos.y - stagePosition.y) / stageScale;
         selectionStartRef.current = { x: boardX, y: boardY };
+      }
+      if (isEmptyArea && isCreationTool(tool)) {
+        setCreationPreview({ startX: boardX, startY: boardY, endX: boardX, endY: boardY });
       }
     },
     [stagePosition, stageScale]
@@ -209,6 +227,12 @@ export const Board = (): ReactElement => {
       const boardX = (pos.x - stagePosition.x) / stageScale;
       const boardY = (pos.y - stagePosition.y) / stageScale;
       handleCursorMove(boardX, boardY);
+      if (creationPreview !== null) {
+        setCreationPreview((prev) =>
+          prev ? { ...prev, endX: boardX, endY: boardY } : null
+        );
+        return;
+      }
       if (!selectionStartRef.current) return;
       const start = selectionStartRef.current;
       const width = Math.abs(boardX - start.x);
@@ -224,7 +248,14 @@ export const Board = (): ReactElement => {
       const y = Math.min(start.y, boardY);
       setSelectionRect({ x, y, width, height });
     },
-    [handleCursorMove, selectionRect, stagePosition, stageScale, setStagePosition]
+    [
+      handleCursorMove,
+      creationPreview,
+      selectionRect,
+      stagePosition,
+      stageScale,
+      setStagePosition,
+    ]
   );
 
   const handleStageMouseUp = useCallback(
@@ -266,11 +297,38 @@ export const Board = (): ReactElement => {
         return;
       }
 
+      const tool = boardStore.getState().activeToolType;
+      const preview = creationPreview;
+      if (preview !== null) {
+        setCreationPreview(null);
+        dragStartRef.current = null;
+        selectionStartRef.current = null;
+        const boardId = boardStore.getState().boardId || 'default-board';
+        const createdBy = authStore.getState().userId || 'anonymous';
+        if (tool === 'line') {
+          const lineGeom = computeLineCreationGeometry(
+            preview.startX,
+            preview.startY,
+            preview.endX,
+            preview.endY
+          );
+          executeObjectCreation(socket, tool, boardId, lineGeom.x, lineGeom.y, createdBy, lineGeom);
+        } else if (isCreationTool(tool)) {
+          const boxGeom = computeBoxCreationGeometry(
+            preview.startX,
+            preview.startY,
+            preview.endX,
+            preview.endY
+          );
+          executeObjectCreation(socket, tool, boardId, boxGeom.x, boxGeom.y, createdBy, boxGeom);
+        }
+        return;
+      }
+
       const targetType = e.target.getType?.();
       const isEmptyArea =
         (e.target as unknown) === stage || targetType === 'Layer' || targetType === 'Stage';
       if (!isEmptyArea) return;
-      const tool = boardStore.getState().activeToolType;
       if (tool === 'select') {
         boardStore.getState().deselectAll();
         selectionStartRef.current = null;
@@ -278,26 +336,26 @@ export const Board = (): ReactElement => {
         return;
       }
       const pos = stage.getPointerPosition();
-      const start = dragStartRef.current;
+      const dragStart = dragStartRef.current;
       dragStartRef.current = null;
       selectionStartRef.current = null;
-      if (!pos || !start) return;
+      if (!pos || !dragStart) return;
       const pointer = stagePosition;
       const scale = stageScale;
-      // Use mousedown position so creation works even if user drags slightly
-      const boardX = (start.x - pointer.x) / scale;
-      const boardY = (start.y - pointer.y) / scale;
+      const boardX = (dragStart.x - pointer.x) / scale;
+      const boardY = (dragStart.y - pointer.y) / scale;
       const boardId = boardStore.getState().boardId || 'default-board';
       const createdBy = authStore.getState().userId || 'anonymous';
       executeObjectCreation(socket, tool, boardId, boardX, boardY, createdBy);
     },
-    [stagePosition, stageScale, selectionRect, socket]
+    [stagePosition, stageScale, selectionRect, creationPreview, socket]
   );
 
   const handleStageMouseLeave = useCallback(() => {
     middlePanStartRef.current = null;
     selectionStartRef.current = null;
     dragStartRef.current = null;
+    setCreationPreview(null);
     setSelectionRect(null);
   }, []);
 
@@ -415,6 +473,33 @@ export const Board = (): ReactElement => {
               listening={false}
             />
           )}
+          {creationPreview !== null &&
+            (activeToolType === 'line' ? (
+              <Line
+                data-testid='canvas-creation-preview-line'
+                points={[
+                  creationPreview.startX,
+                  creationPreview.startY,
+                  creationPreview.endX,
+                  creationPreview.endY,
+                ]}
+                stroke='#64748b'
+                strokeWidth={2}
+                listening={false}
+              />
+            ) : (
+              <Rect
+                data-testid='canvas-creation-preview-rect'
+                x={Math.min(creationPreview.startX, creationPreview.endX)}
+                y={Math.min(creationPreview.startY, creationPreview.endY)}
+                width={Math.abs(creationPreview.endX - creationPreview.startX)}
+                height={Math.abs(creationPreview.endY - creationPreview.startY)}
+                stroke='#64748b'
+                strokeWidth={2}
+                fill='rgba(100, 116, 139, 0.15)'
+                listening={false}
+              />
+            ))}
           <Transformer
             ref={transformerRef}
             onTransformEnd={handleTransformEnd}

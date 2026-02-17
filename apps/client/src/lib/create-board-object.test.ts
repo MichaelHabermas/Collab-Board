@@ -23,6 +23,14 @@ describe('createStickyNote', () => {
     const b = createStickyNote('b', 0, 0, 'u');
     expect(a.id).not.toBe(b.id);
   });
+
+  it('accepts optional dimensions for drag-to-create', () => {
+    const sticky = createStickyNote('b', 10, 20, 'u', { width: 200, height: 100 });
+    expect(sticky.x).toBe(10);
+    expect(sticky.y).toBe(20);
+    expect(sticky.width).toBe(200);
+    expect(sticky.height).toBe(100);
+  });
 });
 
 describe('createRectangle', () => {
@@ -38,6 +46,12 @@ describe('createRectangle', () => {
     expect(rect.strokeWidth).toBe(2);
     expect(rect.fillOpacity).toBe(0.3);
   });
+
+  it('accepts optional dimensions for drag-to-create', () => {
+    const rect = createRectangle('b', 0, 0, 'u', { width: 60, height: 40 });
+    expect(rect.width).toBe(60);
+    expect(rect.height).toBe(40);
+  });
 });
 
 describe('createCircle', () => {
@@ -48,6 +62,13 @@ describe('createCircle', () => {
     expect(circle.radius).toBe(50);
     expect(circle.width).toBe(100);
     expect(circle.height).toBe(100);
+  });
+
+  it('accepts optional dimensions for oval drag-to-create', () => {
+    const circle = createCircle('b', 0, 0, 'u', { width: 80, height: 40 });
+    expect(circle.width).toBe(80);
+    expect(circle.height).toBe(40);
+    expect(circle.radius).toBe(20);
   });
 });
 
@@ -64,6 +85,15 @@ describe('createLine', () => {
     const line = createLine('board-1', 0, 0, 'user-1');
     expect(line.width).toBeGreaterThan(0);
     expect(line.height).toBeGreaterThan(0);
+  });
+
+  it('accepts optional line geometry for drag-to-create', () => {
+    const line = createLine('b', 10, 20, 'u', { dx: 50, dy: 30, length: Math.hypot(50, 30) });
+    expect(line.x).toBe(10);
+    expect(line.y).toBe(20);
+    expect(line.points).toEqual([0, 0, 50, 30]);
+    expect(line.width).toBe(50);
+    expect(line.height).toBe(30);
   });
 });
 

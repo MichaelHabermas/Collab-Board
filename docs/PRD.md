@@ -923,6 +923,10 @@ Everything below through Epic 8 must be functional at the 24-hour MVP gate.
 - [x] Double-click opens inline text editor; outside click saves and closes
 - [x] Color picker with at least 6 options; color updates fill
 - [x] Sticky added to boardStore
+- [ ] Dragging on canvas with Sticky Note tool creates sticky with size determined by drag (drag-to-size creation)
+- [ ] Drag-to-size creation enforces minimum size (e.g. 20×20) before object is created; tiny drags are clamped to minimum
+- [ ] During drag-to-size creation, a preview rectangle shows the intended sticky size
+- [ ] Object is created and added to boardStore only on pointer up (mouse up)
 
 #### Implementation Checklist
 
@@ -930,7 +934,7 @@ Everything below through Epic 8 must be functional at the 24-hour MVP gate.
 
 **Commit 1:** `feat(objects): add sticky note konva component` — Subtasks: [x] Create StickyNote.tsx (Rect + Text); [x] Click for selection; [x] Basic drag (refined in F5.5)
 
-**Commit 2:** `feat(objects): add sticky note creation on canvas click` — Subtasks: [x] Handle canvas click when tool is sticky_note; [x] Create BoardObject sticky_note, addObject; [x] Position for pan/zoom
+**Commit 2:** `feat(objects): add sticky note creation on canvas click` — Subtasks: [x] Handle canvas click when tool is sticky_note; [x] Create BoardObject sticky_note, addObject; [x] Position for pan/zoom; [ ] Implement drag-to-size creation (track pointer down, drag move, pointer up; create on pointer up with computed size); [ ] Enforce minimum size during drag-to-size creation
 
 **Commit 3:** `feat(objects): add inline text editing for sticky notes` — Subtasks: [x] Double-click → HTML textarea overlay; [x] Sync to boardStore on blur/Escape; [x] Position with zoom/pan offset
 
@@ -953,6 +957,12 @@ Everything below through Epic 8 must be functional at the 24-hour MVP gate.
 - [x] Each shape type renders correctly
 - [x] Configurable width, height (or radius), color
 - [x] Shapes added to boardStore on creation
+- [ ] Dragging on canvas with Rectangle tool creates rectangle with size determined by drag (drag-to-size creation)
+- [ ] Dragging on canvas with Circle tool creates circle/oval with size determined by drag (drag-to-size creation)
+- [ ] Drag-to-size creation enforces minimum size (e.g. 20×20 for rectangles/circles) before object is created; tiny drags are clamped to minimum
+- [ ] During drag-to-size creation, a preview shape (rect or line) shows the intended size and position
+- [ ] Objects are created and added to boardStore only on pointer up (mouse up)
+- [ ] Line tool: drag from start (mouse down) to end (mouse up) determines line length and angle; minimum line length enforced by total length
 
 #### Implementation Checklist
 
@@ -962,7 +972,7 @@ Everything below through Epic 8 must be functional at the 24-hour MVP gate.
 
 **Commit 2:** `feat(objects): add line shape component` — Subtasks: [x] LineShape.tsx; [x] Konva Line start/end; [x] Stroke color and width
 
-**Commit 3:** `feat(objects): wire shape creation to toolbar actions` — Subtasks: [x] Canvas click for rectangle, circle, line tools; [x] Create BoardObject with type and defaults; [x] Add to boardStore
+**Commit 3:** `feat(objects): wire shape creation to toolbar actions` — Subtasks: [x] Canvas click for rectangle, circle, line tools; [x] Create BoardObject with type and defaults; [x] Add to boardStore; [ ] Implement drag-to-size creation for rectangle, circle, and line (track pointer down, drag move, pointer up); [ ] Create preview shape during drag; [ ] Enforce minimum size during drag-to-size creation; [ ] Create BoardObject and add to boardStore only on pointer up
 
 **Commit 4:** `test(objects): verify shape creation and merge` — Subtasks: [x] Unit tests shape rendering; [x] typecheck and test:run; [x] Merge to development
 
@@ -980,6 +990,8 @@ Everything below through Epic 8 must be functional at the 24-hour MVP gate.
 - [x] Dragging selected object moves it (60fps); position in boardStore on drag end
 - [x] Selected object shows resize handles; drag handle resizes
 - [x] Minimum size enforced
+- [ ] Minimum size enforcement applies to both resize operations and drag-to-size creation (consistent minimum e.g. 20×20)
+- [ ] If drag-to-size creation results in size below minimum, object is created at minimum size (clamped) at the drag start position
 
 #### Selector tool behavior (canonical)
 

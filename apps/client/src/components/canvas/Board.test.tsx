@@ -316,6 +316,136 @@ describe('Board', () => {
     });
   });
 
+  describe('drag-to-create sizing', () => {
+    it('creates rectangle with size from drag (stage scale 1, position 0)', async () => {
+      mockSocketValue = null;
+      boardStore.getState().clearBoard();
+      boardStore.getState().setActiveTool('rectangle');
+      render(<Board />);
+      const stage = screen.getByTestId('canvas-board-stage');
+      fireEvent.mouseDown(stage, { clientX: 100, clientY: 100, button: 0 });
+      fireEvent.mouseMove(stage, { clientX: 200, clientY: 180 });
+      fireEvent.mouseUp(stage, { clientX: 200, clientY: 180, button: 0 });
+      await act(flushMicrotasks);
+      const objects = boardStore.getState().objects;
+      expect(objects).toHaveLength(1);
+      expect(objects[0].type).toBe('rectangle');
+      expect(objects[0]).toMatchObject({
+        x: 100,
+        y: 100,
+        width: 100,
+        height: 80,
+      });
+    });
+
+    it('creates sticky note with size from drag', async () => {
+      mockSocketValue = null;
+      boardStore.getState().clearBoard();
+      boardStore.getState().setActiveTool('sticky_note');
+      render(<Board />);
+      const stage = screen.getByTestId('canvas-board-stage');
+      fireEvent.mouseDown(stage, { clientX: 10, clientY: 20, button: 0 });
+      fireEvent.mouseMove(stage, { clientX: 130, clientY: 100 });
+      fireEvent.mouseUp(stage, { clientX: 130, clientY: 100, button: 0 });
+      await act(flushMicrotasks);
+      const objects = boardStore.getState().objects;
+      expect(objects).toHaveLength(1);
+      expect(objects[0].type).toBe('sticky_note');
+      expect(objects[0]).toMatchObject({
+        x: 10,
+        y: 20,
+        width: 120,
+        height: 80,
+      });
+    });
+
+    it('creates circle/oval with center at drag-box center (not mouse-down point)', async () => {
+      mockSocketValue = null;
+      boardStore.getState().clearBoard();
+      boardStore.getState().setActiveTool('circle');
+      render(<Board />);
+      const stage = screen.getByTestId('canvas-board-stage');
+      fireEvent.mouseDown(stage, { clientX: 100, clientY: 100, button: 0 });
+      fireEvent.mouseMove(stage, { clientX: 200, clientY: 180 });
+      fireEvent.mouseUp(stage, { clientX: 200, clientY: 180, button: 0 });
+      await act(flushMicrotasks);
+      const objects = boardStore.getState().objects;
+      expect(objects).toHaveLength(1);
+      expect(objects[0]).toMatchObject({
+        type: 'circle',
+        x: 150,
+        y: 140,
+        width: 100,
+        height: 80,
+      });
+    });
+
+    it('creates line from mouse-down start to mouse-up end', async () => {
+      mockSocketValue = null;
+      boardStore.getState().clearBoard();
+      boardStore.getState().setActiveTool('line');
+      render(<Board />);
+      const stage = screen.getByTestId('canvas-board-stage');
+      fireEvent.mouseDown(stage, { clientX: 50, clientY: 50, button: 0 });
+      fireEvent.mouseMove(stage, { clientX: 150, clientY: 90 });
+      fireEvent.mouseUp(stage, { clientX: 150, clientY: 90, button: 0 });
+      await act(flushMicrotasks);
+      const objects = boardStore.getState().objects;
+      expect(objects).toHaveLength(1);
+      expect(objects[0].type).toBe('line');
+      expect(objects[0]).toMatchObject({ x: 50, y: 50 });
+      const line = objects[0] as { points: number[] };
+      expect(line.points).toEqual([0, 0, 100, 40]);
+    });
+
+    it('enforces minimum creation size for box tools (tiny drag clamped to 20)', async () => {
+      mockSocketValue = null;
+      boardStore.getState().clearBoard();
+      boardStore.getState().setActiveTool('rectangle');
+      render(<Board />);
+      const stage = screen.getByTestId('canvas-board-stage');
+      fireEvent.mouseDown(stage, { clientX: 0, clientY: 0, button: 0 });
+      fireEvent.mouseMove(stage, { clientX: 5, clientY: 5 });
+      fireEvent.mouseUp(stage, { clientX: 5, clientY: 5, button: 0 });
+      await act(flushMicrotasks);
+      const objects = boardStore.getState().objects;
+      expect(objects).toHaveLength(1);
+      expect(objects[0].type).toBe('rectangle');
+      expect(objects[0].width).toBeGreaterThanOrEqual(20);
+      expect(objects[0].height).toBeGreaterThanOrEqual(20);
+    });
+
+    it('enforces minimum line length for line tool', async () => {
+      mockSocketValue = null;
+      boardStore.getState().clearBoard();
+      boardStore.getState().setActiveTool('line');
+      render(<Board />);
+      const stage = screen.getByTestId('canvas-board-stage');
+      fireEvent.mouseDown(stage, { clientX: 0, clientY: 0, button: 0 });
+      fireEvent.mouseUp(stage, { clientX: 0, clientY: 0, button: 0 });
+      await act(flushMicrotasks);
+      const objects = boardStore.getState().objects;
+      expect(objects).toHaveLength(1);
+      expect(objects[0].type).toBe('line');
+      const line = objects[0] as { points: number[] };
+      const length = Math.sqrt(
+        (line.points[2] - line.points[0]) ** 2 + (line.points[3] - line.points[1]) ** 2
+      );
+      expect(length).toBeGreaterThanOrEqual(20);
+    });
+
+    it('selection marquee still works with select tool (no creation preview)', () => {
+      boardStore.getState().clearBoard();
+      boardStore.getState().setActiveTool('select');
+      render(<Board />);
+      const stage = screen.getByTestId('canvas-board-stage');
+      fireEvent.mouseDown(stage, { clientX: 50, clientY: 50, button: 0 });
+      fireEvent.mouseMove(stage, { clientX: 100, clientY: 80 });
+      expect(screen.getByTestId('canvas-selection-rect')).toBeInTheDocument();
+      expect(screen.queryByTestId('canvas-creation-preview-rect')).not.toBeInTheDocument();
+    });
+  });
+
   describe('selector tool: selection and drag-move', () => {
     it('selects object on single pointer down when select tool is active', () => {
       const sticky = createStickyNote('test-board', 10, 20, 'test-user');

@@ -1,5 +1,9 @@
 import { defineConfig, devices } from "@playwright/test";
 
+const defaultBaseURL = "http://localhost:5173";
+const baseURL = process.env.BASE_URL ?? process.env.PLAYWRIGHT_BASE_URL ?? defaultBaseURL;
+const isTargetingProduction = baseURL !== defaultBaseURL;
+
 export default defineConfig({
   testDir: "e2e",
   fullyParallel: true,
@@ -8,16 +12,21 @@ export default defineConfig({
   workers: 1,
   reporter: "html",
   use: {
-    baseURL: "http://localhost:5173",
+    baseURL,
     trace: "on-first-retry",
   },
   projects: [{ name: "chromium", use: { ...devices["Desktop Chrome"] } }],
-  webServer: {
-    command: "bun run dev",
-    url: "http://localhost:5173",
-    reuseExistingServer: !process.env.CI,
-    timeout: 120000,
-  },
+  // When targeting production, do not start local dev server
+  ...(isTargetingProduction
+    ? {}
+    : {
+        webServer: {
+          command: "bun run dev",
+          url: defaultBaseURL,
+          reuseExistingServer: !process.env.CI,
+          timeout: 120000,
+        },
+      }),
   timeout: 10000,
   expect: { timeout: 10000 },
 });

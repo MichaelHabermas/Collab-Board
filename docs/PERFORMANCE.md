@@ -25,6 +25,18 @@
 | 500+ objects capacity | Fixture protocol defined in this doc + PRD | Requires browser perf capture in this environment | Pending environment |
 | 5+ concurrent users | Load protocol defined in this doc + PRD | Requires browser perf capture in this environment | Pending environment |
 
+## Latest verification run (agent)
+
+**Date:** 2026-02-18 (UTC).
+
+| Audit input | Result |
+| --- | --- |
+| `bun run validate` | **Pass** (format, typecheck, lint, 165 client + 44 server tests) |
+| `bun run test:run` (unit/integration) | **Pass** (included in validate) |
+| Socket handler integration (`socket-handlers.integration.test.ts`) | **Pass** (included in server test:run) |
+| Multiplayer E2E (`multiplayer-sync.spec.ts`) | **Not run** — Playwright Chromium not installed in this environment. Run locally: `bunx playwright install chromium` then `bun run test:e2e`. |
+| 60 FPS / object sync &lt;100ms / cursor &lt;50ms / 500 objects / 5 users | **Pending** — require browser perf capture (see Re-run Procedure). |
+
 ## Measurement Notes
 
 - Server-side event propagation for join/leave, board load, object create/move/delete, and cursor updates is validated by automated tests.

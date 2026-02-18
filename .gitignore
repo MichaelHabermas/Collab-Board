@@ -27,6 +27,7 @@ bun.lockb
 # Playwright
 test-results/
 playwright-report/
+playwright/.auth/
 
 # TypeScript cache
 *.tsbuildinfo

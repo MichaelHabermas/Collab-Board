@@ -37,11 +37,29 @@ async function checkHealth(): Promise<boolean> {
   return true;
 }
 
+const clientDir = `${import.meta.dir}/../apps/client`;
+
+async function installPlaywrightBrowsers(): Promise<boolean> {
+  process.stdout.write('Playwright: installing Chromium if needed…\n');
+  const proc = Bun.spawn(['bunx', 'playwright', 'install', 'chromium'], {
+    cwd: clientDir,
+    env: process.env,
+    stdout: 'inherit',
+    stderr: 'inherit',
+  });
+  const exit = await proc.exited;
+  return exit === 0;
+}
+
 async function runE2e(): Promise<boolean> {
+  const ok = await installPlaywrightBrowsers();
+  if (!ok) {
+    process.stderr.write('Playwright Chromium install failed; E2E may fail.\n');
+  }
   const proc = Bun.spawn(
     ['bun', 'run', 'test:e2e'],
     {
-      cwd: `${import.meta.dir}/../apps/client`,
+      cwd: clientDir,
       env: { ...process.env, BASE_URL: baseURL },
       stdout: 'inherit',
       stderr: 'inherit',

@@ -68,4 +68,29 @@ describe('useRemoteCursors', () => {
     expect(cursor?.name).toBe('Alice');
     expect(cursor?.color).toBe('#2563eb');
   });
+
+  it('interpolates cursor position toward target (lerp) so movement is smooth', async () => {
+    const { result } = renderHook(() => useRemoteCursors());
+    const onCursorUpdate = cursorHandlers.get('cursor:update');
+    expect(onCursorUpdate).toBeDefined();
+
+    await act(async () => {
+      onCursorUpdate!({ userId: 'user-b', x: 0, y: 0, name: 'Bob', color: '#dc2626' });
+      await flushAnimationFrames();
+    });
+    const afterFirst = result.current.get('user-b');
+    expect(afterFirst?.x).toBe(0);
+    expect(afterFirst?.y).toBe(0);
+
+    await act(async () => {
+      onCursorUpdate!({ userId: 'user-b', x: 100, y: 100, name: 'Bob', color: '#dc2626' });
+      await flushAnimationFrames();
+    });
+    const afterSecond = result.current.get('user-b');
+    expect(afterSecond).toBeDefined();
+    expect(afterSecond!.x).toBeGreaterThan(0);
+    expect(afterSecond!.x).toBeLessThan(100);
+    expect(afterSecond!.y).toBeGreaterThan(0);
+    expect(afterSecond!.y).toBeLessThan(100);
+  });
 });

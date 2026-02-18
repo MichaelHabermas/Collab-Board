@@ -38,11 +38,14 @@ export function registerRoomHandlers(
       });
       return;
     }
-    const { boardId } = parsed.data;
+    const { boardId, displayName, avatarUrl } = parsed.data;
     const room = getRoomName(boardId);
     socket.join(room);
     (socket.data as Socket['data'] & { boardId?: string }).boardId = boardId;
-    notifyPresenceJoin(io, socket, room);
+    notifyPresenceJoin(io, socket, room, {
+      displayName: displayName && displayName.trim() ? displayName.trim() : undefined,
+      avatarUrl: avatarUrl && avatarUrl.trim() ? avatarUrl.trim() : undefined,
+    });
     logger.info('Socket joined room', {
       socketId: socket.id,
       room,

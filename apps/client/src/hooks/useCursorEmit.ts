@@ -21,11 +21,11 @@ export function useCursorEmit(): (x: number, y: number) => void {
     }
     throttledEmitRef.current = throttle(
       ((x: number, y: number) => {
-        const userId = authStore.getState().userId;
+        const { userId, displayName } = authStore.getState();
         socket.emit('cursor:move', {
           x,
           y,
-          name: userId ? userId.slice(0, 8) : undefined,
+          name: displayName || (userId ? userId.slice(0, 8) : undefined),
           color: userId ? getCursorColorForUserId(userId) : undefined,
         });
       }) as (...args: unknown[]) => void,

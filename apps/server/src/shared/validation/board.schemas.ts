@@ -36,6 +36,8 @@ export const updateBoardSchema = z.object({
 
 export const boardJoinSchema = z.object({
   boardId: z.string().min(1),
+  displayName: z.string().max(200).optional(),
+  avatarUrl: z.string().max(2000).optional(),
 });
 
 export const boardLeaveSchema = z.object({

@@ -12,6 +12,17 @@ let mockAuthState = {
 
 vi.mock('@clerk/clerk-react', () => ({
   useAuth: () => mockAuthState,
+  useUser: () => ({
+    user:
+      mockAuthState.isSignedIn && mockAuthState.userId
+        ? {
+            fullName: 'Test User',
+            firstName: 'Test',
+            primaryEmailAddress: { emailAddress: 'test@example.com' },
+            imageUrl: 'https://example.com/avatar.png',
+          }
+        : null,
+  }),
   ClerkProvider: ({ children }: { children: ReactNode }): ReactElement => <>{children}</>,
   SignIn: (): ReactElement => <div data-testid='sign-in-mock'>Sign In</div>,
   UserButton: (): ReactElement => <div data-testid='user-button-mock'>UserButton</div>,

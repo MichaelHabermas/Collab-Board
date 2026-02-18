@@ -35,17 +35,31 @@ function getRoomMap(room: string): Map<string, UserPresence> {
   return m;
 }
 
+export interface IPresenceDisplayOverrides {
+  displayName?: string;
+  avatarUrl?: string;
+}
+
 /**
- * Builds UserPresence from authenticated socket (server has userId/sessionId only).
+ * Builds UserPresence from authenticated socket. Uses displayName/avatarUrl when provided (e.g. from board:join).
  */
-export function buildUserPresenceFromSocket(socket: IAuthenticatedSocket): UserPresence {
+export function buildUserPresenceFromSocket(
+  socket: IAuthenticatedSocket,
+  overrides?: IPresenceDisplayOverrides
+): UserPresence {
   const userId = socket.data.user?.userId ?? '';
   const index = Math.abs(hashUserId(userId)) % COLOR_PALETTE.length;
   const color = COLOR_PALETTE[index] ?? COLOR_PALETTE[0]!;
+  const name =
+    overrides?.displayName && overrides.displayName.trim().length > 0
+      ? overrides.displayName.trim().slice(0, 100)
+      : userId.slice(0, 12) || 'Anonymous';
+  const avatar =
+    overrides?.avatarUrl && overrides.avatarUrl.trim().length > 0 ? overrides.avatarUrl.trim() : '';
   return {
     userId,
-    name: userId.slice(0, 12) || 'Anonymous',
-    avatar: '',
+    name,
+    avatar,
     color,
     cursor: null,
     lastSeen: new Date().toISOString(),
@@ -84,9 +98,15 @@ export function clearPresenceStore(): void {
 /**
  * Called when a socket joins a board room. Adds user to presence store,
  * broadcasts presence:join to room, and sends presence:list to the joining socket.
+ * displayOverrides from board:join (displayName, avatarUrl) are used when building UserPresence.
  */
-export function notifyPresenceJoin(io: Server, socket: IAuthenticatedSocket, room: string): void {
-  const user = buildUserPresenceFromSocket(socket);
+export function notifyPresenceJoin(
+  io: Server,
+  socket: IAuthenticatedSocket,
+  room: string,
+  displayOverrides?: IPresenceDisplayOverrides
+): void {
+  const user = buildUserPresenceFromSocket(socket, displayOverrides);
   addUserToRoom(room, user);
   io.to(room).emit('presence:join', { user });
   socket.emit('presence:list', { users: getUsersInRoom(room) });

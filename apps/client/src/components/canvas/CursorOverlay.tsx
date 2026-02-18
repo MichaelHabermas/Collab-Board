@@ -1,14 +1,15 @@
 import type { ReactElement } from 'react';
-import { Circle, Line, Text } from 'react-konva';
+import { Circle, Group, Rect, Text } from 'react-konva';
 import { useRemoteCursors, useCurrentUserId } from '@/hooks/useRemoteCursors';
 import { getCursorColorForUserId } from '@/lib/cursor-color';
 import type { IRemoteCursor } from '@/hooks/useRemoteCursors';
 
-const CURSOR_SIZE = 8;
-const ARROW_LENGTH = 12;
-const LABEL_OFFSET_Y = 14;
+const CURSOR_DOT_RADIUS = 6;
+const LABEL_OFFSET_Y = 12;
 const LABEL_FONT_SIZE = 12;
-const LABEL_PADDING = 4;
+const LABEL_PADDING_H = 6;
+const LABEL_PADDING_V = 2;
+const LABEL_MAX_WIDTH = 120;
 
 export interface ICursorOverlayProps {
   stageScale: number;
@@ -16,7 +17,7 @@ export interface ICursorOverlayProps {
 
 /**
  * Renders remote user cursors on the cursor layer. Excludes current user.
- * Name label scales with zoom so it stays readable.
+ * Simple dot + label with background so the cursor is clear and the name does not clip.
  */
 export const CursorOverlay = ({ stageScale }: ICursorOverlayProps): ReactElement => {
   const cursors = useRemoteCursors();
@@ -40,29 +41,47 @@ interface ICursorShapeProps {
 function CursorShape({ cursor, stageScale }: ICursorShapeProps): ReactElement {
   const { x, y, name, color } = cursor;
   const fillColor = color ?? getCursorColorForUserId(cursor.userId);
-  const label = name ?? cursor.userId.slice(0, 8);
+  const label = (name ?? cursor.userId.slice(0, 12)).slice(0, 20);
   const scaledFontSize = Math.max(10, LABEL_FONT_SIZE / stageScale);
+  const labelWidth = Math.min(
+    LABEL_MAX_WIDTH,
+    label.length * scaledFontSize * 0.6 + LABEL_PADDING_H * 2
+  );
+  const labelHeight = scaledFontSize + LABEL_PADDING_V * 2;
+  const labelX = x - labelWidth / 2;
+  const labelY = y + LABEL_OFFSET_Y;
 
   return (
-    <>
-      <Circle x={x} y={y} radius={CURSOR_SIZE / 2} fill={fillColor} listening={false} />
-      <Line
-        points={[x, y, x, y - ARROW_LENGTH]}
-        stroke={fillColor}
-        strokeWidth={2}
-        listening={false}
+    <Group listening={false}>
+      <Circle
+        x={x}
+        y={y}
+        radius={CURSOR_DOT_RADIUS}
+        fill={fillColor}
+        stroke='#fff'
+        strokeWidth={1.5}
+      />
+      <Rect
+        x={labelX}
+        y={labelY}
+        width={labelWidth}
+        height={labelHeight}
+        fill='rgba(255,255,255,0.9)'
+        cornerRadius={4}
+        shadowColor='#000'
+        shadowBlur={2}
+        shadowOpacity={0.15}
       />
       <Text
-        x={x - 40}
-        y={y + LABEL_OFFSET_Y}
-        width={80}
+        x={labelX + LABEL_PADDING_H}
+        y={labelY + LABEL_PADDING_V}
+        width={labelWidth - LABEL_PADDING_H * 2}
         text={label}
         fontSize={scaledFontSize}
-        fill={fillColor}
-        listening={false}
+        fill='#374151'
         align='center'
-        padding={LABEL_PADDING}
+        ellipsis
       />
-    </>
+    </Group>
   );
 }

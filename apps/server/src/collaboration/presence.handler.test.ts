@@ -30,6 +30,18 @@ describe('presence.handler', () => {
       expect(user.cursor).toBeNull();
       expect(user.lastSeen).toBeDefined();
     });
+
+    it('uses displayName and avatarUrl from overrides when provided', () => {
+      const socket = {
+        data: { user: { userId: 'user-1', sessionId: 'sess-1' } },
+      } as unknown as IAuthenticatedSocket;
+      const user = buildUserPresenceFromSocket(socket, {
+        displayName: 'Alice',
+        avatarUrl: 'https://example.com/avatar.png',
+      });
+      expect(user.name).toBe('Alice');
+      expect(user.avatar).toBe('https://example.com/avatar.png');
+    });
   });
 
   describe('addUserToRoom, getUsersInRoom, removeUserFromRoom', () => {

@@ -1,6 +1,7 @@
 import { useEffect } from 'react';
 import { useSocket } from './useSocket';
 import { boardStore } from '@/store/boardStore';
+import { authStore } from '@/store/authStore';
 import type {
   BoardLoadPayload,
   ObjectCreatedPayload,
@@ -48,7 +49,12 @@ export function useBoardRoom(boardId: string): void {
     };
     const onConnect = (): void => {
       boardStore.getState().setBoardLoadStatus('loading');
-      socket.emit('board:join', { boardId });
+      const { displayName, avatarUrl } = authStore.getState();
+      socket.emit('board:join', {
+        boardId,
+        displayName: displayName || undefined,
+        avatarUrl: avatarUrl || undefined,
+      });
     };
 
     socket.on('board:load', onBoardLoad);
@@ -58,7 +64,12 @@ export function useBoardRoom(boardId: string): void {
     socket.on('connect', onConnect);
 
     boardStore.getState().setBoardLoadStatus('loading');
-    socket.emit('board:join', { boardId });
+    const { displayName, avatarUrl } = authStore.getState();
+    socket.emit('board:join', {
+      boardId,
+      displayName: displayName || undefined,
+      avatarUrl: avatarUrl || undefined,
+    });
 
     return () => {
       socket.off('board:load', onBoardLoad);

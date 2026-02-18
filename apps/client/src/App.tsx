@@ -1,6 +1,6 @@
 import type { ReactElement } from 'react';
 import { useEffect } from 'react';
-import { useAuth } from '@clerk/clerk-react';
+import { useAuth, useUser } from '@clerk/clerk-react';
 import { AuthGuard } from '@/components/AuthGuard';
 import { SocketProvider } from '@/context/SocketContext';
 import { AppLayout } from '@/components/AppLayout';
@@ -11,16 +11,30 @@ import { useBoardSettingsPersistence } from '@/hooks/useBoardSettingsPersistence
 
 export const App = (): ReactElement => {
   const { isSignedIn, userId } = useAuth();
+  const { user } = useUser();
 
   useBoardSettingsPersistence();
 
   useEffect(() => {
     if (isSignedIn && userId) {
-      authStore.getState().setUser(userId);
+      const displayName =
+        user?.fullName ??
+        user?.firstName ??
+        (user?.primaryEmailAddress?.emailAddress ?? '').split('@')[0] ??
+        '';
+      const avatarUrl = user?.imageUrl ?? '';
+      authStore.getState().setUser(userId, displayName, avatarUrl);
     } else {
       authStore.getState().clearUser();
     }
-  }, [isSignedIn, userId]);
+  }, [
+    isSignedIn,
+    userId,
+    user?.fullName,
+    user?.firstName,
+    user?.primaryEmailAddress?.emailAddress,
+    user?.imageUrl,
+  ]);
 
   return (
     <AuthGuard>

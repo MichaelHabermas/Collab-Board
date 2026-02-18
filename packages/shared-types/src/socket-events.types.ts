@@ -11,6 +11,8 @@ export interface CursorMovePayload {
 
 export interface BoardJoinPayload {
   boardId: string;
+  displayName?: string;
+  avatarUrl?: string;
 }
 
 export interface BoardLeavePayload {

@@ -15,6 +15,25 @@ export const createApp = (): express.Express => {
   );
   app.use(express.json());
 
+  // Allow Clerk inline styles and scripts; avoid default-src 'none' blocking injectGlobalStyles
+  if (process.env['NODE_ENV'] === 'production') {
+    app.use((_req, res, next) => {
+      res.setHeader(
+        'Content-Security-Policy',
+        [
+          "default-src 'self'",
+          "style-src 'self' 'unsafe-inline'",
+          "script-src 'self' 'unsafe-inline' 'unsafe-eval'",
+          "connect-src 'self' https://*.clerk.accounts.dev https://*.clerk.com wss: ws:",
+          "frame-src 'self' https://*.clerk.accounts.dev https://*.clerk.com",
+          "img-src 'self' data: https:",
+          "font-src 'self' data:",
+        ].join('; ')
+      );
+      next();
+    });
+  }
+
   // API routes: auth required except /api/health
   app.use('/api', (req, res, next) => {
     if (req.path === '/health') {

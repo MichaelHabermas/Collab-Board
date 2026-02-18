@@ -51,3 +51,6 @@ vite.config.ts.timestamp-*
 .cursor/commands
 .cursor/plans
 .lbi
+
+# Local backup bundles (do not commit)
+*.bundle

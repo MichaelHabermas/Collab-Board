@@ -12,11 +12,9 @@ if (getContext) {
     options?: CanvasRenderingContext2DSettings
   ): RenderingContext | null {
     const opts =
-      contextId === '2d'
-        ? { ...(options ?? {}), willReadFrequently: true as const }
-        : options;
+      contextId === '2d' ? { ...(options ?? {}), willReadFrequently: true as const } : options;
     return getContext.call(this, contextId, opts);
-  };
+  } as typeof getContext;
 }
 
 const publishableKey = import.meta.env.VITE_CLERK_PUBLISHABLE_KEY ?? '';

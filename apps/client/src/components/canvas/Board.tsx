@@ -6,7 +6,6 @@ import { useContainerSize } from '@/hooks/useContainerSize';
 import { usePanZoom } from '@/hooks/usePanZoom';
 import { useCursorEmit } from '@/hooks/useCursorEmit';
 import { useSocket } from '@/hooks/useSocket';
-import { useObjectSync } from '@/hooks/useObjectSync';
 import { CursorOverlay } from './CursorOverlay';
 import { GridBackground } from './GridBackground';
 import { BoardObjectsLayer } from '@/components/objects/BoardObjectsLayer';
@@ -84,7 +83,6 @@ export const Board = (): ReactElement => {
   } | null>(null);
   const handleCursorMove = useCursorEmit();
   const { socket } = useSocket();
-  useObjectSync();
 
   const registerNodeRef = useCallback((id: string, node: unknown) => {
     const group = node as Konva.Group | null;

@@ -41,14 +41,18 @@ describe('useBoardRoom', () => {
     expect(mockEmit).toHaveBeenCalledWith('board:join', { boardId: 'board-123' });
   });
 
-  it('registers board:load and connect listeners before emitting board:join', () => {
+  it('registers board:load and object sync listeners before emitting board:join', () => {
     renderHook(() => useBoardRoom('board-123'));
     const onCalls = mockOn.mock.calls;
-    expect(onCalls.some((c) => c[0] === 'board:load')).toBe(true);
-    expect(onCalls.some((c) => c[0] === 'connect')).toBe(true);
+    const eventsRegistered = onCalls.map((c) => c[0]);
+    expect(eventsRegistered).toContain('board:load');
+    expect(eventsRegistered).toContain('object:created');
+    expect(eventsRegistered).toContain('object:updated');
+    expect(eventsRegistered).toContain('object:deleted');
+    expect(eventsRegistered).toContain('connect');
+    expect(eventsRegistered[0]).toBe('board:load');
+    expect(eventsRegistered[eventsRegistered.length - 1]).toBe('connect');
     expect(mockEmit).toHaveBeenCalledWith('board:join', { boardId: 'board-123' });
-    expect(onCalls[0][0]).toBe('board:load');
-    expect(onCalls[1][0]).toBe('connect');
   });
 
   it('does not emit when boardId is empty', () => {
@@ -143,5 +147,36 @@ describe('useBoardRoom', () => {
     expect(boardStore.getState().boardId).toBe('board-123');
     expect(boardStore.getState().title).toBe('Test Board');
     expect(boardStore.getState().boardLoadStatus).toBe('loaded');
+  });
+
+  it('updates store when object:created is received (real-time sync without refresh)', () => {
+    renderHook(() => useBoardRoom('board-123'));
+    const onObjectCreated = mockOn.mock.calls.find((c) => c[0] === 'object:created')?.[1];
+    expect(typeof onObjectCreated).toBe('function');
+
+    expect(boardStore.getState().objects).toHaveLength(0);
+    onObjectCreated({
+      object: {
+        id: 'remote-obj-1',
+        boardId: 'board-123',
+        type: 'sticky_note',
+        x: 50,
+        y: 50,
+        width: 120,
+        height: 80,
+        rotation: 0,
+        zIndex: 0,
+        color: '#fef08a',
+        createdBy: 'other-user',
+        updatedAt: new Date().toISOString(),
+        content: 'From another user',
+        fontSize: 14,
+      },
+    });
+
+    expect(boardStore.getState().objects).toHaveLength(1);
+    const obj = boardStore.getState().objects[0];
+    expect(obj.id).toBe('remote-obj-1');
+    expect(obj).toMatchObject({ id: 'remote-obj-1', content: 'From another user' });
   });
 });

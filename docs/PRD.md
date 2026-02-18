@@ -92,6 +92,16 @@ All of the following must be functional at the 24-hour mark:
 | Object capacity | 500+ objects |
 | Concurrent users | 5+ |
 
+### MVP Collaboration Readiness (verification)
+
+The following runtime behaviors must hold for MVP. Do not check a box until the behavior is verified (manual and automated) and stable.
+
+- [ ] **One shared socket per client tab:** The client uses a single Socket.io connection per tab (via SocketProvider). All collaboration hooks (board room, presence, object sync, cursor emit, remote cursors) consume this same instance.
+- [ ] **Live object sync without reload:** When one user creates, moves, updates, or deletes an object, other users in the same board room see the change in real time without refreshing the page.
+- [ ] **Presence reflects other users online:** The presence panel shows other connected users (names/avatars) and displays "No one else online" only when no other users are in the room (current user is excluded from the list).
+- [ ] **Remote cursors visible with smooth motion:** Other users’ cursors appear on the canvas with name labels; cursor positions are interpolated so movement remains smooth under network jitter.
+- [ ] **Single-board MVP mode with authenticated read/write:** MVP operates on a single board (e.g. default board). All authenticated users have read and write access; no board-level permission checks beyond authentication.
+
 ---
 
 ## 5. Working Agreements

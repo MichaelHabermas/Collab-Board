@@ -17,21 +17,21 @@ export function useBoardRoom(boardId: string): void {
       return;
     }
 
-    boardStore.getState().setBoardLoadStatus('loading');
-    socket.emit('board:join', { boardId });
-
     const onBoardLoad = (payload: BoardLoadPayload): void => {
       boardStore.getState().setObjects(payload.objects);
       boardStore.getState().setBoardMetadata(payload.board.id, payload.board.title);
       boardStore.getState().setBoardLoadStatus('loaded');
     };
-    socket.on('board:load', onBoardLoad);
-
     const onConnect = (): void => {
       boardStore.getState().setBoardLoadStatus('loading');
       socket.emit('board:join', { boardId });
     };
+
+    socket.on('board:load', onBoardLoad);
     socket.on('connect', onConnect);
+
+    boardStore.getState().setBoardLoadStatus('loading');
+    socket.emit('board:join', { boardId });
 
     return () => {
       socket.off('board:load', onBoardLoad);

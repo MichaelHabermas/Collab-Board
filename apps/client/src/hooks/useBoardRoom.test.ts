@@ -41,6 +41,16 @@ describe('useBoardRoom', () => {
     expect(mockEmit).toHaveBeenCalledWith('board:join', { boardId: 'board-123' });
   });
 
+  it('registers board:load and connect listeners before emitting board:join', () => {
+    renderHook(() => useBoardRoom('board-123'));
+    const onCalls = mockOn.mock.calls;
+    expect(onCalls.some((c) => c[0] === 'board:load')).toBe(true);
+    expect(onCalls.some((c) => c[0] === 'connect')).toBe(true);
+    expect(mockEmit).toHaveBeenCalledWith('board:join', { boardId: 'board-123' });
+    expect(onCalls[0][0]).toBe('board:load');
+    expect(onCalls[1][0]).toBe('connect');
+  });
+
   it('does not emit when boardId is empty', () => {
     vi.mocked(useSocket).mockReturnValue({
       socket: mockSocket as never,

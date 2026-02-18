@@ -23,7 +23,7 @@ export const createApp = (): express.Express => {
         [
           "default-src 'self'",
           "style-src 'self' 'unsafe-inline'",
-          "script-src 'self' 'unsafe-inline' 'unsafe-eval'",
+          "script-src 'self' 'unsafe-inline' 'unsafe-eval' https://*.clerk.accounts.dev https://*.clerk.com",
           "connect-src 'self' https://*.clerk.accounts.dev https://*.clerk.com wss: ws:",
           "frame-src 'self' https://*.clerk.accounts.dev https://*.clerk.com",
           "img-src 'self' data: https:",

@@ -43,6 +43,7 @@ bun run validate
 
 ## Notes
 
-- If auth fails in production, verify `CLERK_SECRET_KEY` and `VITE_CLERK_PUBLISHABLE_KEY`.
-- If socket fails in production, verify CORS origin and secure WebSocket handshake settings.
+- If auth fails in production, verify `CLERK_SECRET_KEY` and `VITE_CLERK_PUBLISHABLE_KEY` (use **production** keys from Clerk Dashboard for production deploys).
+- If socket shows "Disconnected" or objects don’t persist, set **`VITE_API_URL`** in Render to your service URL (e.g. `https://collab-board-2em2.onrender.com`). Vite bakes this into the client at build time.
+- If socket fails in production, verify `CORS_ORIGIN` matches the app origin and `VITE_API_URL` is set.
 - If persistence fails, verify `MONGODB_URI` and Atlas network access rules.

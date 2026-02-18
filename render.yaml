@@ -20,3 +20,6 @@ services:
         sync: false
       - key: CORS_ORIGIN
         sync: false
+      # Client build: socket/API base URL (must match service URL for same-origin deploy)
+      - key: VITE_API_URL
+        sync: false
